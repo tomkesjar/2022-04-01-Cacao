@@ -1,0 +1,112 @@
+package players;
+
+import deck.WorkerTileDeck;
+import tiles.WorkerTile;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+public class Player implements Serializable {
+    private static final int MAX_NUMBER_OF_CARDS_AT_HAND = 3;
+    private PlayerColour playerColour;
+
+    private int numberOfCacaoBean;
+    private int coins;
+    private int waterPoint;
+    private int shrineSymbol;
+    private WorkerTileDeck workerTileDeck;
+    private List<WorkerTile> cardsAtHand;
+
+    public WorkerTileDeck getWorkerTileDeck() {
+        return workerTileDeck;
+    }
+
+    public void setWorkerTileDeck(WorkerTileDeck workerTileDeck) {
+        this.workerTileDeck = workerTileDeck;
+    }
+
+    public List<WorkerTile> getCardsAtHand() {
+        return cardsAtHand;
+    }
+
+    public void setCardsAtHand(List<WorkerTile> cardsAtHand) {
+        this.cardsAtHand = cardsAtHand;
+    }
+
+    public Player(int nthPlayer, int numberOfPlayers) {
+        switch (nthPlayer) {
+            case 1:
+                this.playerColour = PlayerColour.RED;
+                break;
+            case 2:
+                this.playerColour = PlayerColour.BLUE;
+                break;
+            case 3:
+                this.playerColour = PlayerColour.GREEN;
+                break;
+            case 4:
+                this.playerColour = PlayerColour.YELLOW;
+                break;
+        }
+
+        this.numberOfCacaoBean = 0;
+        this.coins = 0;
+        this.waterPoint = -12;  //TODO to verify
+
+        this.workerTileDeck = new WorkerTileDeck(this.playerColour, numberOfPlayers);
+        this.workerTileDeck.shuffleDeck();
+
+        cardsAtHand = new LinkedList<>();
+        for (int i = 0; i < MAX_NUMBER_OF_CARDS_AT_HAND; ++i){
+            Optional<WorkerTile> drawnCard = workerTileDeck.drawCard();
+            if (drawnCard.isPresent()) {
+                cardsAtHand.add(drawnCard.get());
+            }
+        }
+
+
+    }
+
+    public PlayerColour getPlayerColour() {
+        return playerColour;
+    }
+
+    public void setPlayerColour(PlayerColour playerColour) {
+        this.playerColour = playerColour;
+    }
+
+    public int getNumberOfCacaoBean() {
+        return numberOfCacaoBean;
+    }
+
+    public void setNumberOfCacaoBean(int numberOfCacaoBean) {
+        this.numberOfCacaoBean = numberOfCacaoBean;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public int getWaterPoint() {
+        return waterPoint;
+    }
+
+    public void setWaterPoint(int waterPoint) {
+        this.waterPoint = waterPoint;
+    }
+
+    public int getShrineSymbol() {
+        return shrineSymbol;
+    }
+
+    public void setShrineSymbol(int shrineSymbol) {
+        this.shrineSymbol = shrineSymbol;
+    }
+}
