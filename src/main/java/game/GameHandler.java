@@ -5,6 +5,7 @@ import messages.ResponseStatus;
 import messages.TilePlacementMessageRequest;
 import messages.TilePlacementMessageResponse;
 import server.ServerClientHandler;
+import tiles.AbstractTile;
 import tiles.EmptyTile;
 import tiles.JungleTile;
 import tiles.WorkerTile;
@@ -45,28 +46,21 @@ public class GameHandler {
                 Point coord = tilePlacementMessageRequest.getCoord();
                 WorkerTile workerTile = (WorkerTile) tilePlacementMessageRequest.getTile();
                 game.getBoard().setField(coord.x, coord.y, workerTile);
-                // ide kene vmi, hogy at tudjon ugorni a jungletile select-re
-                // update board to send back
-                game.setHasPlacedWorkerTile(true);
-                //System.out.println("[GameHandler]: board(0,0)=" + game.getBoard().getField(0,0).toString());
 
+                game.setHasPlacedWorkerTile(true);
                 //testing START
                 game.getPlayerList().get(0).setWaterPoint(15);
                 game.getPlayerList().get(0).setCoins(20);
-
                 //testing END
 
                 TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "Now select and place jungle tile");
                 sendMessageToPlayer(response, currentClient);
-                //System.out.println("[GameHandler]: BoardView board=" + game.getBoard().toString());
             }else {
                 System.out.println("[GameHandler]: Invalid WorkerTile Placement, tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-                TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select and place worker tile");
+                TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select an empty tile and place worker tile adjacent to a jungle tile");
                 sendMessageToPlayer(response, currentClient);
             }
         }
-
-
 
         System.out.println("[GameHandler]: Moving to JungleTile placement");
         while (!isJungleTilePlacementValid) {
@@ -116,14 +110,50 @@ public class GameHandler {
         Point coord = new Point(tilePlacementMessageRequest.getCoord());
         boolean positionCheck = (coord.x + coord.y) % 2 == 0;
         boolean emptyCheck = game.getBoard().getField(coord.x, coord.y) instanceof EmptyTile;
-        return positionCheck && emptyCheck;
+        boolean isAdjacentToWorkerTile = isAdjacentToWorkerTile(coord);
+
+        return positionCheck && emptyCheck && isAdjacentToWorkerTile;
     }
 
     private boolean isValidPlacementAsJungleTile(TilePlacementMessageRequest tilePlacementMessageRequest){
         Point coord = new Point(tilePlacementMessageRequest.getCoord());
         boolean positionCheck = (coord.x + coord.y) % 2 == 1;
         boolean emptyCheck = game.getBoard().getField(coord.x, coord.y) instanceof EmptyTile;
-        return positionCheck && emptyCheck;
+        boolean isAdjacenttoJungleTile = isAdjacentToJungleTile(coord);
+
+        return positionCheck && emptyCheck && isAdjacenttoJungleTile;
+    }
+
+    private boolean isJungleTile(Point coord){
+        if (coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight()){
+            return false;
+        }
+        return game.getBoard().getField(coord.x, coord.y) instanceof JungleTile;
+    }
+
+    private boolean isAdjacentToJungleTile(Point coord){
+        boolean upNeighbour = isJungleTile(new Point(coord.x, coord.y-1));
+        boolean downNeighbour = isJungleTile(new Point(coord.x, coord.y+1));
+        boolean leftNeighbour = isJungleTile(new Point(coord.x-1, coord.y));
+        boolean rightNeighbour = isJungleTile(new Point(coord.x+1, coord.y-1));
+
+        return upNeighbour || downNeighbour || leftNeighbour || rightNeighbour;
+    }
+
+    private boolean isWorkerTile(Point coord){
+        if (coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight()){
+            return false;
+        }
+        return game.getBoard().getField(coord.x, coord.y) instanceof WorkerTile;
+    }
+
+    private boolean isAdjacentToWorkerTile(Point coord){
+        boolean upNeighbour = isWorkerTile(new Point(coord.x, coord.y-1));
+        boolean downNeighbour = isWorkerTile(new Point(coord.x, coord.y+1));
+        boolean leftNeighbour = isWorkerTile(new Point(coord.x-1, coord.y));
+        boolean rightNeighbour = isWorkerTile(new Point(coord.x+1, coord.y-1));
+
+        return upNeighbour || downNeighbour || leftNeighbour || rightNeighbour;
     }
 
     private void sendMessageToPlayer(Object message, ServerClientHandler client){
