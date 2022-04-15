@@ -1,10 +1,10 @@
 package players;
 
 import deck.WorkerTileDeck;
+import game.Game;
 import tiles.WorkerTile;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +15,12 @@ public class Player implements Serializable {
 
     private int numberOfCacaoBean;
     private int coins;
+    private int waterPointIndex;
     private int waterPoint;
-    private int shrineSymbol;
+    private int worshipSymbol;
     private WorkerTileDeck workerTileDeck;
     private List<WorkerTile> cardsAtHand;
+    private int templePoint;
 
     public WorkerTileDeck getWorkerTileDeck() {
         return workerTileDeck;
@@ -54,7 +56,8 @@ public class Player implements Serializable {
 
         this.numberOfCacaoBean = 0;
         this.coins = 0;
-        this.waterPoint = -12;  //TODO to verify
+        this.waterPointIndex = 0;
+        this.waterPoint = Game.getWaterPositionValue(this.waterPointIndex);
 
         this.workerTileDeck = new WorkerTileDeck(this.playerColour, numberOfPlayers);
         this.workerTileDeck.shuffleDeck();
@@ -94,6 +97,14 @@ public class Player implements Serializable {
         this.coins = coins;
     }
 
+    public int getWaterPointIndex() {
+        return waterPointIndex;
+    }
+
+    public void setWaterPointIndex(int waterPointIndex) {
+        this.waterPointIndex = waterPointIndex;
+    }
+
     public int getWaterPoint() {
         return waterPoint;
     }
@@ -102,11 +113,19 @@ public class Player implements Serializable {
         this.waterPoint = waterPoint;
     }
 
-    public int getShrineSymbol() {
-        return shrineSymbol;
+    public int getWorshipSymbol() {
+        return worshipSymbol;
     }
 
-    public void setShrineSymbol(int shrineSymbol) {
-        this.shrineSymbol = shrineSymbol;
+    public void setWorshipSymbol(int worshipSymbol) {
+        this.worshipSymbol = worshipSymbol;
+    }
+
+    public int getTemplePoint() {
+        return templePoint;
+    }
+
+    public void setTemplePoint(int templePoint) {
+        this.templePoint = templePoint;
     }
 }

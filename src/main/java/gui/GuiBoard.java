@@ -8,10 +8,8 @@ import tiles.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 
 public class GuiBoard extends JFrame {
@@ -100,10 +98,10 @@ public class GuiBoard extends JFrame {
                     String coinValue = Integer.toString(actualPlayer.getNumberOfCacaoBean());
                     labelEntry.getValue().setText(coinValue);
                 }else if ("shrineValue".equals(labelEntry.getKey())){
-                    String coinValue = Integer.toString(actualPlayer.getShrineSymbol());
+                    String coinValue = Integer.toString(actualPlayer.getWorshipSymbol());
                     labelEntry.getValue().setText(coinValue);
                 }else if ("waterValue".equals(labelEntry.getKey())){
-                    String coinValue = Integer.toString(actualPlayer.getWaterPoint());
+                    String coinValue = Integer.toString(actualPlayer.getWaterPointIndex());
                     labelEntry.getValue().setText(coinValue);
                 }
             }
@@ -117,7 +115,7 @@ public class GuiBoard extends JFrame {
         //boardTile update
         for(int y=0; y<game.getBoard().getHeight(); ++y){
             for(int x=0; x<game.getBoard().getWidth(); ++x){
-                String newText = game.getBoard().getField(x,y).toShortString();
+                String newText = game.getBoard().getField(x,y).toShortString() + " " + x + " " + y;
                 boardTileButtonLink.get(y).get(x).setText(newText);
             }
         }
@@ -169,14 +167,14 @@ public class GuiBoard extends JFrame {
         playerPanelLink.get(player).put("beanValue", beanValue);
 
         JLabel shrineIcon = new JLabel("shrine: "); //TODO: add coin icon
-        JLabel shrineValue = new JLabel(String.valueOf(player.getShrineSymbol()));       //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel shrineValue = new JLabel(String.valueOf(player.getWorshipSymbol()));       //TODO: add boxes instead of number + colourify boxes based on number
         panel.add(shrineIcon);
         panel.add(shrineValue);
         playerPanelLink.get(player).put("shrineIcon", shrineIcon);
         playerPanelLink.get(player).put("shrineValue", shrineValue);
 
         JLabel waterIcon = new JLabel("water: "); //TODO: add coin icon
-        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()));      //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPointIndex()));      //TODO: add boxes instead of number + colourify boxes based on number
         panel.add(waterIcon);
         panel.add(waterValue);
         playerPanelLink.get(player).put("waterIcon", waterIcon);

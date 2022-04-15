@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board implements Serializable {
-    private final int INITIAL_HEIGHT = 6;//20;
-    private final int INITIAL_WIDTH = 6;//30;
+    private final int INITIAL_HEIGHT = 12;//20;
+    private final int INITIAL_WIDTH = 14;//30;
     private List<List<AbstractTile>> board;
 
     public Board() {

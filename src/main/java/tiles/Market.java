@@ -17,11 +17,16 @@ public class Market extends JungleTile {
         }
     }
 
-
     private MarketPrice marketPrice;
 
     public Market(MarketPrice marketPrice) {
         this.marketPrice = marketPrice;
+        switch (this.marketPrice){
+            case LOW: setTileType(TileEnum.MARKET_LOW); break;
+            case MID: setTileType(TileEnum.MARKET_MID); break;
+            case HIGH: setTileType(TileEnum.MARKET_HIGH); break;
+        }
+
     }
 
     @Override

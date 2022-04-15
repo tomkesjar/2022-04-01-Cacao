@@ -4,6 +4,16 @@ import java.io.Serializable;
 
 public abstract class AbstractTile implements Cloneable, Serializable {
 
+    private TileEnum tileType;
+
+    public TileEnum getTileType() {
+        return tileType;
+    }
+
+    public void setTileType(TileEnum tileType) {
+        this.tileType = tileType;
+    }
+
     @Override
     public AbstractTile clone() {
         try {

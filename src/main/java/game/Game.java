@@ -3,10 +3,8 @@ package game;
 import board.Board;
 import deck.JungleTileDeck;
 import players.Player;
-import players.PlayerColour;
 import server.ServerClientHandler;
 import tiles.JungleTile;
-import tiles.WorkerTile;
 
 import java.io.Serializable;
 import java.util.*;
@@ -14,6 +12,11 @@ import java.util.*;
 public class Game implements Serializable {
     private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 1;
     private static final int MAX_NUMBER_OF_PLAYERS = 4;
+
+    private static final int MAX_NUMBER_OF_CACAO_BEANS = 5;
+    private static final int MAX_NUMBER_OF_WORSHIP_SITES = 3;
+    private static final List<Integer> WATER_POSITION_VALUE_LIST = Arrays.asList(-10, -4, -1, 0, 2, 4, 7, 11, 16);
+
 
     private List<Player> playerList;
     private Board board;
@@ -73,7 +76,7 @@ public class Game implements Serializable {
     public void callNextPlayer(){
         activePlayer = (activePlayer + 1) % MAX_NUMBER_OF_PLAYERS;
     }
-
+/*
     public void placeWorkerTile(WorkerTile workerTile, int xCoord, int yCoord){
         //TODO check if placement is valid
 
@@ -88,6 +91,8 @@ public class Game implements Serializable {
         board.setField(xCoord,yCoord, workerTile);
         //((Player)playerList.get(activePlayer)).
     }
+
+ */
 
     public static int getMaxNumberOfJungleTilesAvailable() {
         return MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE;
@@ -131,6 +136,22 @@ public class Game implements Serializable {
 
     public void setHasPlacedJungleTile(boolean hasPlacedJungleTile) {
         this.hasPlacedJungleTile = hasPlacedJungleTile;
+    }
+
+    public static int getMaxNumberOfCacaoBeans() {
+        return MAX_NUMBER_OF_CACAO_BEANS;
+    }
+
+    public static int getWaterPositionValue(int index) {
+        return WATER_POSITION_VALUE_LIST.get(index);
+    }
+
+    public static List<Integer> getWaterPositionValueList() {
+        return WATER_POSITION_VALUE_LIST;
+    }
+
+    public static int getMaxNumberOfWorshipSites() {
+        return MAX_NUMBER_OF_WORSHIP_SITES;
     }
 
     @Override

@@ -5,6 +5,10 @@ public class Plantation extends JungleTile {
 
     public Plantation(int numberOfCocoaBean) {
         this.numberOfCocoaBean = numberOfCocoaBean;
+        switch (this.numberOfCocoaBean){
+            case 1: setTileType(TileEnum.PLANTATION_1); break;
+            case 2: setTileType(TileEnum.PLANTATION_2); break;
+        }
     }
 
     public int getNumberOfCocoaBean() {

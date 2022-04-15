@@ -1,6 +1,10 @@
 package tiles;
 
+import game.Game;
+import players.Player;
 import players.PlayerColour;
+
+import java.awt.*;
 
 public class WorkerTile extends AbstractTile {
 
@@ -9,15 +13,11 @@ public class WorkerTile extends AbstractTile {
     private int leftWorker;
     private int downWorker;
 
-    private String rightNeighbour;
-    private String upNeighbour;
-    private String leftNeighbour;
-    private String downNeighbour;
 
     private String type;
     private PlayerColour colour;
 
-    public void turnRightWorkersNinetyDegrees(){
+    public void turnRightWorkersNinetyDegrees() {
         int temporaryValue = rightWorker;
         rightWorker = downWorker;
         downWorker = leftWorker;
@@ -34,42 +34,44 @@ public class WorkerTile extends AbstractTile {
         this.colour = colour;
     }
 
-    public String getRightNeighbour() {
-        return rightNeighbour;
-    }
+    /*
+        public String getRightNeighbour() {
+            return rightNeighbour;
+        }
 
-    public void setRightNeighbour(String rightNeighbour) {
-        this.rightNeighbour = rightNeighbour;
-    }
+        public void setRightNeighbour(String rightNeighbour) {
+            this.rightNeighbour = rightNeighbour;
+        }
 
-    public String getUpNeighbour() {
-        return upNeighbour;
-    }
+        public String getUpNeighbour() {
+            return upNeighbour;
+        }
 
-    public void setUpNeighbour(String upNeighbour) {
-        this.upNeighbour = upNeighbour;
-    }
+        public void setUpNeighbour(String upNeighbour) {
+            this.upNeighbour = upNeighbour;
+        }
 
-    public String getLeftNeighbour() {
-        return leftNeighbour;
-    }
+        public String getLeftNeighbour() {
+            return leftNeighbour;
+        }
 
-    public void setLeftNeighbour(String leftNeighbour) {
-        this.leftNeighbour = leftNeighbour;
-    }
+        public void setLeftNeighbour(String leftNeighbour) {
+            this.leftNeighbour = leftNeighbour;
+        }
 
-    public String getDownNeighbour() {
-        return downNeighbour;
-    }
+        public String getDownNeighbour() {
+            return downNeighbour;
+        }
 
-    public void setDownNeighbour(String downNeighbour) {
-        this.downNeighbour = downNeighbour;
-    }
-
+        public void setDownNeighbour(String downNeighbour) {
+            this.downNeighbour = downNeighbour;
+        }
+    */
     public PlayerColour getColour() {
         return colour;
     }
 
+    /*
     public boolean isWorkerNumbersMatchOnEachSide(WorkerTile otherTile){
         if (this.getColour() != otherTile.getColour()) {
             return false;
@@ -85,6 +87,8 @@ public class WorkerTile extends AbstractTile {
         return original || rotateOne || rotateTwo || rotateThree;
     }
 
+     */
+
     @Override
     public String toString() {
         return "WorkerTile{" +
@@ -94,7 +98,7 @@ public class WorkerTile extends AbstractTile {
                 ", downWorker=" + downWorker +
                 ", type='" + type + '\'' +
                 ", colour=" + colour +
-                '}'+" hashCode= "+System.identityHashCode(this);
+                '}' + " hashCode= " + System.identityHashCode(this);
     }
 
     @Override
@@ -106,4 +110,107 @@ public class WorkerTile extends AbstractTile {
     }
 
 
+    public void processRightNeighbourOfWorker(Point coord, Game game) {
+        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
+
+        processNeighbour(new Point(coord.x + 1, coord.y), game, leftWorker);
+
+    }
+
+    public void processLeftNeighbourOfWorker(Point coord, Game game) {
+        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
+
+        processNeighbour(new Point(coord.x - 1, coord.y), game, leftWorker);
+
+    }
+
+    public void processDownNeighbourOfWorker(Point coord, Game game) {
+        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
+
+        processNeighbour(new Point(coord.x, coord.y+1), game, leftWorker);
+
+    }
+
+    public void processUpNeighbourOfWorker(Point coord, Game game) {
+        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
+
+        processNeighbour(new Point(coord.x, coord.y-1), game, leftWorker);
+
+    }
+
+    private void processNeighbour(Point coord, Game game, int numberOfLeftWorker) {
+        if (!(coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight())) {
+            Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
+
+            JungleTile neighbourJungleTile = (JungleTile) game.getBoard().getField(coord.x, coord.y);
+
+            switch (neighbourJungleTile.getTileType()) {
+                case WATER:
+                    for(int i=0; i< numberOfLeftWorker; ++i){
+                        if(activePlayer.getWaterPointIndex() < Game.getWaterPositionValueList().size()) {
+                            activePlayer.setWaterPointIndex(activePlayer.getWaterPointIndex() + 1);       //TODO: meet actual game rule
+                            activePlayer.setWaterPoint(Game.getWaterPositionValue(activePlayer.getWaterPointIndex()));
+                        }
+                    }
+                    break;
+                case TEMPLE:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        activePlayer.setTemplePoint(activePlayer.getTemplePoint() + 1);
+                    }
+                    break;
+                case WORSHIP_SITE:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        activePlayer.setWorshipSymbol(Math.min(activePlayer.getWorshipSymbol() + 1, Game.getMaxNumberOfWorshipSites()));
+                    }
+                    break;
+                case MINE_1:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        activePlayer.setCoins(activePlayer.getCoins() + 1);
+                    }
+                    break;
+                case MINE_2:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        activePlayer.setCoins(activePlayer.getCoins() + 2);
+                    }
+                    break;
+                case PLANTATION_1:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        activePlayer.setNumberOfCacaoBean(Math.min(activePlayer.getNumberOfCacaoBean() + 1, Game.getMaxNumberOfCacaoBeans()));
+                    }
+                    break;
+                case PLANTATION_2:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        activePlayer.setNumberOfCacaoBean(Math.min(activePlayer.getNumberOfCacaoBean() + 2, Game.getMaxNumberOfCacaoBeans()));
+                    }
+                    break;
+
+                case MARKET_LOW:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        if (activePlayer.getNumberOfCacaoBean() > 0) {
+                            activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                            activePlayer.setCoins(activePlayer.getCoins() + Market.MarketPrice.LOW.getValue());
+                        }
+                    }
+                    break;
+                case MARKET_MID:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        if (activePlayer.getNumberOfCacaoBean() > 0) {
+                            activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                            activePlayer.setCoins(activePlayer.getCoins() + Market.MarketPrice.MID.getValue());
+                        }
+                    }
+                    break;
+                case MARKET_HIGH:
+                    for(int i=0; i< numberOfLeftWorker; ++i) {
+                        if (activePlayer.getNumberOfCacaoBean() > 0) {
+                            activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                            activePlayer.setCoins(activePlayer.getCoins() + Market.MarketPrice.HIGH.getValue());
+                        }
+                    }
+                    break;
+            }
+
+
+        }
+    }
 }

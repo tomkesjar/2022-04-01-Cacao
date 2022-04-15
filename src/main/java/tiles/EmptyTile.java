@@ -2,6 +2,10 @@ package tiles;
 
 public class EmptyTile extends JungleTile {
 
+    public EmptyTile() {
+        setTileType(TileEnum.EMPTY);
+    }
+
     @Override
     public AbstractTile clone() {
         return (EmptyTile) super.clone();

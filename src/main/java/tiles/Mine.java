@@ -5,6 +5,10 @@ public class Mine extends JungleTile {
 
     public Mine(int goldValue) {
         this.goldValue = goldValue;
+        switch (this.goldValue){
+            case 1: setTileType(TileEnum.MINE_1); break;
+            case 2: setTileType(TileEnum.MINE_2); break;
+        }
     }
 
     @Override
