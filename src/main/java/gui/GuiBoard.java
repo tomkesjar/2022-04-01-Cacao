@@ -40,8 +40,10 @@ public class GuiBoard extends JFrame {
     private JPanel boardPanel;
     private JPanel cardsPanel;
 
+
     private Map<Player, Map<String, JLabel>>  playerPanelLink;
     private List<List<BoardTileButton>> boardTileButtonLink;
+    private List<JButton> cardsPanelLink;
 
 
 
@@ -87,7 +89,7 @@ public class GuiBoard extends JFrame {
         //messagePanel update
         messagePanel.setText("Player " + ((int) game.getActivePlayer() + 1) + ": " + textMessage);
 
-        //playerPanel
+        //playerPanel update
         for (Map.Entry<Player, Map<String, JLabel>> playerEntry : playerPanelLink.entrySet()) {
             for(Map.Entry<String, JLabel> labelEntry : playerEntry.getValue().entrySet()){
                 Player actualPlayer = game.getPlayerList().get(playerEntry.getKey().getPlayerColour().getPlayerOrdinal()-1);
@@ -125,6 +127,7 @@ public class GuiBoard extends JFrame {
         //boardPanel = createBoardPanel(game.getBoard());
         //this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 
+        //cardPanel update
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
@@ -265,6 +268,7 @@ public class GuiBoard extends JFrame {
         JPanel tilesPanel = new JPanel();
         tilesPanel.setLayout(new FlowLayout());
 
+        cardsPanelLink = new ArrayList<>();
         //add jungleTiles
         JPanel jungleTilesPanel = new JPanel();
         for (JungleTile jungleTile : game.getJungleTilesAvailable()) {
@@ -272,6 +276,7 @@ public class GuiBoard extends JFrame {
             tileButton.setText(jungleTile.toShortString());
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
             jungleTilesPanel.add(tileButton);
+            cardsPanelLink.add(tileButton);
         }
         jungleTilesPanel.add(new JButton(String.valueOf(game.getJungleTileDeck().getDeck().size())));
         jungleTilesPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -283,6 +288,7 @@ public class GuiBoard extends JFrame {
             ActionButtonWorkerTile tileButton = new ActionButtonWorkerTile(this, workerTile);
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
             workerTilesPanel.add(tileButton);
+            cardsPanelLink.add(tileButton);
         }
         workerTilesPanel.add(new JButton(String.valueOf(currentPlayer.getWorkerTileDeck().getDeck().size())));
         workerTilesPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -354,5 +360,13 @@ public class GuiBoard extends JFrame {
 
     public void setHasPlacedJungleTile(boolean hasPlacedJungleTile) {
         this.hasPlacedJungleTile = hasPlacedJungleTile;
+    }
+
+    public JPanel getCardsPanel() {
+        return cardsPanel;
+    }
+
+    public List<JButton> getCardsPanelLink() {
+        return cardsPanelLink;
     }
 }

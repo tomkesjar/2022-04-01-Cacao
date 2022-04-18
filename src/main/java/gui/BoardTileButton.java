@@ -3,6 +3,7 @@ package gui;
 import game.Game;
 import messages.TilePlacementMessageRequest;
 import messages.TilePlacementMessageResponse;
+import players.Player;
 import tiles.JungleTile;
 import tiles.WorkerTile;
 
@@ -76,6 +77,26 @@ public class BoardTileButton extends JButton implements MouseListener {
 
                     guiBoard.setHasPlacedJungleTile(gameReceived.hasPlacedJungleTile());
                     System.out.println("[BoardTileButton]: guiBoard hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile());
+
+                    // clear selection
+                    if (guiBoard.hasPlacedJungleTile()){
+
+                        guiBoard.getCardsPanelLink().forEach(tile -> tile.setBorder(javax.swing.BorderFactory.createEmptyBorder()));
+                        guiBoard.setSelectedJungleTile(null);
+                        guiBoard.setSelectedWorkerTile(null);
+
+                        //ez a game-be kellene
+                        //Player activePlayer = guiBoard.getGame().getPlayerList().get(guiBoard.getPlayerIndex());
+                        //activePlayer.getCardsAtHand().remove(selectedWorkerTile);
+                        //activePlayer.getCardsAtHand().remove(activePlayer.getWorkerTileDeck().drawCard());
+
+                        //guiBoard.getGame().get
+
+                    }
+                    //update cards
+
+
+
 
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
                     System.out.println("[BoardTileButton]: guiBoard updated after jungleTile placement");

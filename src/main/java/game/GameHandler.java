@@ -25,6 +25,9 @@ public class GameHandler {
 
     private boolean isGameEnd = false;
 
+    JungleTile jungleTile;
+    WorkerTile workerTile;
+
     public GameHandler(List<ServerClientHandler> clients) {
         this.clients = clients;
         this.game = new Game(clients);
@@ -49,7 +52,7 @@ public class GameHandler {
 
                     //place tile
                     Point coord = tilePlacementMessageRequest.getCoord();
-                    WorkerTile workerTile = (WorkerTile) tilePlacementMessageRequest.getTile();
+                    workerTile = (WorkerTile) tilePlacementMessageRequest.getTile();
                     game.getBoard().setField(coord.x, coord.y, workerTile);
                     isWorkerTilePlacementValid = true;
                     game.setHasPlacedWorkerTile(true);
@@ -62,8 +65,8 @@ public class GameHandler {
 
 
                     //testing START
-                    game.getPlayerList().get(0).setWaterPointIndex(15);
-                    game.getPlayerList().get(0).setCoins(20);
+                    //game.getPlayerList().get(0).setWaterPointIndex(15);
+                    //game.getPlayerList().get(0).setCoins(20);
                     //testing END
 
 
@@ -93,10 +96,12 @@ public class GameHandler {
                     System.out.println("[GameHandler]: Valid JungleTile Placement, tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     isJungleTilePlacementValid = true;
                     Point coord = tilePlacementMessageRequest.getCoord();
-                    JungleTile jungleTile = (JungleTile) tilePlacementMessageRequest.getTile();
+                    jungleTile = (JungleTile) tilePlacementMessageRequest.getTile();
                     game.getBoard().setField(coord.x, coord.y, jungleTile);
                     // update board to send back
                     game.setHasPlacedJungleTile(true);
+
+                    //updatelni itt ???
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "successfully placed jungle tile");
                     sendMessageToPlayer(response, currentClient);
                 } else {
@@ -106,6 +111,19 @@ public class GameHandler {
                 }
             }
             //TODO: draw jungle Tile
+            game.getJungleTilesAvailable().remove(jungleTile);
+
+            if (game.getJungleTileDeck().drawCard().isPresent()) {
+                game.getJungleTilesAvailable().add(game.getJungleTileDeck().drawCard().get());
+            }
+
+            //TODO: draw worker Tile
+            int activePlayerIndex = game.getActivePlayer();
+            Player activePlayer = game.getPlayerList().get(activePlayerIndex);
+            activePlayer.getCardsAtHand().remove(workerTile);
+            if (activePlayer.getWorkerTileDeck().drawCard().isPresent()){
+                activePlayer.getCardsAtHand().add(activePlayer.getWorkerTileDeck().drawCard().get());
+            }
 
             //TODO: do the aftermath
             //recalculate points, beans, worship...
