@@ -73,6 +73,10 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
         }
     }
 
+    public void clearSelection(){
+        isTileSelected = false;
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {

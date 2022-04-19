@@ -43,7 +43,8 @@ public class GuiBoard extends JFrame {
 
     private Map<Player, Map<String, JLabel>>  playerPanelLink;
     private List<List<BoardTileButton>> boardTileButtonLink;
-    private List<JButton> cardsPanelLink;
+    private List<ActionButtonJungleTile> jungleCardsPanelLink;
+    private List<ActionButtonWorkerTile> workerCardsPanelLink;
 
 
 
@@ -268,7 +269,7 @@ public class GuiBoard extends JFrame {
         JPanel tilesPanel = new JPanel();
         tilesPanel.setLayout(new FlowLayout());
 
-        cardsPanelLink = new ArrayList<>();
+        jungleCardsPanelLink = new ArrayList<>();
         //add jungleTiles
         JPanel jungleTilesPanel = new JPanel();
         for (JungleTile jungleTile : game.getJungleTilesAvailable()) {
@@ -276,19 +277,20 @@ public class GuiBoard extends JFrame {
             tileButton.setText(jungleTile.toShortString());
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
             jungleTilesPanel.add(tileButton);
-            cardsPanelLink.add(tileButton);
+            jungleCardsPanelLink.add(tileButton);
         }
         jungleTilesPanel.add(new JButton(String.valueOf(game.getJungleTileDeck().getDeck().size())));
         jungleTilesPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
         //add workerTiles
+        workerCardsPanelLink = new ArrayList<>();
         JPanel workerTilesPanel = new JPanel();
         Player currentPlayer = game.getPlayerList().get(playerIndex);
         for (WorkerTile workerTile : currentPlayer.getCardsAtHand()) {
             ActionButtonWorkerTile tileButton = new ActionButtonWorkerTile(this, workerTile);
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
             workerTilesPanel.add(tileButton);
-            cardsPanelLink.add(tileButton);
+            workerCardsPanelLink.add(tileButton);
         }
         workerTilesPanel.add(new JButton(String.valueOf(currentPlayer.getWorkerTileDeck().getDeck().size())));
         workerTilesPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -366,7 +368,11 @@ public class GuiBoard extends JFrame {
         return cardsPanel;
     }
 
-    public List<JButton> getCardsPanelLink() {
-        return cardsPanelLink;
+    public List<ActionButtonJungleTile> getJungleCardsPanelLink() {
+        return jungleCardsPanelLink;
+    }
+
+    public List<ActionButtonWorkerTile> getWorkerCardsPanelLink() {
+        return workerCardsPanelLink;
     }
 }

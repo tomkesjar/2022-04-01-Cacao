@@ -3,7 +3,6 @@ package gui;
 import game.Game;
 import messages.TilePlacementMessageRequest;
 import messages.TilePlacementMessageResponse;
-import players.Player;
 import tiles.JungleTile;
 import tiles.WorkerTile;
 
@@ -81,7 +80,15 @@ public class BoardTileButton extends JButton implements MouseListener {
                     // clear selection
                     if (guiBoard.hasPlacedJungleTile()){
 
-                        guiBoard.getCardsPanelLink().forEach(tile -> tile.setBorder(javax.swing.BorderFactory.createEmptyBorder()));
+                        guiBoard.getJungleCardsPanelLink().forEach(tile -> {
+                            tile.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+                            tile.setTileSelected(false);
+                        });
+                        guiBoard.getWorkerCardsPanelLink().forEach(tile -> {
+                            tile.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+                            tile.setTileSelected(false);
+                        });
+
                         guiBoard.setSelectedJungleTile(null);
                         guiBoard.setSelectedWorkerTile(null);
 

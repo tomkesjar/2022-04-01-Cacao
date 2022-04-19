@@ -19,7 +19,6 @@ public class GameHandler {
     private Game game;
     private List<ServerClientHandler> clients;
 
-    private boolean hasGameStarted = false;         //TODO: maybe not needed
     private boolean isWorkerTilePlacementValid = false;
     private boolean isJungleTilePlacementValid = false;
 
@@ -58,10 +57,7 @@ public class GameHandler {
                     game.setHasPlacedWorkerTile(true);
 
                     WorkerTile currentTile =(WorkerTile) game.getBoard().getField(coord.x, coord.y);
-                    currentTile.processRightNeighbourOfWorker(coord, game);
-                    currentTile.processLeftNeighbourOfWorker(coord, game);
-                    currentTile.processDownNeighbourOfWorker(coord, game);
-                    currentTile.processUpNeighbourOfWorker(coord, game);
+                    currentTile.processNeighbours(coord, game);
 
 
                     //testing START
@@ -102,6 +98,7 @@ public class GameHandler {
                     game.setHasPlacedJungleTile(true);
 
                     //updatelni itt ???
+                    //TODO: evaluate placement here
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "successfully placed jungle tile");
                     sendMessageToPlayer(response, currentClient);
                 } else {
@@ -111,8 +108,8 @@ public class GameHandler {
                 }
             }
             //TODO: draw jungle Tile
-            game.getJungleTilesAvailable().remove(jungleTile);
-
+            game.getJungleTilesAvailable().remove(jungleTile);  //TODO: ERROR FAULTY OPERATION, different hash, does not remove it
+            // TODO: SOS remove based on equals
             if (game.getJungleTileDeck().drawCard().isPresent()) {
                 game.getJungleTilesAvailable().add(game.getJungleTileDeck().drawCard().get());
             }
@@ -120,6 +117,7 @@ public class GameHandler {
             //TODO: draw worker Tile
             int activePlayerIndex = game.getActivePlayer();
             Player activePlayer = game.getPlayerList().get(activePlayerIndex);
+            // TODO: SOS remove based on equals
             activePlayer.getCardsAtHand().remove(workerTile);
             if (activePlayer.getWorkerTileDeck().drawCard().isPresent()){
                 activePlayer.getCardsAtHand().add(activePlayer.getWorkerTileDeck().drawCard().get());
@@ -220,7 +218,7 @@ public class GameHandler {
         boolean upNeighbour = isWorkerTile(new Point(coord.x, coord.y - 1));
         boolean downNeighbour = isWorkerTile(new Point(coord.x, coord.y + 1));
         boolean leftNeighbour = isWorkerTile(new Point(coord.x - 1, coord.y));
-        boolean rightNeighbour = isWorkerTile(new Point(coord.x + 1, coord.y - 1));
+        boolean rightNeighbour = isWorkerTile(new Point(coord.x + 1, coord.y ));
 
         return upNeighbour || downNeighbour || leftNeighbour || rightNeighbour;
     }
