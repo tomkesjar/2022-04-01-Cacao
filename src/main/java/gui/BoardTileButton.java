@@ -21,7 +21,7 @@ public class BoardTileButton extends JButton implements MouseListener {
         super();
         this.coord = coord;
         this.guiBoard = guiBoard;
-        this.setText(guiBoard.getGame().getBoard().getField(coord.x, coord.y).toShortString()+ " " + coord.x + " " + coord.y);
+        this.setText(guiBoard.getGame().getBoard().getField(coord.x, coord.y).toShortString() + " " + coord.x + " " + coord.y);
         addMouseListener(this);
     }
 
@@ -78,7 +78,7 @@ public class BoardTileButton extends JButton implements MouseListener {
                     System.out.println("[BoardTileButton]: guiBoard hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile());
 
                     // clear selection
-                    if (guiBoard.hasPlacedJungleTile()){
+                    if (guiBoard.hasPlacedJungleTile()) {
 
                         guiBoard.getJungleCardsPanelLink().forEach(tile -> {
                             tile.setBorder(javax.swing.BorderFactory.createEmptyBorder());
@@ -103,10 +103,20 @@ public class BoardTileButton extends JButton implements MouseListener {
                     //update cards
 
 
-
-
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
                     System.out.println("[BoardTileButton]: guiBoard updated after jungleTile placement");
+
+
+                    //guiBoard.getGame().getPlayerList().get(guiBoard.getPlayerIndex());
+
+                    Game updateGameReceived = null;
+                    while (guiBoard.getPlayerIndex() != updateGameReceived.getActivePlayer()) {
+                        guiBoard.getConnection().getObjectInputStream().readUnshared();
+                        TilePlacementMessageResponse updateResponse = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
+                        updateGameReceived = updateResponse.getGame();
+                        guiBoard.setGame(updateGameReceived);
+                        guiBoard.updateGuiBoard(updateGameReceived, response.getTextMessage());
+                    }
 
                 } catch (IOException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();

@@ -2,5 +2,6 @@ package messages;
 
 public enum ResponseStatus {
     SUCCESSFUL,
-    FAILED
+    FAILED,
+    UPDATE
 }

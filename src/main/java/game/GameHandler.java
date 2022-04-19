@@ -10,10 +10,12 @@ import tiles.EmptyTile;
 import tiles.JungleTile;
 import tiles.WorkerTile;
 
+import javax.swing.text.html.Option;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class GameHandler {
     private Game game;
@@ -56,7 +58,7 @@ public class GameHandler {
                     isWorkerTilePlacementValid = true;
                     game.setHasPlacedWorkerTile(true);
 
-                    WorkerTile currentTile =(WorkerTile) game.getBoard().getField(coord.x, coord.y);
+                    WorkerTile currentTile = (WorkerTile) game.getBoard().getField(coord.x, coord.y);
                     currentTile.processNeighbours(coord, game);
 
 
@@ -64,11 +66,6 @@ public class GameHandler {
                     //game.getPlayerList().get(0).setWaterPointIndex(15);
                     //game.getPlayerList().get(0).setCoins(20);
                     //testing END
-
-
-
-
-
 
 
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "Now select and place jungle tile");
@@ -107,9 +104,13 @@ public class GameHandler {
                     sendMessageToPlayer(response, currentClient);
                 }
             }
+
             //TODO: draw jungle Tile
-            game.getJungleTilesAvailable().remove(jungleTile);  //TODO: ERROR FAULTY OPERATION, different hash, does not remove it
-            // TODO: SOS remove based on equals
+            Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();
+            if (matchingJungleTile.isPresent()) {
+                game.getJungleTilesAvailable().remove(matchingJungleTile.get());
+            }
+
             if (game.getJungleTileDeck().drawCard().isPresent()) {
                 game.getJungleTilesAvailable().add(game.getJungleTileDeck().drawCard().get());
             }
@@ -117,16 +118,27 @@ public class GameHandler {
             //TODO: draw worker Tile
             int activePlayerIndex = game.getActivePlayer();
             Player activePlayer = game.getPlayerList().get(activePlayerIndex);
-            // TODO: SOS remove based on equals
-            activePlayer.getCardsAtHand().remove(workerTile);
-            if (activePlayer.getWorkerTileDeck().drawCard().isPresent()){
+            Optional<WorkerTile> matchingWorkerTile = activePlayer.getCardsAtHand().stream().filter(tile -> workerTile.equals(tile)).findFirst();
+            if (matchingWorkerTile.isPresent()){
+                activePlayer.getCardsAtHand().remove(matchingWorkerTile.get());
+            }
+
+            if (activePlayer.getWorkerTileDeck().drawCard().isPresent()) {
                 activePlayer.getCardsAtHand().add(activePlayer.getWorkerTileDeck().drawCard().get());
             }
 
             //TODO: do the aftermath
             //recalculate points, beans, worship...
 
+
             switchPlayer();
+
+            //TODO: send to all clients
+            clients.forEach(client -> client.getObjectOutputStream().writeUnshared());
+
+            TilePlacementMessageResponse responseUpdate = new TilePlacementMessageResponse(game, ResponseStatus.UPDATE, "finished its turn");
+            sendMessageToAll(responseUpdate);
+
         }
         System.out.println("[GameHandler]: Game Ended");
 
@@ -218,7 +230,7 @@ public class GameHandler {
         boolean upNeighbour = isWorkerTile(new Point(coord.x, coord.y - 1));
         boolean downNeighbour = isWorkerTile(new Point(coord.x, coord.y + 1));
         boolean leftNeighbour = isWorkerTile(new Point(coord.x - 1, coord.y));
-        boolean rightNeighbour = isWorkerTile(new Point(coord.x + 1, coord.y ));
+        boolean rightNeighbour = isWorkerTile(new Point(coord.x + 1, coord.y));
 
         return upNeighbour || downNeighbour || leftNeighbour || rightNeighbour;
     }

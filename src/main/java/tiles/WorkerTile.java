@@ -22,6 +22,15 @@ public class WorkerTile extends AbstractTile {
     private String type;
     private PlayerColour colour;
 
+    public WorkerTile turnRightWorkersNinetyDegreesTimes(int numberOfTurn) {
+        if (numberOfTurn > 0) {
+            for (int i = 0; i < numberOfTurn; ++i) {
+                this.turnRightWorkersNinetyDegrees();
+            }
+        }
+        return this;
+    }
+
     public void turnRightWorkersNinetyDegrees() {
         int temporaryValue = rightWorker;
         rightWorker = downWorker;
@@ -47,9 +56,9 @@ public class WorkerTile extends AbstractTile {
     @Override
     public String toString() {
         return "WorkerTile{" +
-                "rightWorker=" + rightWorker +
+                "leftWorker=" + leftWorker +
                 ", upWorker=" + upWorker +
-                ", leftWorker=" + leftWorker +
+                ", rightWorker=" + rightWorker +
                 ", downWorker=" + downWorker +
                 ", type='" + type + '\'' +
                 ", colour=" + colour +
@@ -61,7 +70,7 @@ public class WorkerTile extends AbstractTile {
         String colour = (getColour().toString());
         String shortColour = colour.substring(0, Math.min(colour.length(), 1));
         //return "W_"+ shortColour;
-        return shortColour + this.rightWorker + this.upWorker + this.leftWorker + this.downWorker;
+        return shortColour + this.leftWorker + this.upWorker + this.rightWorker + this.downWorker;
     }
 
 
@@ -69,16 +78,16 @@ public class WorkerTile extends AbstractTile {
         LinkedList<Pair<Point, Integer>> processOrder = new LinkedList<>();
 
         List<Pair<Point, Integer>> sidesAndWorkers = Arrays.asList(
-                new Pair(new Point(coord.x - 1, coord.y), leftWorker),
-                new Pair(new Point(coord.x + 1, coord.y), rightWorker),
-                new Pair(new Point(coord.x, coord.y - 1), upWorker),
-                new Pair(new Point(coord.x, coord.y + 1), downWorker));
+                new Pair<Point, Integer>(new Point(coord.x - 1, coord.y), leftWorker),
+                new Pair<Point, Integer>(new Point(coord.x + 1, coord.y), rightWorker),
+                new Pair<Point, Integer>(new Point(coord.x, coord.y - 1), upWorker),
+                new Pair<Point, Integer>(new Point(coord.x, coord.y + 1), downWorker));
 
-        for (Pair<Point, Integer> side: sidesAndWorkers) {
+        for (Pair<Point, Integer> side : sidesAndWorkers) {
             AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
             if ((TileEnum.MARKET_LOW.equals(tile.getTileType()) || TileEnum.MARKET_MID.equals(tile.getTileType()) || TileEnum.MARKET_HIGH.equals(tile.getTileType()))) {
                 processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
-            } else if (!TileEnum.EMPTY.equals(tile.getTileType())){
+            } else if (!TileEnum.EMPTY.equals(tile.getTileType())) {
                 processOrder.addFirst(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
             }
         }
@@ -184,10 +193,38 @@ public class WorkerTile extends AbstractTile {
                         }
                     }
                     break;
-                default: break;
             }
-
-
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WorkerTile that = (WorkerTile) o;
+        if (colour != that.colour) return false;
+
+        WorkerTile thatRotatedFirst = ((WorkerTile) that.clone()).turnRightWorkersNinetyDegreesTimes(1);
+        WorkerTile thatRotatedSecond = ((WorkerTile) that.clone()).turnRightWorkersNinetyDegreesTimes(2);
+        WorkerTile thatRotatedThird = ((WorkerTile) that.clone()).turnRightWorkersNinetyDegreesTimes(3);
+
+        if ((this.leftWorker == thatRotatedFirst.leftWorker && this.rightWorker == thatRotatedFirst.rightWorker && this.upWorker == thatRotatedFirst.upWorker && this.downWorker == thatRotatedFirst.downWorker) ||
+                (this.leftWorker == thatRotatedSecond.leftWorker && this.rightWorker == thatRotatedSecond.rightWorker && this.upWorker == thatRotatedSecond.upWorker && this.downWorker == thatRotatedSecond.downWorker) ||
+                (this.leftWorker == thatRotatedThird.leftWorker && this.rightWorker == thatRotatedThird.rightWorker && this.upWorker == thatRotatedThird.upWorker && this.downWorker == thatRotatedThird.downWorker)) {
+            return true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rightWorker;
+        result = 31 * result + upWorker;
+        result = 31 * result + leftWorker;
+        result = 31 * result + downWorker;
+        result = 31 * result + colour.hashCode();
+        return result;
     }
 }
