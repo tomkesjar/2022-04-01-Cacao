@@ -134,8 +134,6 @@ public class GameHandler {
             switchPlayer();
 
             //TODO: send to all clients
-            clients.forEach(client -> client.getObjectOutputStream().writeUnshared());
-
             TilePlacementMessageResponse responseUpdate = new TilePlacementMessageResponse(game, ResponseStatus.UPDATE, "finished its turn");
             sendMessageToAll(responseUpdate);
 
