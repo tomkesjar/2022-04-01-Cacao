@@ -128,4 +128,19 @@ public class Player implements Serializable {
     public void setTemplePoint(int templePoint) {
         this.templePoint = templePoint;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "playerColour=" + playerColour +
+                ", numberOfCacaoBean=" + numberOfCacaoBean +
+                ", coins=" + coins +
+                ", waterPointIndex=" + waterPointIndex +
+                ", waterPoint=" + waterPoint +
+                ", worshipSymbol=" + worshipSymbol +
+                ", workerTileDeck=" + workerTileDeck +
+                ", cardsAtHand=" + cardsAtHand +
+                ", templePoint=" + templePoint +
+                '}';
+    }
 }
