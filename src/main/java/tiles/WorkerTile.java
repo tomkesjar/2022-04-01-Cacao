@@ -76,12 +76,11 @@ public class WorkerTile extends AbstractTile {
 
         for (Pair<Point, Integer> side: sidesAndWorkers) {
             AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
-            if ((tile.getTileType().equals(TileEnum.MARKET_LOW) || tile.getTileType().equals(TileEnum.MARKET_MID) || tile.getTileType().equals(TileEnum.MARKET_HIGH))) {
+            if ((TileEnum.MARKET_LOW.equals(tile.getTileType()) || TileEnum.MARKET_MID.equals(tile.getTileType()) || TileEnum.MARKET_HIGH.equals(tile.getTileType()))) {
                 processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
-            } else {
+            } else if (!TileEnum.EMPTY.equals(tile.getTileType())){
                 processOrder.addFirst(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
             }
-
         }
 
         processOrder.forEach(neighbour -> processNeighbour(neighbour.getKey(), game, neighbour.getValue()));
@@ -185,6 +184,7 @@ public class WorkerTile extends AbstractTile {
                         }
                     }
                     break;
+                default: break;
             }
 
 
