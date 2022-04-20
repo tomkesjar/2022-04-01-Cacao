@@ -17,16 +17,21 @@ public class BoardTileButton extends JButton implements MouseListener {
     private Point coord;
     private GuiBoard guiBoard;
 
+    private boolean successfulWorkerTileSending;
+    private boolean successfulJungleTileSending;
+
     public BoardTileButton(Point coord, GuiBoard guiBoard) {
         super();
         this.coord = coord;
         this.guiBoard = guiBoard;
         this.setText(guiBoard.getGame().getBoard().getField(coord.x, coord.y).toShortString() + " " + coord.x + " " + coord.y);
         addMouseListener(this);
+        successfulWorkerTileSending = false;
+        successfulJungleTileSending = false;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         if (guiBoard.getPlayerIndex() == guiBoard.getGame().getActivePlayer()) {
             WorkerTile selectedWorkerTile = guiBoard.getSelectedWorkerTile();
             JungleTile selectedJungleTile = guiBoard.getSelectedJungleTile();
@@ -76,7 +81,7 @@ public class BoardTileButton extends JButton implements MouseListener {
                     guiBoard.setHasPlacedJungleTile(gameReceived.hasPlacedJungleTile());
                     System.out.println("[BoardTileButton]: guiBoard hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile());
 
-                    /*
+
                     // clear selection  ONLY IF SUCCESSFUL JUNGLE TILE PLACEMENT
                     if (guiBoard.hasPlacedJungleTile()) {
 
@@ -103,7 +108,6 @@ public class BoardTileButton extends JButton implements MouseListener {
 
                     }
                     //update cards
-                    */
 
 
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
@@ -136,12 +140,31 @@ public class BoardTileButton extends JButton implements MouseListener {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
+        //continuous wait & update status
+        if (!(guiBoard.hasPlacedWorkerTile() || guiBoard.hasPlacedJungleTile())) {
+            System.out.println("[BoardTileButton]: Listening to updateResponse");
 
+            Game updateGameReceived = null;
+            int updateGameReceivedActivePlayer = -1;
+            while (guiBoard.getPlayerIndex() != updateGameReceivedActivePlayer) {
+                TilePlacementMessageResponse updateResponse = null;
+                try {
+                    updateResponse = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
+                    updateGameReceived = updateResponse.getGame();
+                    updateGameReceivedActivePlayer = updateGameReceived.getActivePlayer();
+                    guiBoard.setGame(updateGameReceived);
+                    guiBoard.updateGuiBoard(updateGameReceived, updateResponse.getTextMessage());
+                } catch (IOException | ClassNotFoundException ioException) {
+                    ioException.printStackTrace();
+                    System.out.println("[BoardTileButton]: updateResponse reading failed. updateResponse=" + updateResponse);
+                }
+            }
+        }
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {
 
     }
 

@@ -7,6 +7,7 @@ import players.Player;
 import tiles.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -50,6 +51,7 @@ public class GuiBoard extends JFrame {
 
 
     public GuiBoard(ClientConnection connection, Game game, int playerIndex) {
+        super("Cacao Board Game");
         this.connection = connection;
         this.game = game;
         this.playerIndex = playerIndex;
@@ -62,7 +64,7 @@ public class GuiBoard extends JFrame {
         playerPanelLink = new HashMap<>();
         boardTileButtonLink = new ArrayList<>();
 
-        this.setTitle("Cacao Board Game");
+        //this.setTitle("Cacao Board Game");
         this.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -82,6 +84,7 @@ public class GuiBoard extends JFrame {
         this.setVisible(true);
         this.setFocusable(true);
         this.requestFocusInWindow();
+
     }
 
     public void updateGuiBoard(Game gameReceived, String textMessage) {
@@ -132,6 +135,9 @@ public class GuiBoard extends JFrame {
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
+
+        this.invalidate();
+        this.repaint();
         //SwingUtilities.updateComponentTreeUI(this);
 
         //this.validate();
@@ -280,7 +286,10 @@ public class GuiBoard extends JFrame {
             jungleCardsPanelLink.add(tileButton);
         }
         jungleTilesPanel.add(new JButton(String.valueOf(game.getJungleTileDeck().getDeck().size())));
-        jungleTilesPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        //jungleTilesPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Jungle Tiles");
+        title.setTitleJustification(TitledBorder.LEFT);
+        jungleTilesPanel.setBorder(title);
 
         //add workerTiles
         //TODO: SOS selection based on guiBoard status?
@@ -295,7 +304,10 @@ public class GuiBoard extends JFrame {
             workerCardsPanelLink.add(tileButton);
         }
         workerTilesPanel.add(new JButton(String.valueOf(currentPlayer.getWorkerTileDeck().getDeck().size())));
-        workerTilesPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        //workerTilesPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        TitledBorder workerTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Worker Tiles");
+        workerTitle.setTitleJustification(TitledBorder.LEFT);
+        workerTilesPanel.setBorder(workerTitle);
 
         tilesPanel.add(jungleTilesPanel);
         tilesPanel.add(workerTilesPanel);
