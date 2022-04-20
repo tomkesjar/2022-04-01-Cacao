@@ -128,21 +128,30 @@ public class JungleTileDeck implements Serializable {
 
     public void twoPlayerSetup() {
         //currently dummy
-        createTiles(3, JungleTileEnum.PLANTATION_1);
-        createTiles(3, JungleTileEnum.PLANTATION_2);
-        createTiles(2, JungleTileEnum.MARKET_LOW);
-        createTiles(2, JungleTileEnum.MARKET_MID);
+        createTiles(1, JungleTileEnum.PLANTATION_1);
+        createTiles(1, JungleTileEnum.PLANTATION_2);
+        createTiles(1, JungleTileEnum.MARKET_LOW);
+        createTiles(1, JungleTileEnum.MARKET_MID);
         createTiles(1, JungleTileEnum.MARKET_HIGH);
         createTiles(1, JungleTileEnum.MINE_1);
         createTiles(1, JungleTileEnum.MINE_2);
         createTiles(1, JungleTileEnum.TEMPLE);
-        createTiles(2, JungleTileEnum.WATER);
+        createTiles(1, JungleTileEnum.WATER);
         createTiles(1, JungleTileEnum.WORSHIP_SITE);
         shuffleDeck();
     }
 
     public List<JungleTile> getDeck() {
         return deck;
+    }
+
+    @Override
+    public String toString() {
+        String topCard = deck.size()>0 ? deck.get(0).toString() : "";
+        return "JungleTileDeck{" +
+                " deckSize=" + deck.size() +
+                " topCard=" + topCard +
+                '}';
     }
 
 }

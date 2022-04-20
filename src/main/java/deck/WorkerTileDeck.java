@@ -53,9 +53,9 @@ public class WorkerTileDeck implements Serializable {
         return Optional.ofNullable(result);
     }
 
-    public void createTiles(int numberOfPieces, int rightWorker, int upWorker, int leftWorker, int downWorker) {
+    public void createTiles(int numberOfPieces, int leftWorker, int upWorker, int rightWorker, int downWorker) {
         for (int i = 0; i < numberOfPieces; ++i) {
-            WorkerTile tempWorker = new WorkerTile(rightWorker,upWorker, leftWorker,downWorker, colour);
+            WorkerTile tempWorker = new WorkerTile(leftWorker,upWorker, rightWorker,downWorker, colour);
             deck.add(tempWorker);
         }
     }
@@ -82,11 +82,23 @@ public class WorkerTileDeck implements Serializable {
 
     public void twoPlayerSetup() {
         //currently dummy
-        createTiles(2, 1,1,1,1);
-        createTiles(2, 1,2,1,0);
+        createTiles(1, 1,1,1,1);
+        createTiles(1, 1,2,1,0);
         createTiles(1, 3,1,0,0);
-        createTiles(1, 1,3,0,0);
+        createTiles(1, 1,2,3,4);
+        createTiles(1, 2,3,4,5);
+        createTiles(1, 3,4,5,6);
+        createTiles(1, 4,5,6,7);
         shuffleDeck();
+    }
+
+    @Override
+    public String toString() {
+        String topCard = deck.size()>0 ? deck.get(0).toString() : "";
+        return "WorkerTileDeck{" +
+                " deckSize=" + deck.size() +
+                " topCard=" + topCard +
+                '}';
     }
 
     /*

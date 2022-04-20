@@ -36,5 +36,9 @@ public abstract class JungleTile extends AbstractTile {
 
     protected abstract void processNeighbour(Point side, Game game, int numberOfWorkers);
 
+    public String toShortString(){
+        String className = this.getClass().toString();
+        return className;
+    }
 
 }

@@ -156,16 +156,24 @@ public class Game implements Serializable {
 
     @Override
     public String toString() {
-        return "Game{" +
-                "playerList=" + playerList +
-                ", board=" + board +
-                ", jungleTileDeck=" + jungleTileDeck +
-                ", jungleTilesAvailable=" + jungleTilesAvailable +
-                ", activePlayer=" + activePlayer +
-                ", hasPlacedWorkerTile=" + hasPlacedWorkerTile +
-                ", hasPlacedJungleTile=" + hasPlacedJungleTile +
-                ", isGameEnded=" + isGameEnded +
-                '}';
+        StringBuilder result = new StringBuilder();
+        result.append("playerList=" + playerList);
+        result.append(System.lineSeparator());
+        result.append("board=" + board.toShortString());
+        result.append(System.lineSeparator());
+        result.append("jungleTileDeck=" + jungleTileDeck );
+        result.append(System.lineSeparator());
+        result.append("jungleTilesAvailable=" + jungleTilesAvailable);
+        result.append(System.lineSeparator());
+        result.append("activePlayer=" + activePlayer);
+        result.append(System.lineSeparator());
+        result.append("hasPlacedWorkerTile=" + hasPlacedWorkerTile);
+        result.append(System.lineSeparator());
+        result.append("hasPlacedJungleTile=" + hasPlacedJungleTile );
+        result.append(System.lineSeparator());
+        result.append("isGameEnded=" + isGameEnded);
+
+        return result.toString();
     }
 
     public String toShortString() {

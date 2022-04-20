@@ -39,10 +39,10 @@ public class WorkerTile extends AbstractTile {
         upWorker = temporaryValue;
     }
 
-    public WorkerTile(int rightWorker, int upWorker, int leftWorker, int downWorker, PlayerColour colour) {
-        this.rightWorker = rightWorker;
-        this.upWorker = upWorker;
+    public WorkerTile(int leftWorker, int upWorker, int rightWorker, int downWorker, PlayerColour colour) {
         this.leftWorker = leftWorker;
+        this.upWorker = upWorker;
+        this.rightWorker = rightWorker;
         this.downWorker = downWorker;
         this.type = "Worker";
         this.colour = colour;
@@ -70,14 +70,17 @@ public class WorkerTile extends AbstractTile {
 
     @Override
     public String toString() {
+        return toShortString() + " hashCode= " + System.identityHashCode(this);
+        /*
         return "WorkerTile{" +
                 "leftWorker=" + leftWorker +
                 ", upWorker=" + upWorker +
                 ", rightWorker=" + rightWorker +
                 ", downWorker=" + downWorker +
-                ", type='" + type + '\'' +
                 ", colour=" + colour +
                 '}' + " hashCode= " + System.identityHashCode(this);
+
+         */
     }
 
     @Override

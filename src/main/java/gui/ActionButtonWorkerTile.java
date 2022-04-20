@@ -31,7 +31,7 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
         this.setText(workerTile.toShortString());
         this.setBackground(Color.GREEN);
         addMouseListener(this);
-        System.out.println("[ActionButtonWorkerTile]: actionButtonWorkerTile created");
+        System.out.println("[ActionButtonWorkerTile]: actionButtonWorkerTile created for worker=" + workerTile.toShortString());
     }
 
     @Override

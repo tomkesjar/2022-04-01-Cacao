@@ -131,16 +131,18 @@ public class Player implements Serializable {
 
     @Override
     public String toString() {
-        return "Player{" +
+        StringBuilder result = new StringBuilder();
+        result.append("Player{" +
                 "playerColour=" + playerColour +
                 ", numberOfCacaoBean=" + numberOfCacaoBean +
                 ", coins=" + coins +
                 ", waterPointIndex=" + waterPointIndex +
                 ", waterPoint=" + waterPoint +
                 ", worshipSymbol=" + worshipSymbol +
-                ", workerTileDeck=" + workerTileDeck +
-                ", cardsAtHand=" + cardsAtHand +
                 ", templePoint=" + templePoint +
-                '}';
+                ", workerTileDeck=" + workerTileDeck);
+        result.append(System.lineSeparator());
+        result.append("cardsAtHand=" + cardsAtHand);
+        return result.toString();
     }
 }

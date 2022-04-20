@@ -42,10 +42,18 @@ public class TilePlacementMessageResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "TilePlacementMessageResponse{" +
-                "game=" + game +
-                ", status=" + status +
-                ", textMessage='" + textMessage + '\'' +
-                '}';
+        StringBuilder result = new StringBuilder();
+        result.append(System.lineSeparator());
+        result.append("----------------------START---");
+        result.append(System.lineSeparator());
+        result.append("game=" + game);
+        result.append(System.lineSeparator());
+        result.append("status=" + status);
+        result.append(System.lineSeparator());
+        result.append("textMessage=" + textMessage);
+        result.append(System.lineSeparator());
+        result.append("-----------------------END---");
+
+        return result.toString();
     }
 }
