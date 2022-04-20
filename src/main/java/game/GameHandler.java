@@ -61,13 +61,6 @@ public class GameHandler {
                     WorkerTile currentTile = (WorkerTile) game.getBoard().getField(coord.x, coord.y);
                     currentTile.processNeighbours(coord, game);
 
-
-                    //testing START
-                    //game.getPlayerList().get(0).setWaterPointIndex(15);
-                    //game.getPlayerList().get(0).setCoins(20);
-                    //testing END
-
-
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "Now select and place jungle tile");
                     sendMessageToPlayer(response, currentClient);
                 } else {
@@ -94,7 +87,9 @@ public class GameHandler {
                     // update board to send back
                     game.setHasPlacedJungleTile(true);
 
-                    //updatelni itt ???
+                    JungleTile currentTile = (JungleTile) game.getBoard().getField(coord.x, coord.y);
+                    currentTile.processNeighbours(coord, game);
+
                     //TODO: evaluate placement here
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "successfully placed jungle tile");
                     sendMessageToPlayer(response, currentClient);
@@ -123,8 +118,9 @@ public class GameHandler {
                 activePlayer.getCardsAtHand().remove(matchingWorkerTile.get());
             }
 
-            if (activePlayer.getWorkerTileDeck().drawCard().isPresent()) {
-                activePlayer.getCardsAtHand().add(activePlayer.getWorkerTileDeck().drawCard().get());
+            Optional<WorkerTile> optionalWorkerTile = activePlayer.getWorkerTileDeck().drawCard();
+            if (optionalWorkerTile.isPresent()) {
+                activePlayer.getCardsAtHand().add(optionalWorkerTile.get());
             }
 
             //TODO: do the aftermath

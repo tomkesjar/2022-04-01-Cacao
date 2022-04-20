@@ -1,5 +1,10 @@
 package tiles;
 
+import game.Game;
+import players.Player;
+
+import java.awt.*;
+
 public class Market extends JungleTile {
     public enum MarketPrice{
         LOW(2),
@@ -27,6 +32,21 @@ public class Market extends JungleTile {
             case HIGH: setTileType(TileEnum.MARKET_HIGH); break;
         }
 
+    }
+
+    @Override
+    protected void processNeighbour(Point coord, Game game, int numberOfWorker) {
+        if (!(coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight())) {
+            WorkerTile neighbour = (WorkerTile) game.getBoard().getField(coord.x, coord.y);
+            Player activePlayer = game.getPlayerList().get(neighbour.getColour().getPlayerOrdinal()-1);
+
+            for (int i=0; i<numberOfWorker; ++i){
+                if (activePlayer.getNumberOfCacaoBean() > 0) {
+                    activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                    activePlayer.setCoins(activePlayer.getCoins() + getMarketPrice().getValue());
+                }
+            }
+        }
     }
 
     @Override

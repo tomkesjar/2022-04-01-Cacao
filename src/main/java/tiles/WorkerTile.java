@@ -52,6 +52,21 @@ public class WorkerTile extends AbstractTile {
         return colour;
     }
 
+    public int getRightWorker() {
+        return rightWorker;
+    }
+
+    public int getUpWorker() {
+        return upWorker;
+    }
+
+    public int getLeftWorker() {
+        return leftWorker;
+    }
+
+    public int getDownWorker() {
+        return downWorker;
+    }
 
     @Override
     public String toString() {
@@ -209,7 +224,9 @@ public class WorkerTile extends AbstractTile {
         WorkerTile thatRotatedSecond = ((WorkerTile) that.clone()).turnRightWorkersNinetyDegreesTimes(2);
         WorkerTile thatRotatedThird = ((WorkerTile) that.clone()).turnRightWorkersNinetyDegreesTimes(3);
 
-        if ((this.leftWorker == thatRotatedFirst.leftWorker && this.rightWorker == thatRotatedFirst.rightWorker && this.upWorker == thatRotatedFirst.upWorker && this.downWorker == thatRotatedFirst.downWorker) ||
+        if (
+                (this.leftWorker == that.leftWorker && this.rightWorker == that.rightWorker && this.upWorker == that.upWorker && this.downWorker == that.downWorker) ||
+                (this.leftWorker == thatRotatedFirst.leftWorker && this.rightWorker == thatRotatedFirst.rightWorker && this.upWorker == thatRotatedFirst.upWorker && this.downWorker == thatRotatedFirst.downWorker) ||
                 (this.leftWorker == thatRotatedSecond.leftWorker && this.rightWorker == thatRotatedSecond.rightWorker && this.upWorker == thatRotatedSecond.upWorker && this.downWorker == thatRotatedSecond.downWorker) ||
                 (this.leftWorker == thatRotatedThird.leftWorker && this.rightWorker == thatRotatedThird.rightWorker && this.upWorker == thatRotatedThird.upWorker && this.downWorker == thatRotatedThird.downWorker)) {
             return true;

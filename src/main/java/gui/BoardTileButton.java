@@ -72,12 +72,12 @@ public class BoardTileButton extends JButton implements MouseListener {
                     TilePlacementMessageResponse response = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
                     System.out.println("[BoardTileButton]: TilePlacementMessageResponse received successfully. tilePlacementMessageResponse=" + response);
                     Game gameReceived = response.getGame();
-                    //System.out.println("[BoardTileButton]: board(0,0)=" + gameReceived.getBoard().getField(0,0).toShortString()); //System.out.println("[BoardTileButton]: full board=" + gameReceived.getBoard().toString()); //System.out.println("[BoardTileButton]: game Players coins=" + gameReceived.getPlayerList().get(0).getCoins()); //System.out.println("[BoardTileButton]: game Players coins=" + gameReceived.getPlayerList().get(1).getCoins());                     guiBoard.setHasPlacedJungleTile(gameReceived.hasPlacedJungleTile());
 
                     guiBoard.setHasPlacedJungleTile(gameReceived.hasPlacedJungleTile());
                     System.out.println("[BoardTileButton]: guiBoard hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile());
 
-                    // clear selection
+                    /*
+                    // clear selection  ONLY IF SUCCESSFUL JUNGLE TILE PLACEMENT
                     if (guiBoard.hasPlacedJungleTile()) {
 
                         guiBoard.getJungleCardsPanelLink().forEach(tile -> {
@@ -91,6 +91,8 @@ public class BoardTileButton extends JButton implements MouseListener {
 
                         guiBoard.setSelectedJungleTile(null);
                         guiBoard.setSelectedWorkerTile(null);
+                        guiBoard.setHasPlacedJungleTile(false);
+                        guiBoard.setHasPlacedWorkerTile(false);
 
                         //ez a game-be kellene
                         //Player activePlayer = guiBoard.getGame().getPlayerList().get(guiBoard.getPlayerIndex());
@@ -101,22 +103,26 @@ public class BoardTileButton extends JButton implements MouseListener {
 
                     }
                     //update cards
+                    */
 
 
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
                     System.out.println("[BoardTileButton]: guiBoard updated after jungleTile placement");
 
 
-                    //guiBoard.getGame().getPlayerList().get(guiBoard.getPlayerIndex());
-
+                    /*
+                    //continuous wait & update status
                     Game updateGameReceived = null;
-                    while (guiBoard.getPlayerIndex() != updateGameReceived.getActivePlayer()) {
+                    int updateGameReceivedActivePlayer = -1;
+                    while (guiBoard.getPlayerIndex() != updateGameReceivedActivePlayer) {
                         guiBoard.getConnection().getObjectInputStream().readUnshared();
                         TilePlacementMessageResponse updateResponse = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
                         updateGameReceived = updateResponse.getGame();
+                        updateGameReceivedActivePlayer = updateGameReceived.getActivePlayer();
                         guiBoard.setGame(updateGameReceived);
                         guiBoard.updateGuiBoard(updateGameReceived, response.getTextMessage());
                     }
+                    */
 
                 } catch (IOException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();

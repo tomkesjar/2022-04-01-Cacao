@@ -128,7 +128,7 @@ public class GuiBoard extends JFrame {
         //boardPanel = createBoardPanel(game.getBoard());
         //this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 
-        //cardPanel update
+        //cardPanel update      TODO:lehet ezt is setText alapon kellene???
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
@@ -283,9 +283,11 @@ public class GuiBoard extends JFrame {
         jungleTilesPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
         //add workerTiles
+        //TODO: SOS selection based on guiBoard status?
         workerCardsPanelLink = new ArrayList<>();
         JPanel workerTilesPanel = new JPanel();
         Player currentPlayer = game.getPlayerList().get(playerIndex);
+
         for (WorkerTile workerTile : currentPlayer.getCardsAtHand()) {
             ActionButtonWorkerTile tileButton = new ActionButtonWorkerTile(this, workerTile);
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));

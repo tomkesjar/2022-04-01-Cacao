@@ -1,9 +1,18 @@
 package tiles;
 
+import game.Game;
+
+import java.awt.*;
+
 public class EmptyTile extends JungleTile {
 
     public EmptyTile() {
         setTileType(TileEnum.EMPTY);
+    }
+
+    @Override
+    protected void processNeighbour(Point side, Game game, int numberOfWorkers) {
+
     }
 
     @Override

@@ -1,6 +1,5 @@
 package server;
 
-import game.Game;
 import game.GameHandler;
 
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.net.SocketException;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,9 +19,9 @@ public class Server {
     private static int PLAYER_COUNTER = 0;
     private static LocalTime START_TIME;
     private static final long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
-    private static final int SO_TIMEOUT = 2;       //TODO to decide
+    private static final int SO_TIMEOUT = 5;       //TODO to decide
 
-    private static final int MAX_PLAYER_NUMBER = 1;     //TODO
+    private static final int MAX_NUMBER_OF_PLAYERS = 1;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
 
     private static List<ServerClientHandler> clients = new ArrayList<>();
     private static int poolSize = 4;
@@ -106,7 +104,7 @@ public class Server {
     }
 
     private static boolean isMaxNumberOfPlayersReached(){
-        return clients.size() >= MAX_PLAYER_NUMBER;
+        return clients.size() >= MAX_NUMBER_OF_PLAYERS;
     }
 
 }
