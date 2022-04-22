@@ -3,14 +3,17 @@ package gui;
 import board.Board;
 import connection.ClientConnection;
 import game.Game;
+import messages.TilePlacementMessageResponse;
 import players.Player;
 import tiles.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class GuiBoard extends JFrame {
@@ -42,22 +45,20 @@ public class GuiBoard extends JFrame {
     private JPanel cardsPanel;
 
 
-    private Map<Player, Map<String, JLabel>>  playerPanelLink;
+    private Map<Player, Map<String, JLabel>> playerPanelLink;
     private List<List<BoardTileButton>> boardTileButtonLink;
     private List<ActionButtonJungleTile> jungleCardsPanelLink;
     private List<ActionButtonWorkerTile> workerCardsPanelLink;
 
 
-
-
     public GuiBoard(ClientConnection connection, Game game, int playerIndex) {
-        super("Cacao Board Game");
+        super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
         this.connection = connection;
         this.game = game;
         this.playerIndex = playerIndex;
+
         selectedJungleTile = null;
         selectedWorkerTile = null;
-
         hasPlacedWorkerTile = false;
         hasPlacedJungleTile = false;
 
@@ -68,7 +69,7 @@ public class GuiBoard extends JFrame {
         this.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        String textMessage = "'s turn (Other players are inactive)";
+        String textMessage = "'s turn, select and place worker tile (Other players are inactive)";
         infoPanel = generateInfoPanel(game, textMessage);
 
         this.getContentPane().setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
@@ -91,8 +92,10 @@ public class GuiBoard extends JFrame {
         this.game = gameReceived;
 
         //messagePanel update
-        messagePanel.setText("Player " + ((int) game.getActivePlayer() + 1) + ": " + textMessage);
 
+
+        messagePanel.setText("Player " + ((int) game.getActivePlayer() + 1) + ": " + textMessage);
+        /*
         //playerPanel update
         for (Map.Entry<Player, Map<String, JLabel>> playerEntry : playerPanelLink.entrySet()) {
             for(Map.Entry<String, JLabel> labelEntry : playerEntry.getValue().entrySet()){
@@ -113,25 +116,30 @@ public class GuiBoard extends JFrame {
             }
         }
 
-
-        //infoPanel = generateInfoPanel(game, textMessage);
-        //this.getContentPane().setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
-        //this.getContentPane().add(infoPanel, BorderLayout.NORTH);
+         */
+        this.getContentPane().remove(0);
+        infoPanel = generateInfoPanel(game, textMessage);
+        this.getContentPane().setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
+        this.getContentPane().add(infoPanel, BorderLayout.NORTH);
 
         //boardTile update
+        /*
         for(int y=0; y<game.getBoard().getHeight(); ++y){
             for(int x=0; x<game.getBoard().getWidth(); ++x){
                 String newText = game.getBoard().getField(x,y).toShortString() + " " + x + " " + y;
                 boardTileButtonLink.get(y).get(x).setText(newText);
             }
         }
+        */
 
 
-
-        //boardPanel = createBoardPanel(game.getBoard());
-        //this.getContentPane().add(boardPanel, BorderLayout.CENTER);
+        this.getContentPane().remove(0);
+        boardPanel = createBoardPanel(game.getBoard());
+        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 
         //cardPanel update      TODO:lehet ezt is setText alapon kellene???
+        //this.getContentPane().remove(2);
+        this.getContentPane().remove(0);
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
@@ -197,6 +205,35 @@ public class GuiBoard extends JFrame {
         return panel;
     }
 
+    public void process() {
+        while (!game.checkIfIsGameEnd()) {
+            System.out.println("[GuiBoard]: game is ongoing, activePlayer="+game.getActivePlayer() + "   this.playerIndex=" +this.getPlayerIndex());
+            while (game.getActivePlayer() != this.getPlayerIndex()) {
+
+                try {
+                    TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getConnection().getObjectInputStream().readUnshared();
+                    this.game = response.getGame();
+                    this.updateGuiBoard(game, response.getTextMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("[GuiBoard]: process got to own turn");
+            try {
+                while (!game.hasPlacedWorkerTile()) {
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                while (!game.hasPlacedJungleTile()) {
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private JPanel generateAllPlayersPanel(Game game) {
         JPanel allPlayersPanel = new JPanel();
         allPlayersPanel.setLayout(new BoxLayout(allPlayersPanel, BoxLayout.Y_AXIS));
@@ -257,7 +294,7 @@ public class GuiBoard extends JFrame {
         for (int y = 0; y < board.getHeight(); ++y) {
             boardTileButtonLink.add(new ArrayList<BoardTileButton>());
             for (int x = 0; x < board.getWidth(); ++x) {
-                BoardTileButton boardTileButton = new BoardTileButton(new Point(x,y),this);
+                BoardTileButton boardTileButton = new BoardTileButton(new Point(x, y), this);
                 boardTileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
                 boardTileButton.setMaximumSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
                 boardTileButtonLink.get(y).add(boardTileButton);
@@ -267,8 +304,6 @@ public class GuiBoard extends JFrame {
 
         return result;
     }
-
-
 
 
     private JPanel generateTilesPanel(Game game, int playerIndex) {
@@ -314,8 +349,6 @@ public class GuiBoard extends JFrame {
 
         return tilesPanel;
     }
-
-
 
 
     public ClientConnection getConnection() {

@@ -11,7 +11,7 @@ import java.util.*;
 
 public class Game implements Serializable {
     private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 1;
-    private static final int MAX_NUMBER_OF_PLAYERS = 1;      //TODO <link with Server's MAX_PLAYER_NUMBER field>
+    private static final int MAX_NUMBER_OF_PLAYERS = 2;      //TODO <link with Server's MAX_PLAYER_NUMBER field>
 
     private static final int MAX_NUMBER_OF_CACAO_BEANS = 5;
     private static final int MAX_NUMBER_OF_WORSHIP_SITES = 3;
@@ -93,6 +93,27 @@ public class Game implements Serializable {
     }
 
  */
+
+    public boolean checkIfIsGameEnd() {
+        //last player, runs out worker or jungle tile
+        boolean isNoMoreJungleTile = false;
+        boolean isNoMoreWorkerTileForLastPlayer = false;
+
+        int activePlayerIndex = this.getActivePlayer();
+        Player activePlayer = this.getPlayerList().get(activePlayerIndex);
+
+
+        if (this.getJungleTileDeck().getDeck().size() == 0 && this.getJungleTilesAvailable().size() == 0) {
+            isNoMoreJungleTile = true;
+        }
+        if (activePlayer.getWorkerTileDeck().getDeck().size() == 0 && activePlayer.getCardsAtHand().size() == 0) {
+            isNoMoreWorkerTileForLastPlayer = true;
+        }
+
+        return isNoMoreJungleTile || isNoMoreWorkerTileForLastPlayer;       //TODO: SOS: add 'or' between the two booleans
+
+    }
+
 
     public static int getMaxNumberOfJungleTilesAvailable() {
         return MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE;

@@ -2,6 +2,7 @@ package gui;
 
 import connection.ClientConnection;
 import game.Game;
+import messages.TilePlacementMessageResponse;
 
 
 import javax.imageio.ImageIO;
@@ -174,6 +175,20 @@ public class GuiStartPage extends JFrame {
         guiBoard.setVisible(true);
         guiBoard.setFocusable(true);
         guiBoard.requestFocusInWindow();
+        //start processing?
+        //guiBoard.process();
+        /*
+        TilePlacementMessageResponse response = null;
+        try {
+            response = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
+            guiBoard.updateGuiBoard((Game) response.getGame(), response.getTextMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+         */
     }
 
     public static void main(String[] args) {

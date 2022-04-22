@@ -40,8 +40,8 @@ public class GameHandler {
         sendStartingGameInstanceToPlayers();
 
 
-        while (!checkIfIsGameEnd()) {
-            System.out.println("[GameHandler]: starting the loop, checkIfIsGameEnd=" +checkIfIsGameEnd());
+        while (!game.checkIfIsGameEnd()) {
+            System.out.println("[GameHandler]: starting the loop, checkIfIsGameEnd=" +game.checkIfIsGameEnd());
 
             System.out.println("[GameHandler]: Moving to WorkerTile placement");
             while (!isWorkerTilePlacementValid) {
@@ -64,9 +64,21 @@ public class GameHandler {
                     WorkerTile currentTile = (WorkerTile) game.getBoard().getField(coord.x, coord.y);
                     currentTile.processNeighbours(coord, game);
 
-                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "Now select and place jungle tile");
-                    sendMessageToPlayer(response, currentClient);
-                    System.out.println("[GameHandler]: successful response sent to player after WORKER placement."/* response=" + response*/);
+                    int activePlayerIndex = game.getActivePlayer();
+                    Player activePlayer = game.getPlayerList().get(activePlayerIndex);
+                    Optional<WorkerTile> matchingWorkerTile = activePlayer.getCardsAtHand().stream().filter(tile -> workerTile.equals(tile)).findFirst();
+                    if (matchingWorkerTile.isPresent()){
+                        activePlayer.getCardsAtHand().remove(matchingWorkerTile.get());
+                    }
+                    Optional<WorkerTile> optionalWorkerTile = activePlayer.getWorkerTileDeck().drawCard();
+                    if (optionalWorkerTile.isPresent()) {
+                        activePlayer.getCardsAtHand().add(optionalWorkerTile.get());
+                    }
+
+                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "worker tile placement successful, now select and place jungle tile");
+                    sendMessageToAll(response);
+                    //sendMessageToPlayer(response, currentClient);
+                    System.out.println("[GameHandler]: successful response sent to all player after WORKER placement."/* response=" + response*/);
                 } else {
                     System.out.println("[GameHandler]: Invalid WorkerTile Placement, tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select an empty tile and place worker tile adjacent to a jungle tile");
@@ -95,16 +107,28 @@ public class GameHandler {
                     JungleTile currentTile = (JungleTile) game.getBoard().getField(coord.x, coord.y);
                     currentTile.processNeighbours(coord, game);
 
-                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "successfully placed jungle tile");
-                    sendMessageToPlayer(response, currentClient);
-                    System.out.println("[GameHandler]: successful response sent to player after JUNGLE placement."/* response=" + response*/);
+                    Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();
+                    if (matchingJungleTile.isPresent()) {
+                        game.getJungleTilesAvailable().remove(matchingJungleTile.get());
+                    }
+                    Optional<JungleTile> drawnCard = game.getJungleTileDeck().drawCard();
+                    if (drawnCard.isPresent()) {
+                        game.getJungleTilesAvailable().add(drawnCard.get());
+                    }
+
+                    switchPlayer();
+
+                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, " 's turn, first select and place worker tile (Other players are inactive)");
+                    sendMessageToAll(response);
+                    //sendMessageToPlayer(response, currentClient);
+                    System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement."/* response=" + response*/);
                 } else {
                     System.out.println("[GameHandler]: Invalid JungleTile Placement, tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select and place jungle tile");
+                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile");
                     sendMessageToPlayer(response, currentClient);
                 }
             }
-
+/*
             Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();
             if (matchingJungleTile.isPresent()) {
                 game.getJungleTilesAvailable().remove(matchingJungleTile.get());
@@ -114,6 +138,8 @@ public class GameHandler {
                 game.getJungleTilesAvailable().add(drawnCard.get());
             }
 
+ */
+/*
             int activePlayerIndex = game.getActivePlayer();
             Player activePlayer = game.getPlayerList().get(activePlayerIndex);
             Optional<WorkerTile> matchingWorkerTile = activePlayer.getCardsAtHand().stream().filter(tile -> workerTile.equals(tile)).findFirst();
@@ -124,18 +150,20 @@ public class GameHandler {
             if (optionalWorkerTile.isPresent()) {
                 activePlayer.getCardsAtHand().add(optionalWorkerTile.get());
             }
-
-
+*/
+/*
             switchPlayer();
             System.out.println("[GameHandler]: switched player");
 
             //TODO: send to all clients
             System.out.println("[GameHandler]: Move to sending message to all");
-            TilePlacementMessageResponse responseUpdate = new TilePlacementMessageResponse(game, ResponseStatus.UPDATE, "finished its turn");
+            TilePlacementMessageResponse responseUpdate = new TilePlacementMessageResponse(game, ResponseStatus.UPDATE, "'s turn (Other players are inactive)"); //first select and place a worker tile adjacent to any jungle tile
             sendMessageToAll(responseUpdate);
-            System.out.println("[GameHandler]: successful response sent to all players."/* responseUpdate=" + responseUpdate*/);
+ */
+            // System.out.println("[GameHandler]: successful response sent to all players."/* responseUpdate=" + responseUpdate*/);
+
         }
-        //TODO: do something here
+        //TODO: do something here SOS Pop up window ranking
         System.out.println("[GameHandler]: Game Ended");
 
     }
@@ -161,7 +189,7 @@ public class GameHandler {
         isJungleTilePlacementValid = false;
         game.callNextPlayer();
     }
-
+/*
     private boolean checkIfIsGameEnd() {
         //last player, runs out worker or jungle tile
         boolean isNoMoreJungleTile = false;
@@ -181,6 +209,7 @@ public class GameHandler {
         return isNoMoreJungleTile && isNoMoreWorkerTileForLastPlayer;       //TODO: SOS: add 'or' between the two booleans
 
     }
+*/
 
     private boolean isValidPlacementAsWorkerTile(TilePlacementMessageRequest tilePlacementMessageRequest) {
         Point coord = new Point(tilePlacementMessageRequest.getCoord());
