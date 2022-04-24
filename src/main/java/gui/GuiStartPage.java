@@ -175,6 +175,13 @@ public class GuiStartPage extends JFrame {
         guiBoard.setVisible(true);
         guiBoard.setFocusable(true);
         guiBoard.requestFocusInWindow();
+
+        Thread thread = new Thread(guiBoard);
+        thread.start();
+        //guiBoard.run();
+
+        //guiBoard.getGuiBoardUpdater().start();
+
         //start processing?
         //guiBoard.process();
         /*

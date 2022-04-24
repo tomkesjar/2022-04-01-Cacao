@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ActionButtonJungleTile extends JButton implements MouseListener {
     private GuiBoard guiBoard;
@@ -27,7 +28,7 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
         this.isTileSelected = false;
 
         this.setText(jungleTile.toShortString());
-        this.setBackground(Color.BLUE);
+        this.setBackground(Color.CYAN);
         addMouseListener(this);
         System.out.println("[ActionButtonJungleTile]: actionButtonJungleTile created for jungle=" + jungleTile.toShortString());
 
@@ -82,6 +83,13 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
     public void mouseEntered(MouseEvent e) {
         if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected) {
             this.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 4));
+            System.out.println("[ActionButtonWorkerTile]: mouseEntered=" + jungleTile.toShortString());
+            System.out.println("[ActionButtonWorkerTile]: "
+                    + "overallEvaluation= " + Objects.toString((playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedWorkerTile() && !isTileSelected))
+                    + ", hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile()
+                    + ", hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile()
+                    + " , isTileSelected=" + isTileSelected
+                    + ", isActivePlayer=" + Objects.toString(playerIndex == game.getActivePlayer()));
         }
     }
 

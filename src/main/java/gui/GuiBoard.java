@@ -11,12 +11,13 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-public class GuiBoard extends JFrame {
+public class GuiBoard extends JFrame implements Runnable {
     private ClientConnection connection;
 
     private static final int TILES_MAX_HEIGHT = 60;
@@ -30,10 +31,10 @@ public class GuiBoard extends JFrame {
     private static final int BOARD_HORIZONTAL_GAP = 20;
     private static final int BOARD_VERTICAL_GAP = 20;
 
-    private Game game;
+    private volatile Game game;
     private final int playerIndex;
-    private WorkerTile selectedWorkerTile;
-    private JungleTile selectedJungleTile;
+    private volatile WorkerTile selectedWorkerTile;
+    private volatile JungleTile selectedJungleTile;
 
     private boolean hasPlacedWorkerTile;
     private boolean hasPlacedJungleTile;
@@ -90,6 +91,10 @@ public class GuiBoard extends JFrame {
 
     public void updateGuiBoard(Game gameReceived, String textMessage) {
         this.game = gameReceived;
+
+        this.hasPlacedWorkerTile = game.hasPlacedWorkerTile();
+        this.hasPlacedJungleTile = game.hasPlacedJungleTile();
+
 
         //messagePanel update
 
@@ -205,29 +210,33 @@ public class GuiBoard extends JFrame {
         return panel;
     }
 
-    public void process() {
+    @Override
+    public void run() {
         while (!game.checkIfIsGameEnd()) {
-            System.out.println("[GuiBoard]: game is ongoing, activePlayer="+game.getActivePlayer() + "   this.playerIndex=" +this.getPlayerIndex());
+            System.out.println("[GuiBoard]: game is ongoing, activePlayer=" + game.getActivePlayer() + "   this.playerIndex=" + this.getPlayerIndex());
+            System.out.println("[GuiBoard]: game is ongoing, hasPlacedWorkerTile=" + game.hasPlacedWorkerTile() +", hasPlacedWorkerTile=" + game.hasPlacedJungleTile());
             while (game.getActivePlayer() != this.getPlayerIndex()) {
 
                 try {
                     TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getConnection().getObjectInputStream().readUnshared();
                     this.game = response.getGame();
                     this.updateGuiBoard(game, response.getTextMessage());
+
+                    this.setVisible(true);
+                    this.setFocusable(true);
+                    //this.requestFocusInWindow();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("[GuiBoard]: process got to own turn");
+            System.out.println("[GuiBoard]: process got to own turn " + LocalTime.now().toString());
+            this.setVisible(true);
+            this.setFocusable(true);
+            //this.requestFocusInWindow();
             try {
-                while (!game.hasPlacedWorkerTile()) {
-                    TimeUnit.SECONDS.sleep(1);
-                }
-                while (!game.hasPlacedJungleTile()) {
-                    TimeUnit.SECONDS.sleep(1);
-                }
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

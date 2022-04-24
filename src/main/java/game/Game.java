@@ -76,23 +76,6 @@ public class Game implements Serializable {
     public void callNextPlayer(){
         activePlayer = (activePlayer + 1) % MAX_NUMBER_OF_PLAYERS;
     }
-/*
-    public void placeWorkerTile(WorkerTile workerTile, int xCoord, int yCoord){
-        //TODO check if placement is valid
-
-        //remove from hand
-        playerList.get(activePlayer).getCardsAtHand().stream()
-                .filter(card -> card.isWorkerNumbersMatchOnEachSide(workerTile))
-                .findFirst();
-
-        //playerList.get(activePlayer).getCardsAtHand().;
-
-        //place on board
-        board.setField(xCoord,yCoord, workerTile);
-        //((Player)playerList.get(activePlayer)).
-    }
-
- */
 
     public boolean checkIfIsGameEnd() {
         //last player, runs out worker or jungle tile

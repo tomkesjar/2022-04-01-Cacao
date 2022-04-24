@@ -35,14 +35,15 @@ public class BoardTileButton extends JButton implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         System.out.println("============== MOUSE PRESS START ===============");
+        System.out.println("[BoardTileButton]: guiBoard.getSelectedWorkerTile=" + guiBoard.getSelectedWorkerTile() + ", guiBoard.getSelectedJungleTile=" + guiBoard.getSelectedJungleTile());
         if (guiBoard.getPlayerIndex() == guiBoard.getGame().getActivePlayer()) {
             WorkerTile selectedWorkerTile = guiBoard.getSelectedWorkerTile();
             JungleTile selectedJungleTile = guiBoard.getSelectedJungleTile();
             //System.out.println("[BoardTileButton - TEST]: SelectedWorkerTile=" + selectedWorkerTile + " - SelectedJungleTile=" + selectedJungleTile + " -- coords=" + coord.x + ":" + coord.y);
 
             //sending workerTile
-            if (Objects.nonNull(selectedWorkerTile)
-                    && Objects.isNull(selectedJungleTile)) {
+            //if (Objects.nonNull(selectedWorkerTile) && Objects.isNull(selectedJungleTile)) {
+            if (Objects.nonNull(selectedWorkerTile) && guiBoard.getGame().hasPlacedWorkerTile() == false) {
                 try {
                     System.out.println("[BoardTileButton]: Attempting to send SelectedWorkerTile. "); //SelectedWorkerTile=" + selectedWorkerTile);
                     TilePlacementMessageRequest tilePlacementMessageRequest = new TilePlacementMessageRequest(getCoord(), selectedWorkerTile);
@@ -103,34 +104,10 @@ public class BoardTileButton extends JButton implements MouseListener {
                         guiBoard.setHasPlacedJungleTile(false);
                         guiBoard.setHasPlacedWorkerTile(false);
 
-                        //ez a game-be kellene
-                        //Player activePlayer = guiBoard.getGame().getPlayerList().get(guiBoard.getPlayerIndex());
-                        //activePlayer.getCardsAtHand().remove(selectedWorkerTile);
-                        //activePlayer.getCardsAtHand().remove(activePlayer.getWorkerTileDeck().drawCard());
-
-                        //guiBoard.getGame().get
-
                     }
-                    //update cards
-
 
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
                     System.out.println("[BoardTileButton]: guiBoard updated after jungleTile placement");
-
-
-                    /*
-                    //continuous wait & update status
-                    Game updateGameReceived = null;
-                    int updateGameReceivedActivePlayer = -1;
-                    while (guiBoard.getPlayerIndex() != updateGameReceivedActivePlayer) {
-                        guiBoard.getConnection().getObjectInputStream().readUnshared();
-                        TilePlacementMessageResponse updateResponse = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
-                        updateGameReceived = updateResponse.getGame();
-                        updateGameReceivedActivePlayer = updateGameReceived.getActivePlayer();
-                        guiBoard.setGame(updateGameReceived);
-                        guiBoard.updateGuiBoard(updateGameReceived, response.getTextMessage());
-                    }
-                    */
 
                 } catch (IOException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();
