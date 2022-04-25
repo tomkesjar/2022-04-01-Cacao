@@ -21,6 +21,10 @@ public class Player implements Serializable {
     private WorkerTileDeck workerTileDeck;
     private List<WorkerTile> cardsAtHand;
     private int templePoint;
+    private int templePointBonus;
+
+    private int point;
+    private int rank;
 
     public WorkerTileDeck getWorkerTileDeck() {
         return workerTileDeck;
@@ -58,6 +62,8 @@ public class Player implements Serializable {
         this.coins = 0;
         this.waterPointIndex = 0;
         this.waterPoint = Game.getWaterPositionValue(this.waterPointIndex);
+        this.point = 0;
+        this.rank = 1;
 
         this.workerTileDeck = new WorkerTileDeck(this.playerColour, numberOfPlayers);
         this.workerTileDeck.shuffleDeck();
@@ -127,6 +133,30 @@ public class Player implements Serializable {
 
     public void setTemplePoint(int templePoint) {
         this.templePoint = templePoint;
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public int getTemplePointBonus() {
+        return templePointBonus;
+    }
+
+    public void setTemplePointBonus(int templePointBonus) {
+        this.templePointBonus = templePointBonus;
     }
 
     @Override

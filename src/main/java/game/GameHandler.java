@@ -61,6 +61,8 @@ public class GameHandler {
 
                     WorkerTile currentTile = (WorkerTile) game.getBoard().getField(coord.x, coord.y);
                     currentTile.processNeighbours(coord, game);
+                    game.calculatePoints();
+                    //game.calculateRanks();
 
                     int activePlayerIndex = game.getActivePlayer();
                     Player activePlayer = game.getPlayerList().get(activePlayerIndex);
@@ -105,6 +107,8 @@ public class GameHandler {
 
                     JungleTile currentTile = (JungleTile) game.getBoard().getField(coord.x, coord.y);
                     currentTile.processNeighbours(coord, game);
+                    game.calculatePoints();
+                    //game.calculateRanks();
 
                     Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();
                     if (matchingJungleTile.isPresent()) {

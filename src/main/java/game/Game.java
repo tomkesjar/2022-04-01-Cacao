@@ -2,12 +2,14 @@ package game;
 
 import board.Board;
 import deck.JungleTileDeck;
+import javafx.util.Pair;
 import players.Player;
 import server.ServerClientHandler;
 import tiles.JungleTile;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game implements Serializable {
     private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 1;
@@ -53,7 +55,7 @@ public class Game implements Serializable {
 
     private List<JungleTile> createJungleTilesAvailable() {
         List<JungleTile> result = new LinkedList<>();
-        for (int i = 0; i < MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE; ++i){
+        for (int i = 0; i < MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE; ++i) {
             Optional<JungleTile> drawnCard = jungleTileDeck.drawCard();
             if (drawnCard.isPresent()) {
                 result.add(drawnCard.get());
@@ -65,7 +67,7 @@ public class Game implements Serializable {
     private List<Player> createPlayerList(List<ServerClientHandler> clients) {
         List<Player> result = new ArrayList<>();
         List<Integer> counter = Arrays.asList(1);
-        clients.forEach( c -> {
+        clients.forEach(c -> {
             Player newPlayer = new Player(counter.get(0), clients.size());
             result.add(newPlayer);
             counter.set(0, counter.get(0) + 1);
@@ -73,7 +75,7 @@ public class Game implements Serializable {
         return result;
     }
 
-    public void callNextPlayer(){
+    public void callNextPlayer() {
         activePlayer = (activePlayer + 1) % MAX_NUMBER_OF_PLAYERS;
     }
 
@@ -97,6 +99,59 @@ public class Game implements Serializable {
 
     }
 
+
+    //TODO: add unit test
+    public void calculatePoints() {
+        Pair<Optional<Integer>, Optional<Integer>> maxValues = calculateTempleBonuses();
+
+        for (Player player : playerList) {
+            if (maxValues.getKey().isPresent() && maxValues.getKey().get() == player.getTemplePoint()){
+                player.setTemplePointBonus(6);
+            }else if (maxValues.getValue().isPresent() && maxValues.getValue().get() == player.getTemplePoint()){
+                player.setTemplePointBonus(3);
+            }else{
+                player.setTemplePointBonus(0);
+            }
+
+            int points = player.getCoins() + player.getWaterPoint() + player.getWorshipSymbol() + player.getTemplePointBonus();
+            player.setPoint(points);
+        }
+    }
+
+    private Pair<Optional<Integer>, Optional<Integer>> calculateTempleBonuses() {
+        playerList.forEach(p -> p.setTemplePointBonus(0));
+
+        Optional<Integer> largestValue = playerList.stream().map(p -> p.getTemplePoint()).sorted(Comparator.reverseOrder()).limit(1).findFirst();
+        Optional<Integer> secondLargestValue = playerList.stream().map(p -> p.getTemplePoint()).filter(p -> p != largestValue.get()).sorted(Comparator.reverseOrder()).limit(1).findFirst();
+
+        return new Pair(largestValue, secondLargestValue);
+
+
+    }
+
+    public void calculateRanks(){
+        LinkedList<Player> rankOrder = new LinkedList<>();
+
+        for (Player player : playerList){
+            if (rankOrder.size() == 0) {
+                rankOrder.add(player);
+            }else{
+                for (int i = 0; i<rankOrder.size(); ++i){
+                    if (player.getPoint() > rankOrder.get(i).getPoint()
+                            || (player.getPoint() == rankOrder.get(i).getPoint() && player.getNumberOfCacaoBean() > rankOrder.get(i).getNumberOfCacaoBean() ) ){
+                        rankOrder.add(i, player);
+                    } else if (player.getPoint() < rankOrder.get(i).getPoint() && i == rankOrder.size()-1){
+                        rankOrder.add(i+1, player);
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i<rankOrder.size(); ++i){
+            rankOrder.get(i).setRank(i+1);
+        }
+    }
 
     public static int getMaxNumberOfJungleTilesAvailable() {
         return MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE;
@@ -165,7 +220,7 @@ public class Game implements Serializable {
         result.append(System.lineSeparator());
         result.append("board=" + board.toShortString());
         result.append(System.lineSeparator());
-        result.append("jungleTileDeck=" + jungleTileDeck );
+        result.append("jungleTileDeck=" + jungleTileDeck);
         result.append(System.lineSeparator());
         result.append("jungleTilesAvailable=" + jungleTilesAvailable);
         result.append(System.lineSeparator());
@@ -173,7 +228,7 @@ public class Game implements Serializable {
         result.append(System.lineSeparator());
         result.append("hasPlacedWorkerTile=" + hasPlacedWorkerTile);
         result.append(System.lineSeparator());
-        result.append("hasPlacedJungleTile=" + hasPlacedJungleTile );
+        result.append("hasPlacedJungleTile=" + hasPlacedJungleTile);
         result.append(System.lineSeparator());
         result.append("isGameEnded=" + isGameEnded);
 
