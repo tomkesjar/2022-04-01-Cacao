@@ -197,6 +197,9 @@ public class Game implements Serializable {
     }
 
     public static int getWaterPositionValue(int index) {
+        if (index >= WATER_POSITION_VALUE_LIST.size()) {
+            return WATER_POSITION_VALUE_LIST.get(WATER_POSITION_VALUE_LIST.size()-1);
+        }
         return WATER_POSITION_VALUE_LIST.get(index);
     }
 
