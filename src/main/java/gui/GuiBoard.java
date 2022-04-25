@@ -183,25 +183,47 @@ public class GuiBoard extends JFrame implements Runnable {
         playerPanelLink.get(player).put("coinValue", coinValue);
 
         JLabel beanIcon = new JLabel("bean: "); //TODO: add coin icon
-        JLabel beanValue = new JLabel(String.valueOf(player.getNumberOfCacaoBean()));      //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel beanValue = new JLabel(String.valueOf(player.getNumberOfCacaoBean()) + "/5");      //TODO: add boxes instead of number + colourify boxes based on number
         panel.add(beanIcon);
         panel.add(beanValue);
         playerPanelLink.get(player).put("beanIcon", beanIcon);
         playerPanelLink.get(player).put("beanValue", beanValue);
 
         JLabel shrineIcon = new JLabel("shrine: "); //TODO: add coin icon
-        JLabel shrineValue = new JLabel(String.valueOf(player.getWorshipSymbol()));       //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel shrineValue = new JLabel(String.valueOf(player.getWorshipSymbol()) + "/" + String.valueOf(Game.getMaxNumberOfWorshipSites()));
         panel.add(shrineIcon);
         panel.add(shrineValue);
         playerPanelLink.get(player).put("shrineIcon", shrineIcon);
         playerPanelLink.get(player).put("shrineValue", shrineValue);
 
+        JLabel templeIcon = new JLabel("temple: "); //TODO: add coin icon
+        JLabel templeValue = new JLabel(String.valueOf(player.getTemplePoint()));       //TODO: add boxes instead of number + colourify boxes based on number
+        panel.add(templeIcon);
+        panel.add(templeValue);
+        playerPanelLink.get(player).put("templeIcon", templeIcon);
+        playerPanelLink.get(player).put("templeValue", templeValue);
+
         JLabel waterIcon = new JLabel("water: "); //TODO: add coin icon
-        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPointIndex()));      //TODO: add boxes instead of number + colourify boxes based on number
+        String nextLevelMessage = (player.getWaterPointIndex()+1) >= Game.getWaterPositionValueList().size() ? "Maxed" : Objects.toString(Game.getWaterPositionValue(player.getWaterPointIndex() +1));
+        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()) + " (next level: " + nextLevelMessage  + ")");      //TODO: add boxes instead of number + colourify boxes based on number
         panel.add(waterIcon);
         panel.add(waterValue);
         playerPanelLink.get(player).put("waterIcon", waterIcon);
         playerPanelLink.get(player).put("waterValue", waterValue);
+
+        JLabel pointIcon = new JLabel("point: "); //TODO: add coin icon
+        JLabel pointValue = new JLabel(String.valueOf(player.getPoint()) + " + " + String.valueOf(player.getTemplePointBonus()));       //TODO: add boxes instead of number + colourify boxes based on number
+        panel.add(pointIcon);
+        panel.add(pointValue);
+        playerPanelLink.get(player).put("pointIcon", pointIcon);
+        playerPanelLink.get(player).put("pointValue", pointValue);
+
+        JLabel rankIcon = new JLabel("rank: "); //TODO: add coin icon
+        JLabel rankValue = new JLabel(String.valueOf(player.getRank()));       //TODO: add boxes instead of number + colourify boxes based on number
+        panel.add(rankIcon);
+        panel.add(rankValue);
+        playerPanelLink.get(player).put("rankIcon", rankIcon);
+        playerPanelLink.get(player).put("rankValue", rankValue);
 
         //TODO: add pointIcon + pointValue ; add rankIcon + rankValue
 
