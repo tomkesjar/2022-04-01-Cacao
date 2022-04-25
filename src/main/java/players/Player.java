@@ -69,7 +69,7 @@ public class Player implements Serializable {
         this.workerTileDeck.shuffleDeck();
 
         cardsAtHand = new LinkedList<>();
-        for (int i = 0; i < MAX_NUMBER_OF_CARDS_AT_HAND; ++i){
+        for (int i = 0; i < MAX_NUMBER_OF_CARDS_AT_HAND; ++i) {
             Optional<WorkerTile> drawnCard = workerTileDeck.drawCard();
             if (drawnCard.isPresent()) {
                 cardsAtHand.add(drawnCard.get());
@@ -164,6 +164,8 @@ public class Player implements Serializable {
         StringBuilder result = new StringBuilder();
         result.append("Player{" +
                 "playerColour=" + playerColour +
+                ", rank=" + rank +
+                ", point=" + point +
                 ", numberOfCacaoBean=" + numberOfCacaoBean +
                 ", coins=" + coins +
                 ", waterPointIndex=" + waterPointIndex +
@@ -174,5 +176,14 @@ public class Player implements Serializable {
         result.append(System.lineSeparator());
         result.append("cardsAtHand=" + cardsAtHand);
         return result.toString();
+    }
+
+    public boolean isEqualRank(Player otherPlayer) {
+        if (getPoint() == otherPlayer.getPoint() && getNumberOfCacaoBean() == otherPlayer.getNumberOfCacaoBean()) {
+            return true;
+        }
+        return false;
+
+
     }
 }

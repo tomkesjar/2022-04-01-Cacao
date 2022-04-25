@@ -105,11 +105,11 @@ public class Game implements Serializable {
         Pair<Optional<Integer>, Optional<Integer>> maxValues = calculateTempleBonuses();
 
         for (Player player : playerList) {
-            if (maxValues.getKey().isPresent() && maxValues.getKey().get() == player.getTemplePoint()){
+            if (maxValues.getKey().isPresent() && maxValues.getKey().get() == player.getTemplePoint()) {
                 player.setTemplePointBonus(6);
-            }else if (maxValues.getValue().isPresent() && maxValues.getValue().get() == player.getTemplePoint()){
+            } else if (maxValues.getValue().isPresent() && maxValues.getValue().get() == player.getTemplePoint()) {
                 player.setTemplePointBonus(3);
-            }else{
+            } else {
                 player.setTemplePointBonus(0);
             }
 
@@ -129,29 +129,24 @@ public class Game implements Serializable {
 
     }
 
-    public void calculateRanks(){
-        LinkedList<Player> rankOrder = new LinkedList<>();
+    public void calculateRanks() {
+        List<Player> sortedPlayers = new ArrayList<>(playerList);
 
-        for (Player player : playerList){
-            if (rankOrder.size() == 0) {
-                rankOrder.add(player);
+        playerList.forEach(p -> sortedPlayers.add(p));
+        sortedPlayers.sort(Comparator.comparing(Player::getPoint).thenComparingInt(Player::getNumberOfCacaoBean).reversed());
+
+        int rank = 1;
+        sortedPlayers.get(0).setRank(rank);
+        for (int i = 1; i < sortedPlayers.size(); ++i) {
+            if (sortedPlayers.get(i - 1).isEqualRank(sortedPlayers.get(i))){
+                sortedPlayers.get(i).setRank(rank);
             }else{
-                for (int i = 0; i<rankOrder.size(); ++i){
-                    if (player.getPoint() > rankOrder.get(i).getPoint()
-                            || (player.getPoint() == rankOrder.get(i).getPoint() && player.getNumberOfCacaoBean() > rankOrder.get(i).getNumberOfCacaoBean() ) ){
-                        rankOrder.add(i, player);
-                    } else if (player.getPoint() < rankOrder.get(i).getPoint() && i == rankOrder.size()-1){
-                        rankOrder.add(i+1, player);
-                    } else {
-                        continue;
-                    }
-                }
+                ++rank;
+                sortedPlayers.get(i).setRank(rank);
             }
         }
-        for (int i = 0; i<rankOrder.size(); ++i){
-            rankOrder.get(i).setRank(i+1);
-        }
     }
+
 
     public static int getMaxNumberOfJungleTilesAvailable() {
         return MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE;
@@ -241,4 +236,36 @@ public class Game implements Serializable {
                 ", hasPlacedJungleTile=" + hasPlacedJungleTile +
                 '}';
     }
+
+    public static void main(String[] args) {
+        List<Player> playerList = new ArrayList<>();
+
+        Player player1 = new Player(1, 4);
+        Player player2 = new Player(2, 4);
+        Player player3 = new Player(3, 4);
+        Player player4 = new Player(4, 4);
+
+
+        player3.setPoint(3);
+        player3.setNumberOfCacaoBean(3);
+
+        player4.setPoint(3);
+        player4.setNumberOfCacaoBean(4);
+
+        player2.setPoint(3);
+        player2.setNumberOfCacaoBean(3);
+
+        player1.setPoint(3);
+        player1.setNumberOfCacaoBean(3);
+
+        playerList.add(player1);
+        playerList.add(player2);
+        playerList.add(player3);
+        playerList.add(player4);
+
+        playerList.sort(Comparator.comparing(Player::getPoint).thenComparingInt(Player::getNumberOfCacaoBean).reversed());
+
+        playerList.forEach(p -> System.out.println(p));
+    }
+
 }
