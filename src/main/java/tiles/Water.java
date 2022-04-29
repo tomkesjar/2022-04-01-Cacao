@@ -8,7 +8,7 @@ import java.awt.*;
 public class Water extends JungleTile {
 
     public Water() {
-        setTileType(TileEnum.WATER);
+        setTileEnum(TileEnum.WATER);
     }
 
     @Override

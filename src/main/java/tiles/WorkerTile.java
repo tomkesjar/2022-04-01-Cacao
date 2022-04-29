@@ -6,7 +6,6 @@ import players.Player;
 import players.PlayerColour;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +20,19 @@ public class WorkerTile extends AbstractTile {
 
     private String type;
     private PlayerColour colour;
+    private TileEnum tileEnum;
+    private int numberOfRotation;
+
+    public WorkerTile(int leftWorker, int upWorker, int rightWorker, int downWorker, PlayerColour colour) {
+        this.leftWorker = leftWorker;
+        this.upWorker = upWorker;
+        this.rightWorker = rightWorker;
+        this.downWorker = downWorker;
+        this.type = "Worker";
+        this.colour = colour;
+        this.tileEnum = TileEnum.valueOf(this.toShortString());
+        this.numberOfRotation = 0;
+    }
 
     public WorkerTile turnRightWorkersNinetyDegreesTimes(int numberOfTurn) {
         if (numberOfTurn > 0) {
@@ -37,15 +49,9 @@ public class WorkerTile extends AbstractTile {
         downWorker = leftWorker;
         leftWorker = upWorker;
         upWorker = temporaryValue;
-    }
 
-    public WorkerTile(int leftWorker, int upWorker, int rightWorker, int downWorker, PlayerColour colour) {
-        this.leftWorker = leftWorker;
-        this.upWorker = upWorker;
-        this.rightWorker = rightWorker;
-        this.downWorker = downWorker;
-        this.type = "Worker";
-        this.colour = colour;
+        this.tileEnum = TileEnum.valueOf(this.toShortString());
+        numberOfRotation = (numberOfRotation + 1) % 4;
     }
 
     public PlayerColour getColour() {
@@ -69,18 +75,18 @@ public class WorkerTile extends AbstractTile {
     }
 
     @Override
-    public String toString() {
-        return toShortString() + " hashCode= " + System.identityHashCode(this);
-        /*
-        return "WorkerTile{" +
-                "leftWorker=" + leftWorker +
-                ", upWorker=" + upWorker +
-                ", rightWorker=" + rightWorker +
-                ", downWorker=" + downWorker +
-                ", colour=" + colour +
-                '}' + " hashCode= " + System.identityHashCode(this);
+    public TileEnum getTileEnum() {
+        return tileEnum;
+    }
 
-         */
+    @Override
+    public int getNumberOfRotation() {
+        return numberOfRotation;
+    }
+
+    @Override
+    public String toString() {
+        return tileEnum.toString() + " hashCode= " + System.identityHashCode(this);
     }
 
     @Override
@@ -102,11 +108,14 @@ public class WorkerTile extends AbstractTile {
                 new Pair<Point, Integer>(new Point(coord.x, coord.y + 1), downWorker));
 
         for (Pair<Point, Integer> side : sidesAndWorkers) {
-            AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
-            if ((TileEnum.MARKET_LOW.equals(tile.getTileType()) || TileEnum.MARKET_MID.equals(tile.getTileType()) || TileEnum.MARKET_HIGH.equals(tile.getTileType()))) {
-                processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
-            } else if (!TileEnum.EMPTY.equals(tile.getTileType())) {
-                processOrder.addFirst(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
+            if (game.isFieldValid(side.getKey().x, side.getKey().y)) {
+                System.out.println("[WorkerTile]: validation for x=" + side.getKey().x + ", y=" + side.getKey().y);
+                AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
+                if ((TileEnum.MARKET_LOW.equals(tile.getTileEnum()) || TileEnum.MARKET_MID.equals(tile.getTileEnum()) || TileEnum.MARKET_HIGH.equals(tile.getTileEnum()))) {
+                    processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
+                } else if (!TileEnum.EMPTY.equals(tile.getTileEnum())) {
+                    processOrder.addFirst(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
+                }
             }
         }
 
@@ -147,7 +156,7 @@ public class WorkerTile extends AbstractTile {
 
             JungleTile neighbourJungleTile = (JungleTile) game.getBoard().getField(coord.x, coord.y);
 
-            switch (neighbourJungleTile.getTileType()) {
+            switch (neighbourJungleTile.getTileEnum()) {
                 case WATER:
                     for (int i = 0; i < numberOfWorker; ++i) {
                         if (activePlayer.getWaterPointIndex() < Game.getWaterPositionValueList().size()) {

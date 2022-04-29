@@ -4,14 +4,19 @@ import java.io.Serializable;
 
 public abstract class AbstractTile implements Cloneable, Serializable {
 
-    private TileEnum tileType;
+    private TileEnum tileEnum;
+    private int numberOfRotation = 0;
 
-    public TileEnum getTileType() {
-        return tileType;
+    public TileEnum getTileEnum() {
+        return tileEnum;
     }
 
-    public void setTileType(TileEnum tileType) {
-        this.tileType = tileType;
+    public void setTileEnum(TileEnum tileEnum) {
+        this.tileEnum = tileEnum;
+    }
+
+    public int getNumberOfRotation() {
+        return numberOfRotation;
     }
 
     @Override
@@ -33,11 +38,11 @@ public abstract class AbstractTile implements Cloneable, Serializable {
 
         AbstractTile that = (AbstractTile) o;
 
-        return tileType == that.tileType;
+        return tileEnum == that.tileEnum;
     }
 
     @Override
     public int hashCode() {
-        return tileType.hashCode();
+        return tileEnum.hashCode();
     }
 }
