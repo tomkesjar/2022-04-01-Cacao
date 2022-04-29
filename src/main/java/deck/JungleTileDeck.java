@@ -1,24 +1,11 @@
 package deck;
 
-import players.PlayerColour;
 import tiles.*;
 
 import java.io.Serializable;
 import java.util.*;
 
 public class JungleTileDeck implements Serializable {
-    public enum JungleTileEnum {
-        PLANTATION_1,
-        PLANTATION_2,
-        MINE_1,
-        MINE_2,
-        WATER,
-        TEMPLE,
-        MARKET_LOW,
-        MARKET_MID,
-        MARKET_HIGH,
-        WORSHIP_SITE
-    }
 
     private List<JungleTile> deck;
 
@@ -28,18 +15,18 @@ public class JungleTileDeck implements Serializable {
 
         switch (numberOfPlayers) {
             case 2:
-                twoPlayerSetup();
+                twoPlayersSetup();
                 break;
             case 3:
-                threePlayerSetup();
+                moreThanTwoPlayersSetup();
                 break;
             case 4:
-                fourPlayerSetup();
+                moreThanTwoPlayersSetup();
                 break;
             default:
                 //TODO clear this out, potentially with exception
                 System.out.println("[JungleTileDeck]: Invalid number of players, by default 2 player setup will start");
-                twoPlayerSetup();
+                twoPlayersSetup();
         }
     }
 
@@ -48,7 +35,7 @@ public class JungleTileDeck implements Serializable {
         Collections.shuffle(deck);
     }
 
-    public void createTiles(int numberOfPieces, JungleTileEnum type) {
+    public void createTiles(int numberOfPieces, TileEnum type) {
 
         for (int i = 0; i < numberOfPieces; ++i) {
             switch (type) {
@@ -95,49 +82,33 @@ public class JungleTileDeck implements Serializable {
     }
 
 
-    public void fourPlayerSetup() {
+    public void moreThanTwoPlayersSetup() {
         //currently dummy
-        createTiles(1, JungleTileEnum.PLANTATION_1);
-        createTiles(1, JungleTileEnum.PLANTATION_2);
-        createTiles(1, JungleTileEnum.MARKET_LOW);
-        createTiles(1, JungleTileEnum.MARKET_MID);
-        createTiles(1, JungleTileEnum.MARKET_HIGH);
-        createTiles(1, JungleTileEnum.MINE_1);
-        createTiles(1, JungleTileEnum.MINE_2);
-        createTiles(1, JungleTileEnum.TEMPLE);
-        createTiles(1, JungleTileEnum.WATER);
-        createTiles(1, JungleTileEnum.WORSHIP_SITE);
-
+        createTiles(6, TileEnum.PLANTATION_1);
+        createTiles(2, TileEnum.PLANTATION_2);
+        createTiles(2, TileEnum.MARKET_LOW);
+        createTiles(4, TileEnum.MARKET_MID);
+        createTiles(1, TileEnum.MARKET_HIGH);
+        createTiles(2, TileEnum.MINE_1);
+        createTiles(1, TileEnum.MINE_2);
+        createTiles(3, TileEnum.WATER);
+        createTiles(5, TileEnum.TEMPLE);
+        createTiles(2, TileEnum.WORSHIP_SITE);
         shuffleDeck();
     }
 
-    public void threePlayerSetup() {
+    public void twoPlayersSetup() {
         //currently dummy
-        createTiles(2, JungleTileEnum.PLANTATION_1);
-        createTiles(2, JungleTileEnum.PLANTATION_2);
-        createTiles(1, JungleTileEnum.MARKET_LOW);
-        createTiles(1, JungleTileEnum.MARKET_MID);
-        createTiles(1, JungleTileEnum.MARKET_HIGH);
-        createTiles(1, JungleTileEnum.MINE_1);
-        createTiles(1, JungleTileEnum.MINE_2);
-        createTiles(1, JungleTileEnum.TEMPLE);
-        createTiles(1, JungleTileEnum.WATER);
-        createTiles(1, JungleTileEnum.WORSHIP_SITE);
-        shuffleDeck();
-    }
-
-    public void twoPlayerSetup() {
-        //currently dummy
-        createTiles(1, JungleTileEnum.PLANTATION_1);
-        createTiles(1, JungleTileEnum.PLANTATION_2);
-        createTiles(1, JungleTileEnum.MARKET_LOW);
-        createTiles(1, JungleTileEnum.MARKET_MID);
-        createTiles(1, JungleTileEnum.MARKET_HIGH);
-        createTiles(1, JungleTileEnum.MINE_1);
-        createTiles(1, JungleTileEnum.MINE_2);
-        createTiles(1, JungleTileEnum.TEMPLE);
-        createTiles(1, JungleTileEnum.WATER);
-        createTiles(1, JungleTileEnum.WORSHIP_SITE);
+        createTiles(4, TileEnum.PLANTATION_1);
+        createTiles(2, TileEnum.PLANTATION_2);
+        createTiles(2, TileEnum.MARKET_LOW);
+        createTiles(3, TileEnum.MARKET_MID);
+        createTiles(1, TileEnum.MARKET_HIGH);
+        createTiles(1, TileEnum.MINE_1);
+        createTiles(1, TileEnum.MINE_2);
+        createTiles(2, TileEnum.WATER);
+        createTiles(4, TileEnum.TEMPLE);
+        createTiles(1, TileEnum.WORSHIP_SITE);
         shuffleDeck();
     }
 

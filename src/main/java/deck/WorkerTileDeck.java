@@ -18,18 +18,18 @@ public class WorkerTileDeck implements Serializable {
 
         switch (numberOfPlayers) {
             case 2:
-                twoPlayerSetup();
+                generateTileDeck(4,5,1,1);
                 break;
             case 3:
-                threePlayerSetup();
+                generateTileDeck(3,5,1,1);
                 break;
             case 4:
-                fourPlayerSetup();
+                generateTileDeck(3,4,1,1);
                 break;
             default:
                 //TODO clear this out, potentially with exception
                 System.out.println("[WorkerTileDeck]: Invalid number of players, by default 2 player setup will start");
-                twoPlayerSetup();
+                generateTileDeck(3,5,1,1);
         }
     }
 
@@ -60,37 +60,14 @@ public class WorkerTileDeck implements Serializable {
         }
     }
 
-
-
-    public void fourPlayerSetup() {
-        //currently dummy
-        createTiles(1, 1,1,1,1);
-        createTiles(1, 1,2,1,0);
-        createTiles(1, 3,1,0,0);
-        createTiles(1, 1,3,0,0);
+    public void generateTileDeck (int w1111, int w2101, int w3001, int w3100){
+        createTiles(w1111, 1,1,1,1);
+        createTiles(w2101, 2,1,0,1);
+        createTiles(w3001, 3,0,0,1);
+        createTiles(w3100, 3,1,0,0);
         shuffleDeck();
     }
 
-    public void threePlayerSetup() {
-        //currently dummy
-        createTiles(2, 1,1,1,1);
-        createTiles(1, 1,2,1,0);
-        createTiles(1, 3,1,0,0);
-        createTiles(1, 1,3,0,0);
-        shuffleDeck();
-    }
-
-    public void twoPlayerSetup() {
-        //currently dummy
-        createTiles(1, 1,1,1,1);
-        createTiles(1, 1,2,1,0);
-        createTiles(1, 3,1,0,0);
-        createTiles(1, 1,2,3,4);
-        createTiles(1, 2,3,4,5);
-        createTiles(1, 3,4,5,6);
-        createTiles(1, 4,5,6,7);
-        shuffleDeck();
-    }
 
     @Override
     public String toString() {
