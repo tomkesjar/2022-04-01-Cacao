@@ -30,8 +30,11 @@ public abstract class JungleTile extends AbstractTile {
 
     protected boolean validatePointAndTileType(Point coord, Game game){
         boolean location = (!(coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight())) ? true : false;
+        if (!location){
+            return false;
+        }
         boolean isWorkerTile = game.getBoard().getField(coord.x, coord.y) instanceof WorkerTile;
-        return location && isWorkerTile;
+        return isWorkerTile;
     }
 
     protected abstract void processNeighbour(Point side, Game game, int numberOfWorkers);
