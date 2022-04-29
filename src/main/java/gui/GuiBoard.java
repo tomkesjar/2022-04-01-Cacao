@@ -10,6 +10,7 @@ import tiles.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.*;
@@ -19,17 +20,23 @@ import java.util.concurrent.TimeUnit;
 
 public class GuiBoard extends JFrame implements Runnable {
     private ClientConnection connection;
+    private ImageLoader imageLoader;
 
-    private static final int TILES_MAX_HEIGHT = 60;
-    private static final int TILES_MAX_WIDTH = 100;
+    private static final int TILES_MAX_HEIGHT = 50;
+    private static final int TILES_MAX_WIDTH = 50;
 
-    private static final int PANEL_MAX_WIDTH = 1_500;
+    private static final int PANEL_MAX_WIDTH = 800;
     private static final int PANEL_MAX_HEIGHT = 1_000;
 
     private static final int INFOPANEL_HEIGHT = 30;
 
     private static final int BOARD_HORIZONTAL_GAP = 20;
     private static final int BOARD_VERTICAL_GAP = 20;
+
+    private static final int FONT_SIZE = 10;
+
+    private static final String TEXTBOX_PREFIX = "<html><p>";
+    private static final String TEXTBOX_SUFFIX = "</p></html>";
 
     private volatile Game game;
     private final int playerIndex;
@@ -57,6 +64,9 @@ public class GuiBoard extends JFrame implements Runnable {
         this.connection = connection;
         this.game = game;
         this.playerIndex = playerIndex;
+        this.imageLoader = new ImageLoader(TILES_MAX_WIDTH, TILES_MAX_HEIGHT);
+        imageLoader.loadJungleImages();
+        imageLoader.loadWorkerImages();
 
         selectedJungleTile = null;
         selectedWorkerTile = null;
@@ -81,6 +91,27 @@ public class GuiBoard extends JFrame implements Runnable {
 
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
+
+        //add here allocate image method
+        jungleCardsPanelLink.forEach(tile -> {
+            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getJungleTile().getNumberOfRotation(), tile.getJungleTile().getTileEnum()));
+            tile.setIcon(icon);
+        });
+
+        workerCardsPanelLink.forEach(tile -> {
+            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getWorkerTile().getNumberOfRotation(), tile.getWorkerTile().getTileEnum()));
+            tile.setIcon(icon);
+        });
+
+        boardTileButtonLink.forEach(tileColumn -> {
+            tileColumn.forEach(tile -> {
+                //if (tile.getTile() instanceof WorkerTile) {
+                ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
+                tile.setIcon(icon);
+                //} else
+
+            });
+        });
 
         this.pack();    //ez rakja egybe
         this.setVisible(true);
@@ -149,6 +180,26 @@ public class GuiBoard extends JFrame implements Runnable {
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
 
+        jungleCardsPanelLink.forEach(tile -> {
+            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getJungleTile().getNumberOfRotation(), tile.getJungleTile().getTileEnum()));
+            tile.setIcon(icon);
+        });
+
+        workerCardsPanelLink.forEach(tile -> {
+            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getWorkerTile().getNumberOfRotation(), tile.getWorkerTile().getTileEnum()));
+            tile.setIcon(icon);
+        });
+
+        boardTileButtonLink.forEach(tileColumn -> {
+            tileColumn.forEach(tile -> {
+                //if (tile.getTile() instanceof WorkerTile) {
+                ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
+                tile.setIcon(icon);
+                //} else
+
+            });
+        });
+
         this.invalidate();
         this.repaint();
         //SwingUtilities.updateComponentTreeUI(this);
@@ -204,8 +255,8 @@ public class GuiBoard extends JFrame implements Runnable {
         playerPanelLink.get(player).put("templeValue", templeValue);
 
         JLabel waterIcon = new JLabel("water: "); //TODO: add coin icon
-        String nextLevelMessage = (player.getWaterPointIndex()+1) >= Game.getWaterPositionValueList().size() ? "Maxed" : Objects.toString(Game.getWaterPositionValue(player.getWaterPointIndex() +1));
-        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()) + " (next level: " + nextLevelMessage  + ")");      //TODO: add boxes instead of number + colourify boxes based on number
+        String nextLevelMessage = (player.getWaterPointIndex() + 1) >= Game.getWaterPositionValueList().size() ? "Maxed" : Objects.toString(Game.getWaterPositionValue(player.getWaterPointIndex() + 1));
+        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()) + " (next level: " + nextLevelMessage + ")");      //TODO: add boxes instead of number + colourify boxes based on number
         panel.add(waterIcon);
         panel.add(waterValue);
         playerPanelLink.get(player).put("waterIcon", waterIcon);
@@ -232,11 +283,146 @@ public class GuiBoard extends JFrame implements Runnable {
         return panel;
     }
 
+    public BufferedImage allocateImageToTile(int numberOfRotation, TileEnum tileEnum) {
+        BufferedImage image = null;
+
+        switch (tileEnum) {
+            case MARKET_LOW:
+                image = imageLoader.getMarket1();
+                break;
+            case MARKET_MID:
+                image = imageLoader.getMarket2();
+                break;
+            case MARKET_HIGH:
+                image = imageLoader.getMarket3();
+                break;
+            case MINE_1:
+                image = imageLoader.getMine1();
+                break;
+            case MINE_2:
+                image = imageLoader.getMine2();
+                break;
+            case PLANTATION_1:
+                image = imageLoader.getPlantation1();
+                break;
+            case PLANTATION_2:
+                image = imageLoader.getPlantation2();
+                break;
+            case WORSHIP_SITE:
+                image = imageLoader.getSun();
+                break;
+            case TEMPLE:
+                image = imageLoader.getTemple();
+                break;
+            case WATER:
+                image = imageLoader.getWater();
+                break;
+            case EMPTY:
+                image = imageLoader.getEmpty();
+                break;
+
+
+            //original image
+            case R1111:
+                image = imageLoader.getR1111();
+                break;
+            case R2101:
+            case R1012:
+            case R0121:
+            case R1210:
+                image = imageLoader.getR2101();
+                break;
+            case R3001:
+            case R0013:
+            case R0130:
+            case R1300:
+                image = imageLoader.getR3001();
+                break;
+            case R3100:
+            case R1003:
+            case R0031:
+            case R0310:
+                image = imageLoader.getR3100();
+                break;
+
+            case B1111:
+                image = imageLoader.getB1111();
+                break;
+            case B2101:
+            case B1012:
+            case B0121:
+            case B1210:
+                image = imageLoader.getB2101();
+                break;
+            case B3001:
+            case B0013:
+            case B0130:
+            case B1300:
+                image = imageLoader.getB3001();
+                break;
+            case B3100:
+            case B1003:
+            case B0031:
+            case B0310:
+                image = imageLoader.getB3100();
+                break;
+
+            case G1111:
+                image = imageLoader.getG1111();
+                break;
+            case G2101:
+            case G1012:
+            case G0121:
+            case G1210:
+                image = imageLoader.getG2101();
+                break;
+            case G3001:
+            case G0013:
+            case G0130:
+            case G1300:
+                image = imageLoader.getG3001();
+                break;
+            case G3100:
+            case G1003:
+            case G0031:
+            case G0310:
+                image = imageLoader.getG3100();
+                break;
+
+            case Y1111:
+                image = imageLoader.getY1111();
+                break;
+            case Y2101:
+            case Y1012:
+            case Y0121:
+            case Y1210:
+                image = imageLoader.getY2101();
+                break;
+            case Y3001:
+            case Y0013:
+            case Y0130:
+            case Y1300:
+                image = imageLoader.getY3001();
+                break;
+            case Y3100:
+            case Y1003:
+            case Y0031:
+            case Y0310:
+                image = imageLoader.getY3100();
+                break;
+
+            default:
+
+        }
+        BufferedImage rotatedImage = ImageLoader.rotateClockwise90(numberOfRotation, image);
+        return rotatedImage;
+    }
+
     @Override
     public void run() {
         while (!game.checkIfIsGameEnd()) {
             System.out.println("[GuiBoard]: game is ongoing, activePlayer=" + game.getActivePlayer() + "   this.playerIndex=" + this.getPlayerIndex());
-            System.out.println("[GuiBoard]: game is ongoing, hasPlacedWorkerTile=" + game.hasPlacedWorkerTile() +", hasPlacedWorkerTile=" + game.hasPlacedJungleTile());
+            System.out.println("[GuiBoard]: game is ongoing, hasPlacedWorkerTile=" + game.hasPlacedWorkerTile() + ", hasPlacedWorkerTile=" + game.hasPlacedJungleTile());
             while (game.getActivePlayer() != this.getPlayerIndex()) {
 
                 try {
@@ -327,7 +513,8 @@ public class GuiBoard extends JFrame implements Runnable {
             for (int x = 0; x < board.getWidth(); ++x) {
                 BoardTileButton boardTileButton = new BoardTileButton(new Point(x, y), this);
                 boardTileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
-                boardTileButton.setMaximumSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
+                boardTileButton.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
+                //boardTileButton.setMaximumSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
                 boardTileButtonLink.get(y).add(boardTileButton);
                 result.add(boardTileButton);
             }
@@ -346,13 +533,29 @@ public class GuiBoard extends JFrame implements Runnable {
         JPanel jungleTilesPanel = new JPanel();
         for (JungleTile jungleTile : game.getJungleTilesAvailable()) {
             ActionButtonJungleTile tileButton = new ActionButtonJungleTile(this, jungleTile);
-            tileButton.setText(jungleTile.toShortString());
+            //tileButton.setText(jungleTile.toShortString());
+            tileButton.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
             jungleTilesPanel.add(tileButton);
             jungleCardsPanelLink.add(tileButton);
         }
-        jungleTilesPanel.add(new JButton(String.valueOf(game.getJungleTileDeck().getDeck().size())));
-        //jungleTilesPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        int remainingJungleDeckSize = game.getJungleTileDeck().getDeck().size();
+        JLabel remainingJungleTileNumberLabel = new JLabel(String.valueOf(remainingJungleDeckSize));
+        remainingJungleTileNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        remainingJungleTileNumberLabel.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
+        remainingJungleTileNumberLabel.setFont(new java.awt.Font("Georgia", 3, FONT_SIZE * 2));
+        if (remainingJungleDeckSize < 2) {
+            remainingJungleTileNumberLabel.setForeground(Color.RED);
+        } else {
+            remainingJungleTileNumberLabel.setForeground(Color.GRAY);
+        }
+
+        TitledBorder jungleLabelTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Deck");
+        jungleLabelTitle.setTitleJustification(TitledBorder.CENTER);
+        remainingJungleTileNumberLabel.setBorder(jungleLabelTitle);
+
+        jungleTilesPanel.add(remainingJungleTileNumberLabel);
+
         TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Jungle Tiles");
         title.setTitleJustification(TitledBorder.LEFT);
         jungleTilesPanel.setBorder(title);
@@ -366,10 +569,25 @@ public class GuiBoard extends JFrame implements Runnable {
         for (WorkerTile workerTile : currentPlayer.getCardsAtHand()) {
             ActionButtonWorkerTile tileButton = new ActionButtonWorkerTile(this, workerTile);
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
+            //tileButton.setFont(new java.awt.Font("Calibri", 2, FONT_SIZE));
             workerTilesPanel.add(tileButton);
             workerCardsPanelLink.add(tileButton);
         }
-        workerTilesPanel.add(new JButton(String.valueOf(currentPlayer.getWorkerTileDeck().getDeck().size())));
+        int remainingWorkerDeckSize = currentPlayer.getWorkerTileDeck().getDeck().size();
+        JLabel remainingWorkerTileNumberLabel = new JLabel(String.valueOf(remainingWorkerDeckSize));
+        remainingWorkerTileNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        remainingWorkerTileNumberLabel.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
+        remainingWorkerTileNumberLabel.setFont(new java.awt.Font("Georgia", 3, FONT_SIZE * 2));
+        if (remainingWorkerDeckSize < 2) {
+            remainingWorkerTileNumberLabel.setForeground(Color.RED);
+        } else {
+            remainingWorkerTileNumberLabel.setForeground(Color.GRAY);
+        }
+        TitledBorder workerLabelTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Deck");
+        workerLabelTitle.setTitleJustification(TitledBorder.CENTER);
+        remainingWorkerTileNumberLabel.setBorder(workerLabelTitle);
+        workerTilesPanel.add(remainingWorkerTileNumberLabel);
+
         //workerTilesPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         TitledBorder workerTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Worker Tiles");
         workerTitle.setTitleJustification(TitledBorder.LEFT);
@@ -453,4 +671,6 @@ public class GuiBoard extends JFrame implements Runnable {
     public List<ActionButtonWorkerTile> getWorkerCardsPanelLink() {
         return workerCardsPanelLink;
     }
+
+
 }
