@@ -7,7 +7,7 @@ import java.awt.*;
 public class EmptyTile extends JungleTile {
 
     public EmptyTile() {
-        setTileType(TileEnum.EMPTY);
+        setTileEnum(TileEnum.EMPTY);
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.awt.*;
 public class WorshipSite extends JungleTile {
 
     public WorshipSite() {
-        setTileType(TileEnum.WORSHIP_SITE);
+        setTileEnum(TileEnum.WORSHIP_SITE);
     }
 
     @Override

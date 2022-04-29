@@ -8,7 +8,7 @@ import java.awt.*;
 public class Temple extends JungleTile {
 
     public Temple() {
-        setTileType(TileEnum.TEMPLE);
+        setTileEnum(TileEnum.TEMPLE);
     }
 
     @Override

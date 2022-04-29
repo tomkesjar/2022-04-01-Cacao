@@ -27,9 +27,9 @@ public class Market extends JungleTile {
     public Market(MarketPrice marketPrice) {
         this.marketPrice = marketPrice;
         switch (this.marketPrice){
-            case LOW: setTileType(TileEnum.MARKET_LOW); break;
-            case MID: setTileType(TileEnum.MARKET_MID); break;
-            case HIGH: setTileType(TileEnum.MARKET_HIGH); break;
+            case LOW: setTileEnum(TileEnum.MARKET_LOW); break;
+            case MID: setTileEnum(TileEnum.MARKET_MID); break;
+            case HIGH: setTileEnum(TileEnum.MARKET_HIGH); break;
         }
 
     }
