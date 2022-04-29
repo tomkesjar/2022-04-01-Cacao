@@ -13,6 +13,8 @@ public class Player implements Serializable {
     private static final int MAX_NUMBER_OF_CARDS_AT_HAND = 3;
     private PlayerColour playerColour;
 
+    private String name;
+
     private int numberOfCacaoBean;
     private int coins;
     private int waterPointIndex;
@@ -42,7 +44,7 @@ public class Player implements Serializable {
         this.cardsAtHand = cardsAtHand;
     }
 
-    public Player(int nthPlayer, int numberOfPlayers) {
+    public Player(int nthPlayer, int numberOfPlayers, String playerName) {
         switch (nthPlayer) {
             case 1:
                 this.playerColour = PlayerColour.RED;
@@ -64,6 +66,7 @@ public class Player implements Serializable {
         this.waterPoint = Game.getWaterPositionValue(this.waterPointIndex);
         this.point = 0;
         this.rank = 1;
+        this.name = playerName;
 
         this.workerTileDeck = new WorkerTileDeck(this.playerColour, numberOfPlayers);
         this.workerTileDeck.shuffleDeck();
@@ -157,6 +160,14 @@ public class Player implements Serializable {
 
     public void setTemplePointBonus(int templePointBonus) {
         this.templePointBonus = templePointBonus;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

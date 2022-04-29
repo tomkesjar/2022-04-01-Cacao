@@ -2,7 +2,6 @@ package gui;
 
 import connection.ClientConnection;
 import game.Game;
-import messages.TilePlacementMessageResponse;
 
 
 import javax.imageio.ImageIO;
@@ -17,11 +16,12 @@ public class GuiStartPage extends JFrame {
     private static final String FILE_NAME = "/background/cacaoFrontPage.jpg";
     private static final String TEXTBOX_PREFIX= "<html><p>";
     private static final String TEXTBOX_SUFFIX = "</p></html>";
-    private static final int BUTTON_HEIGHT = 40;
+    private static final int BUTTON_HEIGHT = 30;
     private static final int BUTTON_WIDTH = 200;
-    private static final int TEXTBOX_HEIGHT = 40;
+    private static final int TEXTBOX_HEIGHT = 30;
     private static final int TEXTBOX_WIDTH = 300;
     private static final int OPACITY_LEVEL = 50;
+    private static final int BUTTON_FONT_SIZE = 20;
 
     private ClientConnection connection;
     private boolean isConnected = false;
@@ -33,6 +33,11 @@ public class GuiStartPage extends JFrame {
     private JPanel contentPane;
 
     private JLabel messageLabel;
+
+    private JPanel namePanel;
+    private JTextField nameInput;
+    String defaultNameInputText = "Add Your Name";
+
 
     private Image backgroundImage = null;
 
@@ -46,7 +51,7 @@ public class GuiStartPage extends JFrame {
 
         dummyPanel = new JPanel();
         dummyPanel.setBackground(new Color(0,0,0,0));
-        dummyPanel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT*7));
+        dummyPanel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT*10));  //set vertical alignment
 
 
         messagePanel = new JPanel();
@@ -65,7 +70,7 @@ public class GuiStartPage extends JFrame {
         newGamePanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
         JButton connectBtn = new JButton("Connect to Game");
         connectBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
-        connectBtn.setFont(new Font("Serif", Font.BOLD, 22));
+        connectBtn.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
         connectBtn.setBackground(Color.GREEN);
         connectBtn.addActionListener((ActionEvent ae) -> {
             updateMessagePanelState();
@@ -77,11 +82,16 @@ public class GuiStartPage extends JFrame {
         exitPanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
         JButton exitBtn = new JButton("Exit");
         exitBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
-        exitBtn.setFont(new Font("Serif", Font.BOLD, 22));
+        exitBtn.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
         exitBtn.setBackground(Color.RED);
         exitBtn.addActionListener((ActionEvent ae) -> System.exit(0));
         exitPanel.add(exitBtn);
 
+        namePanel = new JPanel();
+        namePanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        nameInput = new JTextField(defaultNameInputText, 16);
+        nameInput.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE-4));
+        namePanel.add(nameInput);
 
         contentPane = new JPanel() {
             @Override
@@ -106,18 +116,23 @@ public class GuiStartPage extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
-        contentPane.add(newGamePanel, c);
+        contentPane.add(namePanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 3;
+        contentPane.add(newGamePanel, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 4;
         contentPane.add(exitPanel, c);
 
         setContentPane(contentPane);
 
         this.setPreferredSize(new Dimension(backgroundImage.getWidth(this), backgroundImage.getHeight(this)));
 
-        this.pack();    //ez rakja egybe
+        this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setFocusable(true);
@@ -152,6 +167,14 @@ public class GuiStartPage extends JFrame {
                 connection = new ClientConnection();
                 isConnected = true;
 
+                String playerName = null;
+
+                if (!("".equals(nameInput.getText()) || defaultNameInputText.equals(nameInput.getText()))) {
+                    playerName = nameInput.getText();
+                }
+
+                connection.getObjectOutputStream().writeUnshared(playerName);
+
                 newGame = (Game) connection.getObjectInputStream().readUnshared();
                 playerIndex = (Integer) connection.getObjectInputStream().readUnshared();
                 System.out.println("[GuiStartPage]: Game object and player index received");
@@ -178,24 +201,6 @@ public class GuiStartPage extends JFrame {
 
         Thread thread = new Thread(guiBoard);
         thread.start();
-        //guiBoard.run();
-
-        //guiBoard.getGuiBoardUpdater().start();
-
-        //start processing?
-        //guiBoard.process();
-        /*
-        TilePlacementMessageResponse response = null;
-        try {
-            response = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
-            guiBoard.updateGuiBoard((Game) response.getGame(), response.getTextMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-         */
     }
 
     public static void main(String[] args) {

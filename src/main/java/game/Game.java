@@ -68,7 +68,7 @@ public class Game implements Serializable {
         List<Player> result = new ArrayList<>();
         List<Integer> counter = Arrays.asList(1);
         clients.forEach(c -> {
-            Player newPlayer = new Player(counter.get(0), clients.size());
+            Player newPlayer = new Player(counter.get(0), clients.size(), c.getPlayerName());
             result.add(newPlayer);
             counter.set(0, counter.get(0) + 1);
         });
@@ -252,10 +252,10 @@ public class Game implements Serializable {
     public static void main(String[] args) {
         List<Player> playerList = new ArrayList<>();
 
-        Player player1 = new Player(1, 4);
-        Player player2 = new Player(2, 4);
-        Player player3 = new Player(3, 4);
-        Player player4 = new Player(4, 4);
+        Player player1 = new Player(1, 4, "AAA");
+        Player player2 = new Player(2, 4, "BBB");
+        Player player3 = new Player(3, 4, "CCC");
+        Player player4 = new Player(4, 4, "DDD");
 
 
         player3.setPoint(3);

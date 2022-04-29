@@ -130,7 +130,7 @@ public class GuiBoard extends JFrame implements Runnable {
         //messagePanel update
 
 
-        messagePanel.setText("Player " + ((int) game.getActivePlayer() + 1) + ": " + textMessage);
+        messagePanel.setText(game.getPlayerList().get(game.getActivePlayer()).getName() + ": " + textMessage);
         /*
         //playerPanel update
         for (Map.Entry<Player, Map<String, JLabel>> playerEntry : playerPanelLink.entrySet()) {
@@ -222,7 +222,7 @@ public class GuiBoard extends JFrame implements Runnable {
     private JPanel generatePlayerPanel(Player player) {
         JPanel panel = new JPanel();
 
-        JLabel playerName = new JLabel("Player " + player.getPlayerColour().getPlayerOrdinal());
+        JLabel playerName = new JLabel(player.getName());
         panel.add(playerName);
         playerPanelLink.get(player).put("name", playerName);
 
@@ -488,7 +488,7 @@ public class GuiBoard extends JFrame implements Runnable {
         //if (Objects.nonNull(infoPanel) && infoPanel.getComponents().length >0) infoPanel.removeAll();
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
-        String labelText = "Player " + ((int) game.getActivePlayer() + 1) + ": " + textMessage;
+        String labelText = game.getPlayerList().get(game.getActivePlayer()).getName() + ": " + textMessage;
 
         messagePanel = new JLabel(labelText);
         messagePanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_HEIGHT));

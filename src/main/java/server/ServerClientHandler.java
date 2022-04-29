@@ -10,8 +10,9 @@ import java.util.List;
 public class ServerClientHandler implements  Runnable {
     private Socket socket;
     private List<ServerClientHandler> clients;
-    private ObjectOutputStream objectOutputStream; //
-    private ObjectInputStream objectInputStream; //
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
+    private String playerName;
 
     public ObjectOutputStream getObjectOutputStream() {
         return objectOutputStream;
@@ -51,6 +52,13 @@ public class ServerClientHandler implements  Runnable {
 */
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
 
     @Override
     public void run() {
