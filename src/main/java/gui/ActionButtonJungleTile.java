@@ -27,7 +27,7 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
 
         this.isTileSelected = false;
 
-        this.setText(jungleTile.toShortString());
+        //this.setText(jungleTile.toShortString());
         this.setBackground(Color.CYAN);
         addMouseListener(this);
         System.out.println("[ActionButtonJungleTile]: actionButtonJungleTile created for jungle=" + jungleTile.toShortString());

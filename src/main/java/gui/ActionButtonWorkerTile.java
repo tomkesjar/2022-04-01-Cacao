@@ -27,9 +27,10 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
         this.playerIndex = guiBoard.getPlayerIndex();
         System.out.println("[ActionButtonWorkerTile] ==== workerPlacement === guiBoard.hasPlacedWT="+ guiBoard.hasPlacedWorkerTile() + ", game.hasPlacedWT=" + guiBoard.getGame().hasPlacedWorkerTile() + ", guiBoard.getSelectedWorkerTile="+ guiBoard.getSelectedWorkerTile());
         this.workerTileIsPlaced = guiBoard.hasPlacedWorkerTile(); //Objects.isNull(guiBoard.getSelectedWorkerTile()) ? false : true;
+        //this.tile = guiBoard.getGame().getBoard().getField(coord.x, coord.y);
         this.isTileSelected = false;
 
-        this.setText(workerTile.toShortString());
+        //this.setText(workerTile.toShortString());
         this.setBackground(Color.GREEN);
         addMouseListener(this);
         System.out.println("[ActionButtonWorkerTile]: actionButtonWorkerTile created for worker=" + workerTile.toShortString());
@@ -42,7 +43,9 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
             if (SwingUtilities.isRightMouseButton(e)) {
                 workerTile.turnRightWorkersNinetyDegrees();
                 System.out.println("[ActionButtonWorkerTile]: double click -> tile rotated=" + workerTile.toShortString());
-                this.setText(workerTile.toShortString());
+                //this.setText(workerTile.toShortString());
+                Icon icon = new ImageIcon(guiBoard.allocateImageToTile(workerTile.getNumberOfRotation(), workerTile.getTileEnum()));
+                this.setIcon(icon);
                 if(guiBoard.getSelectedWorkerTile() != null) System.out.println("selected tile="+ guiBoard.getSelectedWorkerTile().toShortString());
 
                 //select

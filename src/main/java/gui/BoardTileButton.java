@@ -4,6 +4,7 @@ import game.Game;
 import messages.ResponseStatus;
 import messages.TilePlacementMessageRequest;
 import messages.TilePlacementMessageResponse;
+import tiles.AbstractTile;
 import tiles.JungleTile;
 import tiles.WorkerTile;
 
@@ -18,6 +19,7 @@ public class BoardTileButton extends JButton implements MouseListener {
     private Point coord;
     private GuiBoard guiBoard;
     private ResponseStatus responseStatus;
+    private AbstractTile tile;
 
     private boolean successfulWorkerTileSending;
     private boolean successfulJungleTileSending;
@@ -26,10 +28,12 @@ public class BoardTileButton extends JButton implements MouseListener {
         super();
         this.coord = coord;
         this.guiBoard = guiBoard;
-        this.setText(guiBoard.getGame().getBoard().getField(coord.x, coord.y).toShortString() + " " + coord.x + " " + coord.y);
+        this.tile = guiBoard.getGame().getBoard().getField(coord.x, coord.y);
+        //this.setText(guiBoard.getGame().getBoard().getField(coord.x, coord.y).toShortString()/* + " " + coord.x + " " + coord.y*/);
         addMouseListener(this);
         successfulWorkerTileSending = false;
         successfulJungleTileSending = false;
+
     }
 
     @Override
@@ -186,5 +190,9 @@ public class BoardTileButton extends JButton implements MouseListener {
 
     public void setGuiBoard(GuiBoard guiBoard) {
         this.guiBoard = guiBoard;
+    }
+
+    public AbstractTile getTile() {
+        return tile;
     }
 }
