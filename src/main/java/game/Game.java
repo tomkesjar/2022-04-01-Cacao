@@ -129,6 +129,8 @@ public class Game implements Serializable {
 
     }
 
+
+
     public void calculateRanks() {
         List<Player> sortedPlayers = new ArrayList<>(playerList);
 
@@ -147,6 +149,13 @@ public class Game implements Serializable {
         }
     }
 
+
+    public boolean isFieldValid(int x, int y){
+        if ( (x >= board.getWidth() || x < 0 || y >= board.getHeight() || y < 0) ){
+            return false;
+        }
+        return true;
+    }
 
     public static int getMaxNumberOfJungleTilesAvailable() {
         return MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE;
