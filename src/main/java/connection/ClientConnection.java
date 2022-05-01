@@ -20,19 +20,15 @@ public class ClientConnection {
 
 
     public ClientConnection() throws IOException, ClassNotFoundException {
-        //Game game = null;
         try {
             this.socket = new Socket(SERVER_IP, SERVER_PORT);
-            System.out.println("[ClientConnection]: Successful connection to server");
+            //System.out.println("[ClientConnection]: Successful connection to server");
             this.objectInputStream = new ObjectInputStream(this.socket.getInputStream());
-            System.out.println("[ClientConnection]: InputStream successfully created");
+            //System.out.println("[ClientConnection]: InputStream successfully created");
             this.objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
-            System.out.println("[ClientConnection]: OutputStreams successfully created");
+            //System.out.println("[ClientConnection]: OutputStreams successfully created");
+            System.out.println("[ClientConnection]: Connection, InputStream and OutputStreams successfully created");
 
-            //ActionMessage connectionMessage = (ActionMessage) this.objectInputStream.readUnshared();
-            //System.out.println("[ClientConnection]: Message received from server");
-            //System.out.println(connectionMessage.toString());
-            //game = (Game) this.objectInputStream.readUnshared();
         } catch (IOException e) {
             e.printStackTrace();
         }

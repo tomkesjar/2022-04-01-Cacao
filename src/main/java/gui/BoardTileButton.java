@@ -29,7 +29,6 @@ public class BoardTileButton extends JButton implements MouseListener {
         this.coord = coord;
         this.guiBoard = guiBoard;
         this.tile = guiBoard.getGame().getBoard().getField(coord.x, coord.y);
-        //this.setText(guiBoard.getGame().getBoard().getField(coord.x, coord.y).toShortString()/* + " " + coord.x + " " + coord.y*/);
         addMouseListener(this);
         successfulWorkerTileSending = false;
         successfulJungleTileSending = false;
@@ -39,7 +38,7 @@ public class BoardTileButton extends JButton implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         System.out.println("============== MOUSE PRESS START ===============");
-        System.out.println("[BoardTileButton]: guiBoard.getSelectedWorkerTile=" + guiBoard.getSelectedWorkerTile() + ", guiBoard.getSelectedJungleTile=" + guiBoard.getSelectedJungleTile());
+        //System.out.println("[BoardTileButton]: guiBoard.getSelectedWorkerTile=" + guiBoard.getSelectedWorkerTile() + ", guiBoard.getSelectedJungleTile=" + guiBoard.getSelectedJungleTile());
         if (guiBoard.getPlayerIndex() == guiBoard.getGame().getActivePlayer()) {
             WorkerTile selectedWorkerTile = guiBoard.getSelectedWorkerTile();
             JungleTile selectedJungleTile = guiBoard.getSelectedJungleTile();
@@ -56,12 +55,12 @@ public class BoardTileButton extends JButton implements MouseListener {
 
                     // waitForResponse() + update guiBoard if needed
                     TilePlacementMessageResponse response = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
-                    System.out.println("[BoardTileButton]: TilePlacementMessageResponse received successfully. tilePlacementMessageResponse=" + response);
+                    System.out.println("[BoardTileButton]: TilePlacementMessageResponse received successfully."); // tilePlacementMessageResponse=" + response);
                     responseStatus = response.getStatus();
                     Game gameReceived = response.getGame();
 
                     guiBoard.setHasPlacedWorkerTile(gameReceived.hasPlacedWorkerTile());
-                    System.out.println("[BoardTileButton]: guiBoard hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile());
+                    //System.out.println("[BoardTileButton]: guiBoard hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile());
                     //update board + panels
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
                     System.out.println("[BoardTileButton]: guiBoard updated after workerTile placement");
@@ -126,40 +125,7 @@ public class BoardTileButton extends JButton implements MouseListener {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-        System.out.println("============== MOUSE RELEASED START ===============");
-        /*
-        //continuous wait & update status
-
-        //check if placement valid
-
-        boolean samePlayer = guiBoard.getGame().getActivePlayer() == guiBoard.getPlayerIndex();
-        boolean hasNotPlacedAnyTile = !(guiBoard.hasPlacedWorkerTile() || guiBoard.hasPlacedJungleTile());
-        boolean hasOnlyPlacedWorkerTile = (guiBoard.hasPlacedWorkerTile() && !guiBoard.hasPlacedJungleTile());
-
-        if (samePlayer && (hasNotPlacedAnyTile || hasOnlyPlacedWorkerTile)) {
-            System.out.println("[BoardTileButton]: Listening to updateResponse");
-
-            Game updateGameReceived = null;
-            int updateGameReceivedActivePlayer = -1;
-            while (guiBoard.getPlayerIndex() != updateGameReceivedActivePlayer) {
-                TilePlacementMessageResponse updateResponse = null;
-                try {
-                    updateResponse = (TilePlacementMessageResponse) guiBoard.getConnection().getObjectInputStream().readUnshared();
-                    responseStatus = updateResponse.getStatus();
-                    updateGameReceived = updateResponse.getGame();
-                    updateGameReceivedActivePlayer = updateGameReceived.getActivePlayer();
-                    guiBoard.setGame(updateGameReceived);
-                    guiBoard.updateGuiBoard(updateGameReceived, updateResponse.getTextMessage());
-                } catch (IOException | ClassNotFoundException ioException) {
-                    ioException.printStackTrace();
-                    System.out.println("[BoardTileButton]: updateResponse reading failed. updateResponse=" + updateResponse);
-                }
-            }
-        }
-
-         */
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
     public void mouseClicked(MouseEvent e) {

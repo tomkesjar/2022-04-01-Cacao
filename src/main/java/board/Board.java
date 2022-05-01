@@ -1,9 +1,8 @@
 package board;
 
-import tiles.AbstractTile;
-import tiles.EmptyTile;
-import tiles.Market;
-import tiles.Plantation;
+//import javafx.util.Pair;
+import messages.TilePlacementMessageRequest;
+import tiles.*;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -21,6 +20,9 @@ public class Board implements Serializable {
 
     private Point freshWorkerTilePoint;
     private Point freshJungleTilePoint;
+
+    private List<Pair<Integer, Integer>> selectableJunglePanelPositions;
+    private List<Pair<Integer, Integer>> selectableWorkerPanelPositions;
 
     public Board() {
         board = new ArrayList<>();
@@ -44,13 +46,90 @@ public class Board implements Serializable {
         for (int y = 0; y < INITIAL_HEIGHT; ++y) {
             List<AbstractTile> tempList = new ArrayList<>();
             for (int x = 0; x < INITIAL_WIDTH; ++x) {
-                //AbstractTile newTile = originalBoard.getField(x,y);
                 tempList.add(originalBoard.getField(x,y).clone());
             }
             board.add(tempList);
         }
     }
 
+
+    public void selectPossibleWorkerAndJungleTilesForPlacement(){
+        selectableJunglePanelPositions = new ArrayList<>();
+        selectableWorkerPanelPositions = new ArrayList<>();
+
+        for (int y = 0; y < INITIAL_HEIGHT; ++y) {
+            for (int x = 0; x < INITIAL_WIDTH; ++x) {
+                if (isValidPlacementAsWorkerTile(x,y)){
+                    selectableWorkerPanelPositions.add(new Pair(x,y));
+                }
+                if (isValidPlacementAsJungleTile(x,y)){
+                    selectableJunglePanelPositions.add(new Pair(x,y));
+                }
+            }
+        }
+    }
+
+
+    public boolean isValidPlacementAsWorkerTile(TilePlacementMessageRequest tilePlacementMessageRequest) {
+        Point coord = new Point(tilePlacementMessageRequest.getCoord());
+
+        return isValidPlacementAsWorkerTile(coord.x, coord.y);
+    }
+
+    public boolean isValidPlacementAsWorkerTile(int xCoord, int yCoord) {
+        boolean positionCheck = (xCoord + yCoord) % 2 == 0;
+        boolean emptyCheck = getField(xCoord, yCoord) instanceof EmptyTile;
+        boolean isAdjacentToJungleTile = isAdjacentToJungleTile(xCoord, yCoord);
+
+        return positionCheck && emptyCheck && isAdjacentToJungleTile;
+    }
+
+    private boolean isAdjacentToJungleTile(int xCoord, int yCoord) {
+        boolean upNeighbour = isJungleTile(xCoord, yCoord - 1);
+        boolean downNeighbour = isJungleTile(xCoord, yCoord + 1);
+        boolean leftNeighbour = isJungleTile(xCoord - 1, yCoord);
+        boolean rightNeighbour = isJungleTile(xCoord + 1, yCoord);
+
+        return upNeighbour || downNeighbour || leftNeighbour || rightNeighbour;
+    }
+
+    private boolean isJungleTile(int xCoord, int yCoord) {
+        if (xCoord < 0 || xCoord >= getWidth() || yCoord < 0 || yCoord >= getHeight()) {
+            return false;
+        }
+        boolean notEmptyTile = getField(xCoord, yCoord).getTileEnum() != TileEnum.EMPTY;
+        return getField(xCoord, yCoord) instanceof JungleTile && notEmptyTile;
+    }
+
+
+    public boolean isValidPlacementAsJungleTile(TilePlacementMessageRequest tilePlacementMessageRequest) {
+        Point coord = new Point(tilePlacementMessageRequest.getCoord());
+        return isValidPlacementAsJungleTile(coord.x, coord.y);
+    }
+
+    public boolean isValidPlacementAsJungleTile(int xCoord, int yCoord) {
+        boolean positionCheck = (xCoord + yCoord) % 2 == 1;
+        boolean emptyCheck = getField(xCoord, yCoord) instanceof EmptyTile;
+        boolean isAdjacenttoWorkerTile = isAdjacentToWorkerTile(xCoord, yCoord);
+
+        return positionCheck && emptyCheck && isAdjacenttoWorkerTile;
+    }
+
+    private boolean isAdjacentToWorkerTile(int xCoord, int yCoord) {
+        boolean upNeighbour = isWorkerTile(xCoord, yCoord - 1);
+        boolean downNeighbour = isWorkerTile(xCoord, yCoord + 1);
+        boolean leftNeighbour = isWorkerTile(xCoord - 1, yCoord);
+        boolean rightNeighbour = isWorkerTile(xCoord + 1, yCoord);
+
+        return upNeighbour || downNeighbour || leftNeighbour || rightNeighbour;
+    }
+
+    private boolean isWorkerTile(int xCoord, int yCoord) {
+        if (xCoord < 0 || xCoord >= getWidth() || yCoord < 0 || yCoord >= getHeight()) {
+            return false;
+        }
+        return getField(xCoord, yCoord) instanceof WorkerTile;
+    }
 
 
 
@@ -107,6 +186,14 @@ public class Board implements Serializable {
 
     public void setFreshJungleTilePoint(Point freshJungleTilePoint) {
         this.freshJungleTilePoint = freshJungleTilePoint;
+    }
+
+    public List<Pair<Integer, Integer>> getSelectableJunglePanelPositions() {
+        return selectableJunglePanelPositions;
+    }
+
+    public List<Pair<Integer, Integer>> getSelectableWorkerPanelPositions() {
+        return selectableWorkerPanelPositions;
     }
 
     @Override

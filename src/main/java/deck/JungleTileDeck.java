@@ -107,7 +107,7 @@ public class JungleTileDeck implements Serializable {
         createTiles(1, TileEnum.MINE_1);
         createTiles(1, TileEnum.MINE_2);
         createTiles(2, TileEnum.WATER);
-        createTiles(4, TileEnum.TEMPLE);
+        createTiles(3, TileEnum.TEMPLE);
         createTiles(1, TileEnum.WORSHIP_SITE);
         shuffleDeck();
     }

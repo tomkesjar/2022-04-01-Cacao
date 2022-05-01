@@ -27,10 +27,9 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
 
         this.isTileSelected = false;
 
-        //this.setText(jungleTile.toShortString());
         this.setBackground(Color.CYAN);
         addMouseListener(this);
-        System.out.println("[ActionButtonJungleTile]: actionButtonJungleTile created for jungle=" + jungleTile.toShortString());
+        //System.out.println("[ActionButtonJungleTile]: actionButtonJungleTile created for jungle=" + jungleTile.toShortString());
 
     }
 
@@ -51,14 +50,21 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
                     }
                 });
                 System.out.println("[ActionButtonJungleTile]: single click -> select tile=" + jungleTile.toShortString());
+
+                guiBoard.getSelectableJunglePanelLink().forEach( boardTileButton -> boardTileButton.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 4)));
+                System.out.println("[ActionButtonJungleTile]: getSelectableJunglePanelPositions=" + guiBoard.getGame().getBoard().getSelectableJunglePanelPositions().toString() );
+
                 guiBoard.setSelectedJungleTile(this.jungleTile);
                 isTileSelected = true;
-                System.out.println("selectedJungleTile=" + guiBoard.getSelectedJungleTile().toShortString());
+                System.out.println("[ActionButtonJungleTile]: selectedJungleTile=" + guiBoard.getSelectedJungleTile().toShortString());
                 //deselect
             } else {
                 this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
                 guiBoard.setSelectedJungleTile(null);
                 isTileSelected = false;
+
+                guiBoard.getSelectableJunglePanelLink().forEach( boardTileButton -> boardTileButton.setBorder(javax.swing.BorderFactory.createEmptyBorder()));
+
                 System.out.println("[ActionButtonJungleTile]: single click -> deselect tile=" + jungleTile.toShortString());
             }
         }
@@ -83,13 +89,6 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
     public void mouseEntered(MouseEvent e) {
         if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected) {
             this.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 4));
-            System.out.println("[ActionButtonWorkerTile]: mouseEntered=" + jungleTile.toShortString());
-            System.out.println("[ActionButtonWorkerTile]: "
-                    + "overallEvaluation= " + Objects.toString((playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedWorkerTile() && !isTileSelected))
-                    + ", hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile()
-                    + ", hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile()
-                    + " , isTileSelected=" + isTileSelected
-                    + ", isActivePlayer=" + Objects.toString(playerIndex == game.getActivePlayer()));
         }
     }
 
@@ -99,6 +98,8 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
             this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         }
     }
+
+
 
     public Game getGame() {
         return game;

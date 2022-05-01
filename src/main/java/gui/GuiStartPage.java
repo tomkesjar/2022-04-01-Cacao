@@ -143,7 +143,7 @@ public class GuiStartPage extends JFrame {
         messageLabel.setText(TEXTBOX_PREFIX + "Connected, waiting for others... " + TEXTBOX_SUFFIX);
         messageLabel.setBackground(new Color(0,0,0,0));
         messageLabel.paintImmediately(messageLabel.getVisibleRect());
-        System.out.println("[GuiStartPage]: messageLabel updated, state="  + messageLabel.getText());
+        //System.out.println("[GuiStartPage]: messageLabel updated, state="  + messageLabel.getText());
     }
 
     private void loadBackgroundImage() {
