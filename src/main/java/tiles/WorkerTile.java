@@ -44,11 +44,11 @@ public class WorkerTile extends AbstractTile {
     }
 
     public void turnRightWorkersNinetyDegrees() {
-        int temporaryValue = rightWorker;
-        rightWorker = downWorker;
-        downWorker = leftWorker;
-        leftWorker = upWorker;
-        upWorker = temporaryValue;
+        int temporaryValue = downWorker;
+        downWorker = rightWorker;
+        rightWorker = upWorker;
+        upWorker = leftWorker;
+        leftWorker = temporaryValue;
 
         this.tileEnum = TileEnum.valueOf(this.toShortString());
         numberOfRotation = (numberOfRotation + 1) % 4;
@@ -109,7 +109,7 @@ public class WorkerTile extends AbstractTile {
 
         for (Pair<Point, Integer> side : sidesAndWorkers) {
             if (game.isFieldValid(side.getKey().x, side.getKey().y)) {
-                System.out.println("[WorkerTile]: validation for x=" + side.getKey().x + ", y=" + side.getKey().y);
+                //System.out.println("[WorkerTile]: validation for x=" + side.getKey().x + ", y=" + side.getKey().y);
                 AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
                 if ((TileEnum.MARKET_LOW.equals(tile.getTileEnum()) || TileEnum.MARKET_MID.equals(tile.getTileEnum()) || TileEnum.MARKET_HIGH.equals(tile.getTileEnum()))) {
                     processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
