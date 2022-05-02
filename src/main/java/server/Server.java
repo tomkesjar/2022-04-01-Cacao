@@ -22,7 +22,7 @@ public class Server {
     private static final long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
     private static final int SO_TIMEOUT = 5;       //TODO to decide (millisec)
 
-    private static final int MAX_NUMBER_OF_PLAYERS = 2;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
+    private static final int MAX_NUMBER_OF_PLAYERS = 1;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
 
     private static List<ServerClientHandler> clients = new ArrayList<>();
     private static int poolSize = 4;

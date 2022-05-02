@@ -28,8 +28,8 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int OPACITY_LEVEL_HIGH = 85;
     private static final int OPACITY_LEVEL_LOW = 85;
 
-    private static final int TILES_MAX_HEIGHT = 50;
-    private static final int TILES_MAX_WIDTH = 50;
+    private static final int TILES_MAX_HEIGHT = 47;
+    private static final int TILES_MAX_WIDTH = 47;
 
     private static final int PANEL_MAX_WIDTH = 720;
     private static final int PANEL_MAX_HEIGHT = 800;
@@ -83,6 +83,7 @@ public class GuiBoard extends JFrame implements Runnable {
         this.selectableJunglePanelLink = new ArrayList<>();
         imageLoader.loadJungleImages();
         imageLoader.loadWorkerImages();
+        imageLoader.loadIconImages();
 
         selectedJungleTile = null;
         selectedWorkerTile = null;
@@ -112,13 +113,13 @@ public class GuiBoard extends JFrame implements Runnable {
         this.getContentPane().add(infoPanel, BorderLayout.NORTH);
 
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.EAST);
+        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 /*
         ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
         scrollPaneObject.add(boardPanel);
-        scrollPaneObject.setSize(PANEL_MAX_WIDTH, BOARD_PANEL_HEIGHT);
-        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL));
-        this.getContentPane().add(scrollPaneObject, BorderLayout.EAST);
+        scrollPaneObject.setSize(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT);
+        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
+        this.getContentPane().add(scrollPaneObject, BorderLayout.CENTER);
 */
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
@@ -168,14 +169,14 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.getContentPane().remove(0);
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.EAST);
+        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 /*
         //this.getContentPane().add(new JScrollPane(boardPanel), BorderLayout.EAST);
         ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
-        scrollPaneObject.setSize(PANEL_MAX_WIDTH, BOARD_PANEL_HEIGHT);
+        scrollPaneObject.setSize(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT);
         scrollPaneObject.add(boardPanel);
-        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL));
-        this.getContentPane().add(scrollPaneObject, BorderLayout.EAST);
+        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
+        this.getContentPane().add(scrollPaneObject, BorderLayout.CENTER);
 */
         this.getContentPane().remove(0);
         cardsPanel = generateTilesPanel(game, playerIndex);
@@ -233,54 +234,62 @@ public class GuiBoard extends JFrame implements Runnable {
         JPanel panel = new JPanel();
 
         JLabel playerName = new JLabel(player.getName());
+        playerName.setForeground(Color.WHITE);
         panel.add(playerName);
         playerPanelLink.get(player).put("name", playerName);
 
-        JLabel coinIcon = new JLabel("coin: "); //TODO: add coin icon
+        JLabel coinIcon = new JLabel(new ImageIcon((BufferedImage)imageLoader.getCoinIcon())); //TODO: add coin icon
         JLabel coinValue = new JLabel(String.valueOf(player.getCoins()));
+        coinValue.setForeground(Color.WHITE);
         panel.add(coinIcon);
         panel.add(coinValue);
         playerPanelLink.get(player).put("coinIcon", coinIcon);
         playerPanelLink.get(player).put("coinValue", coinValue);
 
-        JLabel beanIcon = new JLabel("bean: "); //TODO: add coin icon
+        JLabel beanIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getBeanIcon())); //TODO: add coin icon
         JLabel beanValue = new JLabel(String.valueOf(player.getNumberOfCacaoBean()) + "/5");      //TODO: add boxes instead of number + colourify boxes based on number
+        beanValue.setForeground(Color.WHITE);
         panel.add(beanIcon);
         panel.add(beanValue);
         playerPanelLink.get(player).put("beanIcon", beanIcon);
         playerPanelLink.get(player).put("beanValue", beanValue);
 
-        JLabel shrineIcon = new JLabel("shrine: "); //TODO: add coin icon
+        JLabel shrineIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getShrineIcon())); //TODO: add coin icon
         JLabel shrineValue = new JLabel(String.valueOf(player.getWorshipSymbol()) + "/" + String.valueOf(Game.getMaxNumberOfWorshipSites()));
+        shrineValue.setForeground(Color.WHITE);
         panel.add(shrineIcon);
         panel.add(shrineValue);
         playerPanelLink.get(player).put("shrineIcon", shrineIcon);
         playerPanelLink.get(player).put("shrineValue", shrineValue);
 
-        JLabel templeIcon = new JLabel("temple: "); //TODO: add coin icon
+        JLabel templeIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getTempleIcon())); //TODO: add coin icon
         JLabel templeValue = new JLabel(String.valueOf(player.getTemplePoint()));       //TODO: add boxes instead of number + colourify boxes based on number
+        templeValue.setForeground(Color.WHITE);
         panel.add(templeIcon);
         panel.add(templeValue);
         playerPanelLink.get(player).put("templeIcon", templeIcon);
         playerPanelLink.get(player).put("templeValue", templeValue);
 
-        JLabel waterIcon = new JLabel("water: "); //TODO: add coin icon
+        JLabel waterIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getWaterIcon())); //TODO: add coin icon
         String nextLevelMessage = (player.getWaterPointIndex() + 1) >= Game.getWaterPositionValueList().size() ? "Maxed" : Objects.toString(Game.getWaterPositionValue(player.getWaterPointIndex() + 1));
         JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()) + " (next level: " + nextLevelMessage + ")");      //TODO: add boxes instead of number + colourify boxes based on number
+        waterValue.setForeground(Color.WHITE);
         panel.add(waterIcon);
         panel.add(waterValue);
         playerPanelLink.get(player).put("waterIcon", waterIcon);
         playerPanelLink.get(player).put("waterValue", waterValue);
 
-        JLabel pointIcon = new JLabel("point: "); //TODO: add coin icon
+        JLabel pointIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getPointIcon())); //TODO: add coin icon
         JLabel pointValue = new JLabel(String.valueOf(player.getPoint()) + " + " + String.valueOf(player.getTemplePointBonus()));       //TODO: add boxes instead of number + colourify boxes based on number
+        pointValue.setForeground(Color.WHITE);
         panel.add(pointIcon);
         panel.add(pointValue);
         playerPanelLink.get(player).put("pointIcon", pointIcon);
         playerPanelLink.get(player).put("pointValue", pointValue);
 
-        JLabel rankIcon = new JLabel("rank: "); //TODO: add coin icon
+        JLabel rankIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getRankIcon())); //TODO: add coin icon
         JLabel rankValue = new JLabel(String.valueOf(player.getRank()));       //TODO: add boxes instead of number + colourify boxes based on number
+        rankValue.setForeground(Color.WHITE);
         panel.add(rankIcon);
         panel.add(rankValue);
         playerPanelLink.get(player).put("rankIcon", rankIcon);
@@ -499,10 +508,12 @@ public class GuiBoard extends JFrame implements Runnable {
                     selectedColour = Color.GRAY;
             }
 
-            c.fill = GridBagConstraints.VERTICAL;
+            c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx = 0;
             c.gridy = playerPanelLink.size() + index;
-            playerPanel.setBackground(selectedColour);
+            //playerPanel.setBackground(selectedColour);
+            playerPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_LOW));
+            playerPanel.setBorder(BorderFactory.createLineBorder(selectedColour, 2));
 
             infoPanel.add(playerPanel,c);
 
@@ -516,7 +527,7 @@ public class GuiBoard extends JFrame implements Runnable {
         GridBagConstraints c = new GridBagConstraints();
         String labelText = game.getPlayerList().get(game.getActivePlayer()).getName() + textMessage;
 
-        infoPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT*(game.getPlayerList().size()+1)));
+        infoPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT*(game.getPlayerList().size()+2)));
         infoPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
 
         messagePanel = new JLabel(labelText);
@@ -525,7 +536,7 @@ public class GuiBoard extends JFrame implements Runnable {
         messagePanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
         messagePanel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        c.fill = GridBagConstraints.VERTICAL;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
         infoPanel.add(messagePanel, c);
@@ -538,15 +549,13 @@ public class GuiBoard extends JFrame implements Runnable {
 
     private JPanel createBoardPanel(Board board) {
         JPanel result = new JPanel();
-        result.setLayout(new GridLayout(board.getHeight(), board.getWidth()));
+        result.setLayout(new CustomGridLayout(board.getHeight(), board.getWidth()));
 
         for (int y = 0; y < board.getHeight(); ++y) {
             boardTileButtonLink.add(new ArrayList<BoardTileButton>());
             for (int x = 0; x < board.getWidth(); ++x) {
                 BoardTileButton boardTileButton = new BoardTileButton(new Point(x, y), this);
                 boardTileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
-                boardTileButton.setMaximumSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
-                //boardTileButton.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
                 boardTileButtonLink.get(y).add(boardTileButton);
                 result.add(boardTileButton);
             }
@@ -740,4 +749,63 @@ public class GuiBoard extends JFrame implements Runnable {
     }
 
 
+    class CustomGridLayout extends GridLayout {
+        public CustomGridLayout(int rows, int cols) {
+            super(rows, cols);
+        }
+        public void layoutContainer(Container parent) {
+            synchronized (parent.getTreeLock()) {
+                Insets insets = parent.getInsets();
+                int ncomponents = parent.getComponentCount();
+                int nrows = getRows();
+                int ncols = getColumns();
+                boolean ltr = parent.getComponentOrientation().isLeftToRight();
+
+                if (ncomponents == 0) {
+                    return;
+                }
+                if (nrows > 0) {
+                    ncols = (ncomponents + nrows - 1) / nrows;
+                } else {
+                    nrows = (ncomponents + ncols - 1) / ncols;
+                }
+
+
+
+                int totalGapsWidth = (ncols - 1) * getHgap();
+                int widthWOInsets = parent.getWidth() - (insets.left + insets.right);
+                int widthOnComponent = (widthWOInsets - totalGapsWidth) / ncols;
+                int extraWidthAvailable = (widthWOInsets - (widthOnComponent * ncols + totalGapsWidth)) / 2;
+
+                int totalGapsHeight = (nrows - 1) * getVgap();
+                int heightWOInsets = parent.getHeight() - (insets.top + insets.bottom);
+                int heightOnComponent = (heightWOInsets - totalGapsHeight) / nrows;
+                int extraHeightAvailable = (heightWOInsets - (heightOnComponent * nrows + totalGapsHeight)) / 2;
+
+                int size=Math.min(widthOnComponent, heightOnComponent);
+                widthOnComponent=size;
+                heightOnComponent=size;
+                if (ltr) {
+                    for (int c = 0, x = insets.left + extraWidthAvailable; c < ncols ; c++, x += widthOnComponent + getHgap()) {
+                        for (int r = 0, y = insets.top + extraHeightAvailable; r < nrows ; r++, y += heightOnComponent + getVgap()) {
+                            int i = r * ncols + c;
+                            if (i < ncomponents) {
+                                parent.getComponent(i).setBounds(x, y, widthOnComponent, heightOnComponent);
+                            }
+                        }
+                    }
+                } else {
+                    for (int c = 0, x = (parent.getWidth() - insets.right - widthOnComponent) - extraWidthAvailable; c < ncols ; c++, x -= widthOnComponent + getHgap()) {
+                        for (int r = 0, y = insets.top + extraHeightAvailable; r < nrows ; r++, y += heightOnComponent + getVgap()) {
+                            int i = r * ncols + c;
+                            if (i < ncomponents) {
+                                parent.getComponent(i).setBounds(x, y, widthOnComponent, heightOnComponent);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
