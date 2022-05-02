@@ -112,7 +112,7 @@ public class ImageLoader {
             b3001 = getScaledImage(urlForB3001);
 
 
-/*
+
             URL urlForG111 = this.getClass().getResource("/icons/worker/dummy_g1111.png");
             g1111 = getScaledImage(urlForG111);
 
@@ -138,7 +138,7 @@ public class ImageLoader {
 
             URL urlForY3001 = this.getClass().getResource("/icons/worker/dummy_y3001.png");
             y3001 = getScaledImage(urlForY3001);
-*/
+
             //TODO SOS add remaining
 
         } catch (IOException e) {
