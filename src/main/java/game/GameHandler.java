@@ -77,7 +77,7 @@ public class GameHandler {
                     }
 
                     Optional<WorkerTile> optionalWorkerTile = activePlayer.getWorkerTileDeck().drawCard();
-                    if (optionalWorkerTile.isPresent() && activePlayer.getCardsAtHand().size() < 3) {
+                    if (optionalWorkerTile.isPresent() && activePlayer.getCardsAtHand().size() < Player.getMaxNumberOfCardsAtHand()) {
                         activePlayer.getCardsAtHand().add(optionalWorkerTile.get());
                     }
 
@@ -118,9 +118,7 @@ public class GameHandler {
 
                     game.getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
 
-                    //game.getBoard().getSelectableJunglePanelPositions().forEach(pos -> {
-  //                      System.out.println(pos.get + " : " + pos.getValue());
-//                    });
+
 
 
                     Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();      //TODO SOS CHECK!!!
@@ -128,7 +126,7 @@ public class GameHandler {
                         game.getJungleTilesAvailable().remove(matchingJungleTile.get());
                     }
                     Optional<JungleTile> drawnCard = game.getJungleTileDeck().drawCard();
-                    if (drawnCard.isPresent()) {
+                    if (drawnCard.isPresent() &&  game.getJungleTilesAvailable().size() < Game.getMaxNumberOfJungleTilesAvailable()) {
                         game.getJungleTilesAvailable().add(drawnCard.get());
                     }
                 } else {
@@ -147,13 +145,11 @@ public class GameHandler {
             System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
 
         }
+            //send rank
+        TilePlacementMessageResponse finalMessage = new TilePlacementMessageResponse(game, ResponseStatus.FINAL, "Game End)");
+            sendMessageToAll(finalMessage);
         //TODO: do something here SOS Pop up window ranking
-        System.out.println("[GameHandler]: ******************************************************************************");
-        System.out.println("[GameHandler]: ******************************************************************************");
         System.out.println("[GameHandler]: Game Ended");
-        System.out.println("[GameHandler]: ******************************************************************************");
-        System.out.println("[GameHandler]: ******************************************************************************");
-
     }
 
     private void sendStartingGameInstanceToPlayers() {

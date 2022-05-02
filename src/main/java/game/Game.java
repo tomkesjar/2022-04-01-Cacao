@@ -2,7 +2,8 @@ package game;
 
 import board.Board;
 import deck.JungleTileDeck;
-//import javafx.util.Pair;
+//import javafx.util.messages.Pair;
+import messages.Pair;
 import players.Player;
 import server.ServerClientHandler;
 import tiles.JungleTile;
@@ -82,7 +83,7 @@ public class Game implements Serializable {
     public boolean checkIfIsGameEnd() {
         //last player, runs out worker or jungle tile
         boolean isNoMoreJungleTile = false;
-        boolean isNoMoreWorkerTileForLastPlayer = false;
+        boolean isOnlyOneWorkerTileForLastPlayer = false;
 
         int activePlayerIndex = this.getActivePlayer();
         Player activePlayer = this.getPlayerList().get(activePlayerIndex);
@@ -91,11 +92,11 @@ public class Game implements Serializable {
         if (this.getJungleTileDeck().getDeck().size() == 0 && this.getJungleTilesAvailable().size() == 0) {
             isNoMoreJungleTile = true;
         }
-        if (activePlayer.getWorkerTileDeck().getDeck().size() == 0 && activePlayer.getCardsAtHand().size() == 0) {
-            isNoMoreWorkerTileForLastPlayer = true;
+        if (activePlayer.getWorkerTileDeck().getDeck().size() == 0 && activePlayer.getCardsAtHand().size() == 1) {
+            isOnlyOneWorkerTileForLastPlayer = true;
         }
 
-        return isNoMoreJungleTile || isNoMoreWorkerTileForLastPlayer;       //TODO: SOS: add 'or' between the two booleans
+        return isNoMoreJungleTile || isOnlyOneWorkerTileForLastPlayer;       //TODO: SOS: add 'or' between the two booleans
 
     }
 
@@ -279,5 +280,7 @@ public class Game implements Serializable {
 
         playerList.forEach(p -> System.out.println(p));
     }
+
+
 
 }

@@ -1,6 +1,7 @@
 package board;
 
-//import javafx.util.Pair;
+//import javafx.util.messages.Pair;
+import messages.Pair;
 import messages.TilePlacementMessageRequest;
 import tiles.*;
 
