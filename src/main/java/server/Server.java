@@ -19,7 +19,7 @@ public class Server {
     private static final int SERVER_PORT = 5555;
     private static int PLAYER_COUNTER = 0;
     private static LocalTime START_TIME;
-    private static final long WAIT_TIME_IN_SECOND = 120;       //TODO to decide
+    private static final long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
     private static final int SO_TIMEOUT = 5;       //TODO to decide (millisec)
 
     private static final int MAX_NUMBER_OF_PLAYERS = 2;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>

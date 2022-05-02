@@ -99,16 +99,16 @@ public class JungleTileDeck implements Serializable {
 
     public void twoPlayersSetup() {
         //currently dummy
-        createTiles(4, TileEnum.PLANTATION_1);
+        createTiles(4, TileEnum.PLANTATION_1);  //-2
         createTiles(2, TileEnum.PLANTATION_2);
         createTiles(2, TileEnum.MARKET_LOW);
-        createTiles(3, TileEnum.MARKET_MID);
+        createTiles(3, TileEnum.MARKET_MID);    //-1
         createTiles(1, TileEnum.MARKET_HIGH);
-        createTiles(1, TileEnum.MINE_1);
+        createTiles(1, TileEnum.MINE_1);        //-1
         createTiles(1, TileEnum.MINE_2);
-        createTiles(2, TileEnum.WATER);
-        createTiles(3, TileEnum.TEMPLE);
-        createTiles(1, TileEnum.WORSHIP_SITE);
+        createTiles(2, TileEnum.WATER);         //-1
+        createTiles(3, TileEnum.TEMPLE);        //-2
+        createTiles(1, TileEnum.WORSHIP_SITE);  //-1
         shuffleDeck();
     }
 

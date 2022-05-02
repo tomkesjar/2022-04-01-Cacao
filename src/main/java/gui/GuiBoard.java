@@ -7,12 +7,13 @@ import messages.TilePlacementMessageResponse;
 import players.Player;
 import tiles.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.time.LocalTime;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,18 +23,23 @@ public class GuiBoard extends JFrame implements Runnable {
     private ClientConnection connection;
     private ImageLoader imageLoader;
 
-    private static final int TILES_MAX_HEIGHT = 60;
-    private static final int TILES_MAX_WIDTH = 60;
+    private Image backgroundImage = null;
+    private static final String FILE_NAME = "/background/jungleBackground.png";
+    private static final int OPACITY_LEVEL_HIGH = 85;
+    private static final int OPACITY_LEVEL_LOW = 85;
 
-    private static final int PANEL_MAX_WIDTH = 860;
-    private static final int PANEL_MAX_HEIGHT = 900;
+    private static final int TILES_MAX_HEIGHT = 50;
+    private static final int TILES_MAX_WIDTH = 50;
 
-    private static final int INFOPANEL_HEIGHT = 30;
+    private static final int PANEL_MAX_WIDTH = 720;
+    private static final int PANEL_MAX_HEIGHT = 800;
 
-    private static final int BOARD_HORIZONTAL_GAP = 20;
-    private static final int BOARD_VERTICAL_GAP = 20;
+    private static final int INFOPANEL_UNIT_HEIGHT = 16;
 
-    private static final int FONT_SIZE = 10;
+    private static final int BOARD_HORIZONTAL_GAP = 0;
+    private static final int BOARD_VERTICAL_GAP = 0;
+
+    private static final int FONT_SIZE = 12;
 
     private static final String TEXTBOX_PREFIX = "<html><p>";
     private static final String TEXTBOX_SUFFIX = "</p></html>";
@@ -52,6 +58,8 @@ public class GuiBoard extends JFrame implements Runnable {
     private JPanel boardPanel;
     private JPanel cardsPanel;
 
+    private JPanel contentPane;
+
 
     private Map<Player, Map<String, JLabel>> playerPanelLink;
     private List<List<BoardTileButton>> boardTileButtonLink;
@@ -63,6 +71,10 @@ public class GuiBoard extends JFrame implements Runnable {
 
     public GuiBoard(ClientConnection connection, Game game, int playerIndex) {
         super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
+        this.setResizable(false);
+
+        loadBackgroundImage();
+
         this.connection = connection;
         this.game = game;
         this.playerIndex = playerIndex;
@@ -80,7 +92,16 @@ public class GuiBoard extends JFrame implements Runnable {
         playerPanelLink = new HashMap<>();
         boardTileButtonLink = new ArrayList<>();
 
-        //this.setTitle("Cacao Board Game");
+        contentPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
+            }
+        };
+
+        contentPane.setLayout(new GridBagLayout());
+        this.setContentPane(contentPane);
+
         this.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,7 +113,13 @@ public class GuiBoard extends JFrame implements Runnable {
 
         boardPanel = createBoardPanel(game.getBoard());
         this.getContentPane().add(boardPanel, BorderLayout.EAST);
-
+/*
+        ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrollPaneObject.add(boardPanel);
+        scrollPaneObject.setSize(PANEL_MAX_WIDTH, BOARD_PANEL_HEIGHT);
+        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        this.getContentPane().add(scrollPaneObject, BorderLayout.EAST);
+*/
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
@@ -141,8 +168,15 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.getContentPane().remove(0);
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
-
+        this.getContentPane().add(boardPanel, BorderLayout.EAST);
+/*
+        //this.getContentPane().add(new JScrollPane(boardPanel), BorderLayout.EAST);
+        ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+        scrollPaneObject.setSize(PANEL_MAX_WIDTH, BOARD_PANEL_HEIGHT);
+        scrollPaneObject.add(boardPanel);
+        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        this.getContentPane().add(scrollPaneObject, BorderLayout.EAST);
+*/
         this.getContentPane().remove(0);
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
@@ -413,22 +447,40 @@ public class GuiBoard extends JFrame implements Runnable {
             this.setVisible(true);
             this.setFocusable(true);
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        try {
+
+            TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getConnection().getObjectInputStream().readUnshared();
+            this.game = response.getGame();
+
+            GuiEndGameResult guiEndGameResult = new GuiEndGameResult(game);
+
+            guiEndGameResult.setVisible(true);
+            guiEndGameResult.setFocusable(true);
+            guiEndGameResult.requestFocusInWindow();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    private JPanel generateAllPlayersPanel(Game game) {
-        JPanel allPlayersPanel = new JPanel();
-        allPlayersPanel.setLayout(new BoxLayout(allPlayersPanel, BoxLayout.Y_AXIS));
-
+    private void generateAllPlayersPanel(Game game, JPanel infoPanel, int index, GridBagConstraints c) {
+        //JPanel allPlayersPanel = new JPanel();
+        //allPlayersPanel.setLayout(new BoxLayout(allPlayersPanel, BoxLayout.Y_AXIS));
+        playerPanelLink.clear();
         for (Player player : game.getPlayerList()) {
             playerPanelLink.put(player, new HashMap<>());
             JPanel playerPanel = generatePlayerPanel(player);
-            playerPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_HEIGHT));
+            playerPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
 
+            System.out.println("[GuiBoard]: playerPanel width: panel max=" + PANEL_MAX_WIDTH + "  screen width="+this.getSize().width);
+            //this.getBounds().;
             Color selectedColour;
             switch (game.getPlayerList().indexOf(player)) {
                 case 0:
@@ -447,26 +499,39 @@ public class GuiBoard extends JFrame implements Runnable {
                     selectedColour = Color.GRAY;
             }
 
+            c.fill = GridBagConstraints.VERTICAL;
+            c.gridx = 0;
+            c.gridy = playerPanelLink.size() + index;
             playerPanel.setBackground(selectedColour);
-            allPlayersPanel.add(playerPanel);
+
+            infoPanel.add(playerPanel,c);
+
+            //allPlayersPanel.add(playerPanel);
         }
-        return allPlayersPanel;
     }
 
     private JPanel generateInfoPanel(Game game, String textMessage) {
-        //if (Objects.nonNull(infoPanel) && infoPanel.getComponents().length >0) infoPanel.removeAll();
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
-        String labelText = game.getPlayerList().get(game.getActivePlayer()).getName() + ": " + textMessage;
+        infoPanel.setLayout( new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        String labelText = game.getPlayerList().get(game.getActivePlayer()).getName() + textMessage;
+
+        infoPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT*(game.getPlayerList().size()+1)));
+        infoPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
 
         messagePanel = new JLabel(labelText);
-        messagePanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_HEIGHT));
+        messagePanel.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
+        messagePanel.setForeground(Color.LIGHT_GRAY);
+        messagePanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
         messagePanel.setHorizontalAlignment(SwingConstants.CENTER);
-        infoPanel.add(messagePanel, BorderLayout.NORTH);
 
-        JPanel allPlayersPanel = generateAllPlayersPanel(game);
+        c.fill = GridBagConstraints.VERTICAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        infoPanel.add(messagePanel, c);
 
-        infoPanel.add(allPlayersPanel, BorderLayout.CENTER);
+        generateAllPlayersPanel(game, infoPanel, 1, c);
+
         return infoPanel;
     }
 
@@ -480,13 +545,14 @@ public class GuiBoard extends JFrame implements Runnable {
             for (int x = 0; x < board.getWidth(); ++x) {
                 BoardTileButton boardTileButton = new BoardTileButton(new Point(x, y), this);
                 boardTileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
-                boardTileButton.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
-                //boardTileButton.setMaximumSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
+                boardTileButton.setMaximumSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
+                //boardTileButton.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
                 boardTileButtonLink.get(y).add(boardTileButton);
                 result.add(boardTileButton);
             }
         }
 
+        result.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
         return result;
     }
 
@@ -514,21 +580,23 @@ public class GuiBoard extends JFrame implements Runnable {
         if (remainingJungleDeckSize < 2) {
             remainingJungleTileNumberLabel.setForeground(Color.RED);
         } else {
-            remainingJungleTileNumberLabel.setForeground(Color.GRAY);
+            remainingJungleTileNumberLabel.setForeground(Color.LIGHT_GRAY);
         }
 
         TitledBorder jungleLabelTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Deck");
+        jungleLabelTitle.setTitleColor(Color.LIGHT_GRAY);
         jungleLabelTitle.setTitleJustification(TitledBorder.CENTER);
         remainingJungleTileNumberLabel.setBorder(jungleLabelTitle);
 
         jungleTilesPanel.add(remainingJungleTileNumberLabel);
 
         TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Jungle Tiles");
+        title.setTitleColor(Color.LIGHT_GRAY);
         title.setTitleJustification(TitledBorder.LEFT);
         jungleTilesPanel.setBorder(title);
+        jungleTilesPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
 
         //add workerTiles
-        //TODO: SOS selection based on guiBoard status?
         workerCardsPanelLink = new ArrayList<>();
         JPanel workerTilesPanel = new JPanel();
         Player currentPlayer = game.getPlayerList().get(playerIndex);
@@ -547,19 +615,23 @@ public class GuiBoard extends JFrame implements Runnable {
         if (remainingWorkerDeckSize < 2) {
             remainingWorkerTileNumberLabel.setForeground(Color.RED);
         } else {
-            remainingWorkerTileNumberLabel.setForeground(Color.GRAY);
+            remainingWorkerTileNumberLabel.setForeground(Color.LIGHT_GRAY);
         }
         TitledBorder workerLabelTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Deck");
+        workerLabelTitle.setTitleColor(Color.LIGHT_GRAY);
         workerLabelTitle.setTitleJustification(TitledBorder.CENTER);
         remainingWorkerTileNumberLabel.setBorder(workerLabelTitle);
         workerTilesPanel.add(remainingWorkerTileNumberLabel);
 
         TitledBorder workerTitle = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Worker Tiles");
+        workerTitle.setTitleColor(Color.LIGHT_GRAY);
         workerTitle.setTitleJustification(TitledBorder.LEFT);
         workerTilesPanel.setBorder(workerTitle);
+        workerTilesPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
 
         tilesPanel.add(jungleTilesPanel);
         tilesPanel.add(workerTilesPanel);
+        tilesPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
 
         return tilesPanel;
     }
@@ -656,4 +728,16 @@ public class GuiBoard extends JFrame implements Runnable {
     public void setSelectableWorkerPanelLink(List<BoardTileButton> selectableWorkerPanelLink) {
         this.selectableWorkerPanelLink = selectableWorkerPanelLink;
     }
+
+    private void loadBackgroundImage() {
+        URL url = this.getClass().getResource(FILE_NAME);
+
+        try {
+            backgroundImage = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
