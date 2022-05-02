@@ -178,7 +178,7 @@ public class ImageLoader {
             templeIcon = getScaledImage(urlForTempleIcon, ImageTypes.ICON);
 
 
-            URL urlForPointIcon = this.getClass().getResource("/icons/playerPanel/point.png");
+            URL urlForPointIcon = this.getClass().getResource("/icons/playerPanel/sum.png");
             pointIcon = getScaledImage(urlForPointIcon, ImageTypes.ICON);
 
             URL urlForRankIcon = this.getClass().getResource("/icons/playerPanel/rank.png");
