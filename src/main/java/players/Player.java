@@ -78,8 +78,25 @@ public class Player implements Serializable {
                 cardsAtHand.add(drawnCard.get());
             }
         }
+    }
 
+    public Player(PlayerBuilder builder){
+        this.name = builder.getName();
+        this.rank = builder.getRank();
+        this.playerColour = builder.getPlayerColour();
+        this.numberOfCacaoBean = builder.getNumberOfCacaoBean();
+        this.coins = builder.getCoins();
+        this.waterPointIndex = builder.getWaterPointIndex();
+        this.waterPoint = builder.getWaterPoint();
+        this.point = builder.getPoint();
+        this.workerTileDeck = builder.getWorkerTileDeck();
+        this.cardsAtHand = builder.getCardsAtHand();
+        this.templePoint = builder.getTemplePoint();
+        this.templePointBonus = builder.getTemplePointBonus();
+    }
 
+    public static int getMaxNumberOfCardsAtHand() {
+        return MAX_NUMBER_OF_CARDS_AT_HAND;
     }
 
     public PlayerColour getPlayerColour() {
@@ -194,7 +211,166 @@ public class Player implements Serializable {
             return true;
         }
         return false;
+    }
 
 
+    public static class PlayerBuilder {
+        private PlayerColour playerColour;
+        private String name;
+        private int numberOfCacaoBean;
+        private int coins;
+        private int waterPointIndex;
+        private int waterPoint;
+        private int worshipSymbol;
+        private WorkerTileDeck workerTileDeck;
+        private List<WorkerTile> cardsAtHand;
+        private int templePoint;
+        private int templePointBonus;
+        private int point;
+        private int rank;
+
+        public PlayerBuilder() {
+        }
+
+        public PlayerBuilder(Player player) {
+            PlayerBuilder builder = new PlayerBuilder();
+            builder
+                    .setPlayerColour(player.getPlayerColour())
+                    .setName(player.getName())
+                    .setNumberOfCacaoBean(player.getNumberOfCacaoBean())
+                    .setCoins(player.getCoins())
+                    .setWaterPointIndex(player.getWaterPointIndex())
+                    .setWaterPoint(player.getWaterPoint())
+                    .setWorshipSymbol(player.getWorshipSymbol())
+                    .setWorkerTileDeck(player.getWorkerTileDeck())
+                    .setCardsAtHand(player.getCardsAtHand())
+                    .setTemplePoint(player.getTemplePoint())
+                    .setTemplePointBonus(player.getTemplePointBonus())
+                    .setPoint(player.getPoint())
+                    .setRank(player.getRank());
+        }
+
+
+        public PlayerColour getPlayerColour() {
+            return playerColour;
+        }
+
+        public PlayerBuilder setPlayerColour(PlayerColour playerColour) {
+            this.playerColour = playerColour;
+            return this;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public PlayerBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public int getNumberOfCacaoBean() {
+            return numberOfCacaoBean;
+        }
+
+        public PlayerBuilder setNumberOfCacaoBean(int numberOfCacaoBean) {
+            this.numberOfCacaoBean = numberOfCacaoBean;
+            return this;
+        }
+
+        public int getCoins() {
+            return coins;
+        }
+
+        public PlayerBuilder setCoins(int coins) {
+            this.coins = coins;
+            return this;
+        }
+
+        public int getWaterPointIndex() {
+            return waterPointIndex;
+        }
+
+        public PlayerBuilder setWaterPointIndex(int waterPointIndex) {
+            this.waterPointIndex = waterPointIndex;
+            return this;
+        }
+
+        public int getWaterPoint() {
+            return waterPoint;
+        }
+
+        public PlayerBuilder setWaterPoint(int waterPoint) {
+            this.waterPoint = waterPoint;
+            return this;
+        }
+
+        public int getWorshipSymbol() {
+            return worshipSymbol;
+        }
+
+        public PlayerBuilder setWorshipSymbol(int worshipSymbol) {
+            this.worshipSymbol = worshipSymbol;
+            return this;
+        }
+
+        public WorkerTileDeck getWorkerTileDeck() {
+            return workerTileDeck;
+        }
+
+        public PlayerBuilder setWorkerTileDeck(WorkerTileDeck workerTileDeck) {
+            this.workerTileDeck = workerTileDeck;
+            return this;
+        }
+
+        public List<WorkerTile> getCardsAtHand() {
+            return cardsAtHand;
+        }
+
+        public PlayerBuilder setCardsAtHand(List<WorkerTile> cardsAtHand) {
+            this.cardsAtHand = cardsAtHand;
+            return this;
+        }
+
+        public int getTemplePoint() {
+            return templePoint;
+        }
+
+        public PlayerBuilder setTemplePoint(int templePoint) {
+            this.templePoint = templePoint;
+            return this;
+        }
+
+        public int getTemplePointBonus() {
+            return templePointBonus;
+        }
+
+        public PlayerBuilder setTemplePointBonus(int templePointBonus) {
+            this.templePointBonus = templePointBonus;
+            return this;
+        }
+
+        public int getPoint() {
+            return point;
+        }
+
+        public PlayerBuilder setPoint(int point) {
+            this.point = point;
+            return this;
+        }
+
+        public int getRank() {
+            return rank;
+        }
+
+        public PlayerBuilder setRank(int rank) {
+            this.rank = rank;
+            return this;
+        }
+
+        public Player build(){
+            Player newPlayer = new Player(this);
+            return newPlayer;
+        }
     }
 }
