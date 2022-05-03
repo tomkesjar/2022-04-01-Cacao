@@ -31,7 +31,7 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int TILES_MAX_HEIGHT = 47;
     private static final int TILES_MAX_WIDTH = 47;
 
-    private static final int PANEL_MAX_WIDTH = 720;
+    private static final int PANEL_MAX_WIDTH = 900;
     private static final int PANEL_MAX_HEIGHT = 800;
 
     private static final int INFOPANEL_UNIT_HEIGHT = 16;
@@ -39,7 +39,8 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int BOARD_HORIZONTAL_GAP = 0;
     private static final int BOARD_VERTICAL_GAP = 0;
 
-    private static final int FONT_SIZE = 12;
+    private static final int FONT_SIZE = 10;
+    private static final int MESSAGE_PANEL_FONT_SIZE = 16;
 
     private static final String TEXTBOX_PREFIX = "<html><p>";
     private static final String TEXTBOX_SUFFIX = "</p></html>";
@@ -237,14 +238,6 @@ public class GuiBoard extends JFrame implements Runnable {
         playerName.setForeground(Color.WHITE);
         panel.add(playerName);
         playerPanelLink.get(player).put("name", playerName);
-
-        JLabel coinIcon = new JLabel(new ImageIcon((BufferedImage)imageLoader.getCoinIcon())); //TODO: add coin icon
-        JLabel coinValue = new JLabel(String.valueOf(player.getCoins()));
-        coinValue.setForeground(Color.WHITE);
-        panel.add(coinIcon);
-        panel.add(coinValue);
-        playerPanelLink.get(player).put("coinIcon", coinIcon);
-        playerPanelLink.get(player).put("coinValue", coinValue);
 
         JLabel beanIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getBeanIcon())); //TODO: add coin icon
         JLabel beanValue = new JLabel(String.valueOf(player.getNumberOfCacaoBean()) + "/5");      //TODO: add boxes instead of number + colourify boxes based on number
@@ -480,8 +473,6 @@ public class GuiBoard extends JFrame implements Runnable {
     }
 
     private void generateAllPlayersPanel(Game game, JPanel infoPanel, int index, GridBagConstraints c) {
-        //JPanel allPlayersPanel = new JPanel();
-        //allPlayersPanel.setLayout(new BoxLayout(allPlayersPanel, BoxLayout.Y_AXIS));
         playerPanelLink.clear();
         for (Player player : game.getPlayerList()) {
             playerPanelLink.put(player, new HashMap<>());
@@ -489,7 +480,6 @@ public class GuiBoard extends JFrame implements Runnable {
             playerPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
 
             System.out.println("[GuiBoard]: playerPanel width: panel max=" + PANEL_MAX_WIDTH + "  screen width="+this.getSize().width);
-            //this.getBounds().;
             Color selectedColour;
             switch (game.getPlayerList().indexOf(player)) {
                 case 0:
@@ -509,15 +499,13 @@ public class GuiBoard extends JFrame implements Runnable {
             }
 
             c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx = 0;
-            c.gridy = playerPanelLink.size() + index;
-            //playerPanel.setBackground(selectedColour);
+            c.gridx = game.getPlayerList().indexOf(player) % 2 == 1 ? 1 : 0;
+            c.gridwidth = 1;
+            c.gridy = game.getPlayerList().indexOf(player) > 1 ? 2 : 1;
             playerPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_LOW));
             playerPanel.setBorder(BorderFactory.createLineBorder(selectedColour, 2));
 
             infoPanel.add(playerPanel,c);
-
-            //allPlayersPanel.add(playerPanel);
         }
     }
 
@@ -531,7 +519,7 @@ public class GuiBoard extends JFrame implements Runnable {
         infoPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_HIGH));
 
         messagePanel = new JLabel(labelText);
-        messagePanel.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
+        messagePanel.setFont(new java.awt.Font("Calibri", 1, MESSAGE_PANEL_FONT_SIZE));
         messagePanel.setForeground(Color.LIGHT_GRAY);
         messagePanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
         messagePanel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -539,6 +527,7 @@ public class GuiBoard extends JFrame implements Runnable {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
+        c.gridwidth = 2;
         infoPanel.add(messagePanel, c);
 
         generateAllPlayersPanel(game, infoPanel, 1, c);
