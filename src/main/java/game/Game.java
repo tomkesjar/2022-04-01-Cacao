@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class Game implements Serializable {
     private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 1;
-    private static final int MAX_NUMBER_OF_PLAYERS = 4;      //TODO <link with Server's MAX_PLAYER_NUMBER field>
+    private static final int MAX_NUMBER_OF_PLAYERS = 2;      //TODO <link with Server's MAX_PLAYER_NUMBER field>
 
     private static final int MAX_NUMBER_OF_CACAO_BEANS = 5;
     private static final int MAX_NUMBER_OF_WORSHIP_SITES = 3;

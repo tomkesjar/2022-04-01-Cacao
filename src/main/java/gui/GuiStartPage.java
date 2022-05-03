@@ -56,14 +56,15 @@ public class GuiStartPage extends JFrame {
 
         messagePanel = new JPanel();
         messagePanel.setBackground(new Color(0,0,0,0));
-        //messagePanel.setBackground(Color.BLACK);
-        //messageLabel = new JLabel(TEXTBOX_PREFIX+ "Welcome to Cacao Board Game" + TEXTBOX_SUFFIX, SwingConstants.CENTER);
+        messagePanel.setOpaque(false);
         messageLabel = new JLabel();
         messageLabel.setPreferredSize(new Dimension(TEXTBOX_WIDTH, TEXTBOX_HEIGHT));
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         messageLabel.setVerticalAlignment(SwingConstants.CENTER);
         messageLabel.setFont(new Font("Serif", Font.BOLD, 20));
         messageLabel.setForeground(Color.WHITE);
+        messageLabel.setBackground(new Color(0,0,0,0));
+        messageLabel.setOpaque(false);
         messagePanel.add(messageLabel);
 
         newGamePanel = new JPanel();

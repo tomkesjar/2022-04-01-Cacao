@@ -28,8 +28,8 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int OPACITY_LEVEL_HIGH = 85;
     private static final int OPACITY_LEVEL_LOW = 85;
 
-    private static final int TILES_MAX_HEIGHT = 47;
-    private static final int TILES_MAX_WIDTH = 47;
+    private static final int TILES_MAX_HEIGHT = 55;
+    private static final int TILES_MAX_WIDTH = 55;
 
     private static final int PANEL_MAX_WIDTH = 900;
     private static final int PANEL_MAX_HEIGHT = 800;
@@ -114,7 +114,7 @@ public class GuiBoard extends JFrame implements Runnable {
         this.getContentPane().add(infoPanel, BorderLayout.NORTH);
 
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
+        this.getContentPane().add(boardPanel, BorderLayout.EAST);
 /*
         ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
         scrollPaneObject.add(boardPanel);
@@ -138,8 +138,16 @@ public class GuiBoard extends JFrame implements Runnable {
 
         boardTileButtonLink.forEach(tileColumn -> {
             tileColumn.forEach(tile -> {
-                ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
-                tile.setIcon(icon);
+                if (tile.getTile().getTileEnum() != TileEnum.EMPTY){
+                    ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
+                    tile.setIcon(icon);
+                }else {
+                    tile.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
+                    tile.setOpaque(false);
+                    tile.setContentAreaFilled(false);
+                    //tile.setBorderPainted(false);
+
+                }
             });
         });
 
@@ -148,7 +156,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.pack();    //ez rakja egybe
         this.setVisible(true);
-        this.setFocusable(true);
+        //this.setFocusable(true);
         this.requestFocusInWindow();
     }
 
@@ -170,7 +178,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.getContentPane().remove(0);
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
+        this.getContentPane().add(boardPanel, BorderLayout.EAST);
 /*
         //this.getContentPane().add(new JScrollPane(boardPanel), BorderLayout.EAST);
         ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
@@ -195,8 +203,15 @@ public class GuiBoard extends JFrame implements Runnable {
 
         boardTileButtonLink.forEach(tileColumn -> {
             tileColumn.forEach(tile -> {
-                ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
-                tile.setIcon(icon);
+                if (tile.getTile().getTileEnum() != TileEnum.EMPTY){
+                    ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
+                    tile.setIcon(icon);
+                }else {
+                    tile.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
+                    tile.setOpaque(false);
+                    tile.setContentAreaFilled(false);
+                    //tile.setBorderPainted(false);
+                }
             });
         });
 
@@ -439,7 +454,7 @@ public class GuiBoard extends JFrame implements Runnable {
                     this.updateGuiBoard(game, response.getTextMessage());
 
                     this.setVisible(true);
-                    this.setFocusable(true);
+                    //this.setFocusable(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
@@ -447,7 +462,7 @@ public class GuiBoard extends JFrame implements Runnable {
                 }
             }
             this.setVisible(true);
-            this.setFocusable(true);
+            //this.setFocusable(true);
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
@@ -539,6 +554,8 @@ public class GuiBoard extends JFrame implements Runnable {
     private JPanel createBoardPanel(Board board) {
         JPanel result = new JPanel();
         result.setLayout(new CustomGridLayout(board.getHeight(), board.getWidth()));
+        result.setBackground(new Color(0,0,0,0));
+        result.setOpaque(false);
 
         for (int y = 0; y < board.getHeight(); ++y) {
             boardTileButtonLink.add(new ArrayList<BoardTileButton>());
