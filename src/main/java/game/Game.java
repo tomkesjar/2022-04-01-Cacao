@@ -220,6 +220,14 @@ public class Game implements Serializable {
         return MAX_NUMBER_OF_WORSHIP_SITES;
     }
 
+    public boolean isGameEnded() {
+        return isGameEnded;
+    }
+
+    public void setGameEnded(boolean gameEnded) {
+        isGameEnded = gameEnded;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

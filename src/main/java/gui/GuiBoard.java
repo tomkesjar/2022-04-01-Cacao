@@ -3,6 +3,7 @@ package gui;
 import board.Board;
 import connection.ClientConnection;
 import game.Game;
+import messages.ResponseStatus;
 import messages.TilePlacementMessageResponse;
 import players.Player;
 import tiles.*;
@@ -468,10 +469,13 @@ public class GuiBoard extends JFrame implements Runnable {
 
     @Override
     public void run() {
-        while (!game.checkIfIsGameEnd()) {
+        ResponseStatus messageStatus = null;
+
+        while (!game.isGameEnded() && !(ResponseStatus.FINAL == messageStatus)) {
             while (game.getActivePlayer() != this.getPlayerIndex()) {
                 try {
                     TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
+                    messageStatus = response.getStatus();
                     this.game = response.getGame();
                     System.out.println("[GuiBoard]: void run: updated game.activePlayer=" + game.getActivePlayer());
                     this.updateGuiBoard(game, response.getTextMessage());
@@ -484,11 +488,13 @@ public class GuiBoard extends JFrame implements Runnable {
                     e.printStackTrace();
                 }
             }
+
+            //own turn, simple waiting
             this.setVisible(true);
             //this.setFocusable(true);
             try {
                 System.out.println("[GuiBoard]: void Sleep: current game.activePlayer=" + game.getActivePlayer());
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -500,6 +506,7 @@ public class GuiBoard extends JFrame implements Runnable {
             this.game = response.getGame();
 
             GuiEndGameResult guiEndGameResult = new GuiEndGameResult(game);
+            System.out.println("[GuiBoard]: guiEndGameResult created");
 
             guiEndGameResult.setVisible(true);
             guiEndGameResult.setFocusable(true);

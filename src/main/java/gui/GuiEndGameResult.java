@@ -56,7 +56,7 @@ public class GuiEndGameResult extends JFrame {
         headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         headerLabel.setVerticalAlignment(SwingConstants.CENTER);
         headerLabel.setFont(new Font("Serif", Font.BOLD, HEADER_FONT_SIZE));
-        headerLabel.setForeground(Color.WHITE);
+        headerLabel.setForeground(Color.BLACK);
         headerPanel.setBackground(new Color(223, 218, 0));
         headerPanel.add(headerLabel);
 
@@ -112,14 +112,16 @@ public class GuiEndGameResult extends JFrame {
         playerPanel.add(rankLabel);
         playerPanel.add(playerNameLabel);
         playerPanel.add(pointLabel);
-        playerPanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        playerPanel.setBackground(new Color(Color.DARK_GRAY.getRed(),Color.DARK_GRAY.getGreen(),Color.DARK_GRAY.getBlue(),Color.DARK_GRAY.getAlpha()-50));
+        //playerPanel.setBackground(Color.DARK_GRAY);
 
         return playerPanel;
     }
 
     private JLabel createLabel(String text, int orientation, int width){
         JLabel result = new JLabel(text);
-        result.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        result.setBackground(new Color(0,0,0,0));
+        result.setOpaque(false);
         result.setPreferredSize(new Dimension(width, RANK_AND_POINT_HEIGHT));
         result.setHorizontalAlignment(orientation);
         result.setVerticalAlignment(SwingConstants.CENTER);

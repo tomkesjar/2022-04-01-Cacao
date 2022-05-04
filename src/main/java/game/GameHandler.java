@@ -39,7 +39,7 @@ public class GameHandler {
 
 
         //while (!game.checkIfIsGameEnd()) {
-        while (!game.checkIfIsGameEnd()) {
+        while (!game.isGameEnded()) {
             System.out.println("[GameHandler]: starting the loop, checkIfIsGameEnd=" +game.checkIfIsGameEnd());
 
             System.out.println("[GameHandler]: Moving to WorkerTile placement for player=" +game.getActivePlayer());
@@ -136,16 +136,29 @@ public class GameHandler {
                 }
             }
 
-            System.out.println("[GameHandler]: values Before switch, activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
-            switchPlayer();
-            System.out.println("[GameHandler]: =================================================================SWITCH=");
-            System.out.println("[GameHandler]: values After switched player, activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
 
-            TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "'s turn, first select and place worker tile (Other players are inactive)");
+
+
+            System.out.println("[GameHandler]: values Before switch, isGameEnded=" + game.isGameEnded() + ", activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
+
+            switchPlayer();
+            game.setGameEnded(game.checkIfIsGameEnd());
+            ResponseStatus messageStatus = game.isGameEnded() ? ResponseStatus.FINAL : ResponseStatus.SUCCESSFUL;
+
+            System.out.println("[GameHandler]: =================================================================SWITCH=");
+            System.out.println("[GameHandler]: values After switched player, isGameEnded=" + game.isGameEnded() + ", activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
+
+            TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, messageStatus, "'s turn, first select and place worker tile (Other players are inactive)");
             sendMessageToAll(response);
             System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
-
         }
+
+
+
+
+
+
+
         //TODO
             //send rank
         TilePlacementMessageResponse finalMessage = new TilePlacementMessageResponse(game, ResponseStatus.FINAL, "Game End)");
