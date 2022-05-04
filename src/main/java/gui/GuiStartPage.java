@@ -32,6 +32,7 @@ public class GuiStartPage extends JFrame {
     private JPanel messagePanel;
     private JPanel dummyPanel;
     private JPanel newGamePanel;
+    private JPanel newGameWithBotsPanel;
     private JPanel exitPanel;
     private JPanel contentPane;
 
@@ -54,7 +55,7 @@ public class GuiStartPage extends JFrame {
 
         dummyPanel = new JPanel();
         dummyPanel.setBackground(new Color(0,0,0,0));
-        dummyPanel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT*10));  //set vertical alignment
+        dummyPanel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT*9));  //set vertical alignment
 
 
         messagePanel = new JPanel();
@@ -81,6 +82,29 @@ public class GuiStartPage extends JFrame {
             requestConnection();
         });
         newGamePanel.add(connectBtn);
+
+        newGameWithBotsPanel = new JPanel();
+        newGameWithBotsPanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        JButton playWithBots = new JButton("Play with bots");
+        playWithBots.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
+        playWithBots.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
+        playWithBots.setBackground(new Color(255, 204, 0));
+        playWithBots.addActionListener((ActionEvent ae) -> {
+            startSinglePlayerMode();
+        });
+        newGameWithBotsPanel.add(playWithBots);
+/*
+        JButton playWithBots2 = new JButton("Play wit bots");
+        playWithBots2.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
+        playWithBots2.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
+        playWithBots2.setBackground(new Color(255, 204, 0));
+        playWithBots2.addActionListener((ActionEvent ae) -> {
+            updateMessagePanelState();
+            requestConnection();
+        });
+        newGameWithBotsPanel.add(playWithBots2);
+*/
+
 
         exitPanel = new JPanel();
         exitPanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
@@ -130,6 +154,11 @@ public class GuiStartPage extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 4;
+        contentPane.add(newGameWithBotsPanel, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 5;
         contentPane.add(exitPanel, c);
 
         setContentPane(contentPane);
@@ -141,6 +170,16 @@ public class GuiStartPage extends JFrame {
         this.setVisible(true);
         this.setFocusable(true);
         this.requestFocusInWindow();
+    }
+
+    private void startSinglePlayerMode() {
+        //create new game
+        //GameHandlerMulti gameHandlerMulti = new GameHandlerMulti();
+        //Game newGame = new Game();
+        //add 3 bots
+
+
+        //launchGuiBoard(newGame, playerIndex);
     }
 
     private void updateMessagePanelState() {
