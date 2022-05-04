@@ -2,6 +2,8 @@ package server;
 
 import game.GameHandler;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,7 +22,7 @@ public class ServerMain {
     private static final int SERVER_CHAT_PORT = 5550;
     private static int PLAYER_COUNTER = 0;
     private static LocalTime START_TIME;
-    private static final long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
+    private static final long WAIT_TIME_IN_SECOND = 10;       //TODO to decide
     private static final int SO_TIMEOUT = 10;       //TODO to decide (millisec)
 
     private static final int MAX_NUMBER_OF_PLAYERS = 2;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
@@ -122,15 +124,21 @@ public class ServerMain {
 
             } catch (SocketException se) {
                 System.out.println("SERVER]: No successful connection this time SE");
-                se.printStackTrace();
+                //se.printStackTrace();
             } catch (IOException e) {
                 System.out.println("SERVER]: No successful connection this time IOE");
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
         System.out.println("[SERVER]: waiting time expired or all slots are filled, clients connected=" + gameClients.size());
+
+        if (gameClients.isEmpty() || chatClients.isEmpty()) {
+            System.out.println("[SERVER]: Nobody joined, closing server.  gameClients=" + gameClients.size() + ", chatClients=" + gameClients.size());
+            JOptionPane.showMessageDialog(new Frame(), "Nobody joined, closing server.  gameClients=" + gameClients.size() + ", chatClients=" + gameClients.size(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         //System.out.println("[SERVER]: start processing threads with executorService" );
         //gameClients.forEach(client -> gamePool.execute(client));
