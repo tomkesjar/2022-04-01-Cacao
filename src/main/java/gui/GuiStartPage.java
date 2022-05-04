@@ -65,7 +65,7 @@ public class GuiStartPage extends JFrame {
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         messageLabel.setVerticalAlignment(SwingConstants.CENTER);
         messageLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        messageLabel.setForeground(Color.WHITE);
+        messageLabel.setForeground(new Color(255,255,255));
         messageLabel.setBackground(new Color(0,0,0,0));
         messageLabel.setOpaque(false);
         messagePanel.add(messageLabel);
@@ -145,9 +145,10 @@ public class GuiStartPage extends JFrame {
 
     private void updateMessagePanelState() {
         messageLabel.setText(TEXTBOX_PREFIX + "Connected, waiting for others... " + TEXTBOX_SUFFIX);
-        messageLabel.setBackground(new Color(0,0,0,0));
+        Color usedColor = Color.LIGHT_GRAY;
+        messageLabel.setBackground(new Color(usedColor.getRed(),usedColor.getGreen(),usedColor.getBlue(),usedColor.getAlpha()-25));
+        messageLabel.setOpaque(true);
         messageLabel.paintImmediately(messageLabel.getVisibleRect());
-        //System.out.println("[GuiStartPage]: messageLabel updated, state="  + messageLabel.getText());
     }
 
     private void loadBackgroundImage() {
@@ -212,6 +213,11 @@ public class GuiStartPage extends JFrame {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (newGame.getPlayerList().size() == 1) {
+            JOptionPane.showMessageDialog(this, "You are the only one who joined. If you would like to play please restart the game and invite your friends", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         System.out.println("[GuiStartPage]: Launching GuiBoard");
