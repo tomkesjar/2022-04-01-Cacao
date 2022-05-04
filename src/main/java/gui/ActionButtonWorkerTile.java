@@ -36,6 +36,7 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        System.out.println("[ActionButtonWorkerTile]: click event playerIndex=" + playerIndex + ", " + game.getPlayerList().get(game.getActivePlayer()).getName()+ ", game.activePlayer=" + game.getActivePlayer() + ", gui.placedWorkerTile="+ guiBoard.hasPlacedWorkerTile() );
         if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedWorkerTile()) {
             //rotate
             if (SwingUtilities.isRightMouseButton(e)) {
@@ -106,6 +107,7 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        System.out.println("[ActionButtonWorkerTile]: mouseEnter event playerIndex=" + playerIndex + ", " + game.getPlayerList().get(game.getActivePlayer()).getName()+ ", game.activePlayer=" + game.getActivePlayer() + ", gui.placedWorkerTile="+ guiBoard.hasPlacedWorkerTile() );
         if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedWorkerTile() && !isTileSelected) {
             this.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 4));
         }

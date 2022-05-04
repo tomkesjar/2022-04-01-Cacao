@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class Board implements Serializable {
-    private final int INITIAL_HEIGHT = 12;//20;
-    private final int INITIAL_WIDTH = 14;//30;
+    private final int INITIAL_HEIGHT = 10;//20;
+    private final int INITIAL_WIDTH = 16;//30;
     private List<List<AbstractTile>> board;
 
     private AbstractTile freshWorkerTile;

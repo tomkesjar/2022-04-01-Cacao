@@ -5,12 +5,10 @@ import messages.ResponseStatus;
 import messages.TilePlacementMessageRequest;
 import messages.TilePlacementMessageResponse;
 import players.Player;
-import server.ServerClientHandler;
-import tiles.EmptyTile;
+import server.GameServerClientHandler;
 import tiles.JungleTile;
 import tiles.WorkerTile;
 
-import javax.swing.text.html.Option;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,7 +17,7 @@ import java.util.Optional;
 
 public class GameHandler {
     private Game game;
-    private List<ServerClientHandler> clients;
+    private List<GameServerClientHandler> clients;
 
     private boolean isWorkerTilePlacementValid = false;
     private boolean isJungleTilePlacementValid = false;
@@ -27,10 +25,10 @@ public class GameHandler {
     JungleTile jungleTile;
     WorkerTile workerTile;
 
-    public GameHandler(List<ServerClientHandler> clients) {
-        this.clients = clients;
-        this.game = new Game(clients);
-        System.out.println("[GameHandler]: Game instance created with players=" + clients.size());
+    public GameHandler(List<GameServerClientHandler> gameClients) {
+        this.clients = gameClients;             //for sending/receiving objects (game)
+        this.game = new Game(gameClients);      //only the gameClients.size() matters
+        System.out.println("[GameHandler]: Game instance created with players=" + gameClients.size());
     }
 
 
@@ -40,12 +38,13 @@ public class GameHandler {
         sendStartingGameInstanceToPlayers();
 
 
+        //while (!game.checkIfIsGameEnd()) {
         while (!game.checkIfIsGameEnd()) {
             System.out.println("[GameHandler]: starting the loop, checkIfIsGameEnd=" +game.checkIfIsGameEnd());
 
             System.out.println("[GameHandler]: Moving to WorkerTile placement for player=" +game.getActivePlayer());
             while (!isWorkerTilePlacementValid) {
-                ServerClientHandler currentClient = clients.get(game.getActivePlayer());
+                GameServerClientHandler currentClient = clients.get(game.getActivePlayer());
 
                 TilePlacementMessageRequest tilePlacementMessageRequest = (TilePlacementMessageRequest) currentClient.getObjectInputStream().readUnshared();
                 if (game.getBoard().isValidPlacementAsWorkerTile(tilePlacementMessageRequest)) {
@@ -92,9 +91,10 @@ public class GameHandler {
                 }
             }
 
-            //System.out.println("[GameHandler]: Moving to JungleTile placement, player=" + game.getActivePlayer());
+            System.out.println("[GameHandler]: Moving to JungleTile placement, player=" + game.getActivePlayer());
             while (!isJungleTilePlacementValid) {
-                ServerClientHandler currentClient = clients.get(game.getActivePlayer());
+                GameServerClientHandler currentClient = clients.get(game.getActivePlayer());
+                System.out.println("[GameHandler]: clients=" + clients);
 
                 TilePlacementMessageRequest tilePlacementMessageRequest = (TilePlacementMessageRequest) clients.get(game.getActivePlayer()).getObjectInputStream().readUnshared();
                 //System.out.println("[GameHandler]: TilePlacement message received from player=" + game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
@@ -105,7 +105,7 @@ public class GameHandler {
                     Point coord = tilePlacementMessageRequest.getCoord();
                     jungleTile = (JungleTile) tilePlacementMessageRequest.getTile();
                     game.getBoard().setField(coord.x, coord.y, jungleTile);
-                    game.getBoard().setFreshJungleTile(workerTile);
+                    game.getBoard().setFreshJungleTile(jungleTile);
                     game.getBoard().setFreshJungleTilePoint(coord);
                     game.setHasPlacedJungleTile(true);
                     game.setHasPlacedWorkerTile(false);
@@ -120,7 +120,7 @@ public class GameHandler {
 
 
 
-
+                    //update + manage jungle tile deck
                     Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();      //TODO SOS CHECK!!!
                     if (matchingJungleTile.isPresent()) {
                         game.getJungleTilesAvailable().remove(matchingJungleTile.get());
@@ -136,19 +136,21 @@ public class GameHandler {
                 }
             }
 
+            System.out.println("[GameHandler]: values Before switch, activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
             switchPlayer();
             System.out.println("[GameHandler]: =================================================================SWITCH=");
-            System.out.println("[GameHandler]: switched player, activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
+            System.out.println("[GameHandler]: values After switched player, activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
 
-            TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, " 's turn, first select and place worker tile (Other players are inactive)");
+            TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "'s turn, first select and place worker tile (Other players are inactive)");
             sendMessageToAll(response);
             System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
 
         }
+        //TODO
             //send rank
         TilePlacementMessageResponse finalMessage = new TilePlacementMessageResponse(game, ResponseStatus.FINAL, "Game End)");
             sendMessageToAll(finalMessage);
-        //TODO: do something here SOS Pop up window ranking
+        System.out.println("[GameHandler]: final game status sent to all players");
         System.out.println("[GameHandler]: Game Ended");
     }
 
@@ -175,7 +177,7 @@ public class GameHandler {
     }
 
 
-    private void sendMessageToPlayer(Object message, ServerClientHandler client) {
+    private void sendMessageToPlayer(Object message, GameServerClientHandler client) {
         try {
             client.getObjectOutputStream().reset();
             client.getObjectOutputStream().writeUnshared(message);

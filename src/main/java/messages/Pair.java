@@ -26,4 +26,9 @@ public class Pair<K extends Object, V extends Object> extends Object implements 
     public void setValue(V value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Pair(" + key + ", " + value +')';
+    }
 }

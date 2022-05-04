@@ -5,16 +5,15 @@ import deck.JungleTileDeck;
 //import javafx.util.messages.Pair;
 import messages.Pair;
 import players.Player;
-import server.ServerClientHandler;
+import server.GameServerClientHandler;
 import tiles.JungleTile;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Game implements Serializable {
     private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 1;
-    private static final int MAX_NUMBER_OF_PLAYERS = 2;      //TODO <link with Server's MAX_PLAYER_NUMBER field>
+    private static final int MAX_NUMBER_OF_PLAYERS = 2;      //TODO <link with ServerMain's MAX_PLAYER_NUMBER field>
 
     private static final int MAX_NUMBER_OF_CACAO_BEANS = 5;
     private static final int MAX_NUMBER_OF_WORSHIP_SITES = 3;
@@ -42,7 +41,7 @@ public class Game implements Serializable {
         this.isGameEnded = false;
     }
 
-    public Game(List<ServerClientHandler> clients) {
+    public Game(List<GameServerClientHandler> clients) {
         this.playerList = createPlayerList(clients);
         this.jungleTileDeck = new JungleTileDeck(clients.size());
         this.board = new Board();
@@ -65,7 +64,7 @@ public class Game implements Serializable {
         return result;
     }
 
-    private List<Player> createPlayerList(List<ServerClientHandler> clients) {
+    private List<Player> createPlayerList(List<GameServerClientHandler> clients) {
         List<Player> result = new ArrayList<>();
         List<Integer> counter = Arrays.asList(1);
         clients.forEach(c -> {
@@ -96,7 +95,7 @@ public class Game implements Serializable {
             isOnlyOneWorkerTileForLastPlayer = true;
         }
 
-        return isNoMoreJungleTile || isOnlyOneWorkerTileForLastPlayer;       //TODO: SOS: add 'or' between the two booleans
+        return isNoMoreJungleTile || isOnlyOneWorkerTileForLastPlayer;
 
     }
 
@@ -226,18 +225,24 @@ public class Game implements Serializable {
         StringBuilder result = new StringBuilder();
         result.append("playerList=" + playerList);
         result.append(System.lineSeparator());
-        result.append("board=" + board.toShortString());
+        /*
+        result.append("board=" + board);
+
         result.append(System.lineSeparator());
         result.append("jungleTileDeck=" + jungleTileDeck);
         result.append(System.lineSeparator());
         result.append("jungleTilesAvailable=" + jungleTilesAvailable);
         result.append(System.lineSeparator());
+
+         */
         result.append("activePlayer=" + activePlayer);
         result.append(System.lineSeparator());
+        /*
         result.append("hasPlacedWorkerTile=" + hasPlacedWorkerTile);
         result.append(System.lineSeparator());
         result.append("hasPlacedJungleTile=" + hasPlacedJungleTile);
         result.append(System.lineSeparator());
+         */
         result.append("isGameEnded=" + isGameEnded);
 
         return result.toString();
