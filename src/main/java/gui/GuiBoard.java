@@ -20,18 +20,21 @@ import java.util.concurrent.TimeUnit;
 
 
 public class GuiBoard extends JFrame implements Runnable {
-    private ClientConnection connection;
+    private ClientConnection gameConnection;
+    private ClientConnection chatConnection;
     private ImageLoader imageLoader;
 
     private Image backgroundImage = null;
+
+
     private static final String FILE_NAME = "/background/jungleBackground.png";
     private static final int OPACITY_LEVEL_HIGH = 85;
-    private static final int OPACITY_LEVEL_LOW = 85;
+    private static final int OPACITY_LEVEL_LOW = 25;
 
     private static final int TILES_MAX_HEIGHT = 55;
     private static final int TILES_MAX_WIDTH = 55;
 
-    private static final int PANEL_MAX_WIDTH = 900;
+    private static final int PANEL_MAX_WIDTH = 1_200;
     private static final int PANEL_MAX_HEIGHT = 800;
 
     private static final int INFOPANEL_UNIT_HEIGHT = 16;
@@ -40,7 +43,7 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int BOARD_VERTICAL_GAP = 0;
 
     private static final int FONT_SIZE = 10;
-    private static final int MESSAGE_PANEL_FONT_SIZE = 16;
+    private static final int MESSAGE_PANEL_FONT_SIZE = 18;
 
     private static final String TEXTBOX_PREFIX = "<html><p>";
     private static final String TEXTBOX_SUFFIX = "</p></html>";
@@ -58,6 +61,7 @@ public class GuiBoard extends JFrame implements Runnable {
     private JPanel infoPanel;
     private JPanel boardPanel;
     private JPanel cardsPanel;
+    private ChatBoxPanel chatBoxPanel;
 
     private JPanel contentPane;
 
@@ -70,13 +74,14 @@ public class GuiBoard extends JFrame implements Runnable {
     private List<BoardTileButton> selectableJunglePanelLink;
     private List<BoardTileButton> selectableWorkerPanelLink;
 
-    public GuiBoard(ClientConnection connection, Game game, int playerIndex) {
+    public GuiBoard(ClientConnection gameConnection, ClientConnection chatConnection, Game game, int playerIndex) {
         super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
         this.setResizable(false);
 
         loadBackgroundImage();
 
-        this.connection = connection;
+        this.gameConnection = gameConnection;
+        this.chatConnection = chatConnection;
         this.game = game;
         this.playerIndex = playerIndex;
         this.imageLoader = new ImageLoader(TILES_MAX_WIDTH, TILES_MAX_HEIGHT);
@@ -122,6 +127,12 @@ public class GuiBoard extends JFrame implements Runnable {
         scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
         this.getContentPane().add(scrollPaneObject, BorderLayout.CENTER);
 */
+
+        chatBoxPanel = new ChatBoxPanel(this.chatConnection, 14, OPACITY_LEVEL_HIGH);
+        this.getContentPane().add(chatBoxPanel, BorderLayout.WEST);
+        new Thread(chatBoxPanel).start();
+
+
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
 
@@ -162,6 +173,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
     public void updateGuiBoard(Game gameReceived, String textMessage) {
         System.out.println("[GuiBoard]: Before Update getSelectableWorkerPanelPositions=" + game.getBoard().getSelectableWorkerPanelPositions().toString() );
+        System.out.println("[GuiBoard]: Before getSelectableWorkerPanelPositions=" + game.getBoard().getSelectableWorkerPanelPositions() );
         this.game = gameReceived;
         System.out.println("[GuiBoard]: After Update getSelectableWorkerPanelPositions=" + game.getBoard().getSelectableWorkerPanelPositions().toString() );
 
@@ -172,13 +184,16 @@ public class GuiBoard extends JFrame implements Runnable {
         messagePanel.setText(game.getPlayerList().get(game.getActivePlayer()).getName() + ": " + textMessage);
 
         this.getContentPane().remove(0);
+
         infoPanel = generateInfoPanel(game, textMessage);
         this.getContentPane().setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
-        this.getContentPane().add(infoPanel, BorderLayout.NORTH);
+        this.getContentPane().add(infoPanel, BorderLayout.NORTH, 0);
 
-        this.getContentPane().remove(0);
+        this.getContentPane().remove(1);
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.EAST);
+        this.getContentPane().add(boardPanel, BorderLayout.EAST, 1);
+
+
 /*
         //this.getContentPane().add(new JScrollPane(boardPanel), BorderLayout.EAST);
         ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
@@ -187,9 +202,12 @@ public class GuiBoard extends JFrame implements Runnable {
         scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
         this.getContentPane().add(scrollPaneObject, BorderLayout.CENTER);
 */
-        this.getContentPane().remove(0);
+
+        //chatBox panel will not be removed! it is on index=2
+
+        this.getContentPane().remove(3);
         cardsPanel = generateTilesPanel(game, playerIndex);
-        this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
+        this.getContentPane().add(cardsPanel, BorderLayout.SOUTH,3);
 
         jungleCardsPanelLink.forEach(tile -> {
             ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getJungleTile().getNumberOfRotation(), tile.getJungleTile().getTileEnum()));
@@ -225,6 +243,8 @@ public class GuiBoard extends JFrame implements Runnable {
 
     private void collectSelectableWorkerPanelLink() {
         selectableWorkerPanelLink = new ArrayList<>();
+        selectableWorkerPanelLink = new ArrayList<>();
+
         boardTileButtonLink.forEach(tileRow -> tileRow.forEach(tile -> {
             game.getBoard().getSelectableWorkerPanelPositions().forEach(selectable ->{
                 if (selectable.getKey() == tile.getCoord().x && selectable.getValue() == tile.getCoord().y){
@@ -237,6 +257,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
     private void collectSelectableJunglePanelLink() {
         selectableJunglePanelLink = new ArrayList<>();
+        selectableJunglePanelLink = new ArrayList<>();
         boardTileButtonLink.forEach(tileRow -> tileRow.forEach(tile -> {
             game.getBoard().getSelectableJunglePanelPositions().forEach(selectable ->{
                 if (selectable.getKey() == tile.getCoord().x && selectable.getValue() == tile.getCoord().y){
@@ -244,6 +265,7 @@ public class GuiBoard extends JFrame implements Runnable {
                 }
             });
         }));
+        System.out.println("[GuiBoard]: selectableJunglePanelLink.size="+ selectableJunglePanelLink.size());
     }
 
     private JPanel generatePlayerPanel(Player player) {
@@ -288,7 +310,7 @@ public class GuiBoard extends JFrame implements Runnable {
         playerPanelLink.get(player).put("waterValue", waterValue);
 
         JLabel pointIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getPointIcon())); //TODO: add coin icon
-        JLabel pointValue = new JLabel(String.valueOf(player.getPoint()) + " + " + String.valueOf(player.getTemplePointBonus()));       //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel pointValue = new JLabel(String.valueOf(player.getPoint()-player.getTemplePointBonus()) + " + " + String.valueOf(player.getTemplePointBonus()));       //TODO: add boxes instead of number + colourify boxes based on number
         pointValue.setForeground(Color.WHITE);
         panel.add(pointIcon);
         panel.add(pointValue);
@@ -449,8 +471,9 @@ public class GuiBoard extends JFrame implements Runnable {
         while (!game.checkIfIsGameEnd()) {
             while (game.getActivePlayer() != this.getPlayerIndex()) {
                 try {
-                    TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getConnection().getObjectInputStream().readUnshared();
+                    TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
                     this.game = response.getGame();
+                    System.out.println("[GuiBoard]: void run: updated game.activePlayer=" + game.getActivePlayer());
                     this.updateGuiBoard(game, response.getTextMessage());
 
                     this.setVisible(true);
@@ -464,14 +487,16 @@ public class GuiBoard extends JFrame implements Runnable {
             this.setVisible(true);
             //this.setFocusable(true);
             try {
-                TimeUnit.SECONDS.sleep(5);
+                System.out.println("[GuiBoard]: void Sleep: current game.activePlayer=" + game.getActivePlayer());
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         try {
 
-            TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getConnection().getObjectInputStream().readUnshared();
+            System.out.println("[GuiBoard]: final read: checkIfIsGameEnd=" + game.checkIfIsGameEnd());
+            TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
             this.game = response.getGame();
 
             GuiEndGameResult guiEndGameResult = new GuiEndGameResult(game);
@@ -494,7 +519,7 @@ public class GuiBoard extends JFrame implements Runnable {
             JPanel playerPanel = generatePlayerPanel(player);
             playerPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
 
-            System.out.println("[GuiBoard]: playerPanel width: panel max=" + PANEL_MAX_WIDTH + "  screen width="+this.getSize().width);
+            //System.out.println("[GuiBoard]: playerPanel width: panel max=" + PANEL_MAX_WIDTH + "  screen width="+this.getSize().width);
             Color selectedColour;
             switch (game.getPlayerList().indexOf(player)) {
                 case 0:
@@ -652,12 +677,12 @@ public class GuiBoard extends JFrame implements Runnable {
     }
 
 
-    public ClientConnection getConnection() {
-        return connection;
+    public ClientConnection getGameConnection() {
+        return gameConnection;
     }
 
-    public void setConnection(ClientConnection connection) {
-        this.connection = connection;
+    public void setGameConnection(ClientConnection gameConnection) {
+        this.gameConnection = gameConnection;
     }
 
     public Game getGame() {

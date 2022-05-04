@@ -23,7 +23,7 @@ public class Client {
 /*
     private static void establishConnection(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         try {
-            System.out.println("[Client]: Successful connection to server.Server");
+            System.out.println("[Client]: Successful connection to server.ServerMain");
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             System.out.println("[Client]: Input/OutputStreams successfully created");

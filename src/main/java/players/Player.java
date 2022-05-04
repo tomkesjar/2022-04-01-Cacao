@@ -64,7 +64,7 @@ public class Player implements Serializable {
         this.coins = 0;
         this.waterPointIndex = 0;
         this.waterPoint = Game.getWaterPositionValue(this.waterPointIndex);
-        this.point = 0;
+        this.point = -10;
         this.rank = 1;
         this.name = playerName;
 
@@ -192,6 +192,7 @@ public class Player implements Serializable {
         StringBuilder result = new StringBuilder();
         result.append("Player{" +
                 "playerColour=" + playerColour +
+                ", playerName=" + name +
                 ", rank=" + rank +
                 ", point=" + point +
                 ", numberOfCacaoBean=" + numberOfCacaoBean +

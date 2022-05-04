@@ -23,8 +23,11 @@ public class GuiStartPage extends JFrame {
     private static final int OPACITY_LEVEL = 50;
     private static final int BUTTON_FONT_SIZE = 20;
 
-    private ClientConnection connection;
-    private boolean isConnected = false;
+    private ClientConnection gameConnection;
+    private ClientConnection chatConnection;
+    private boolean isGameConnected = false;
+    private boolean isChatConnected = false;
+
 
     private JPanel messagePanel;
     private JPanel dummyPanel;
@@ -159,25 +162,49 @@ public class GuiStartPage extends JFrame {
 
 
     private void requestConnection() {
-        System.out.println("[GuiStartPage]: attempting to connect, isConnected state=" + isConnected);
+        System.out.println("[GuiStartPage]: attempting to connect, isGameConnected state=" + isGameConnected + ", isChatConnected state=" + isChatConnected);
 
         Game newGame = null;
         Integer playerIndex = null;
-        if (!isConnected) {
+        if (!isGameConnected) {
             try {
-                connection = new ClientConnection();
-                isConnected = true;
+                System.out.println("[GuiStartPage]: attempting to create game clientConnection");
+                gameConnection = new ClientConnection(ClientConnection.ConnectionType.OBJECT);
+                isGameConnected = true;
+                System.out.println("[GuiStartPage]: isGameConnected=" +isGameConnected);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //****************************************
+        if (!isChatConnected) {
+            try {
+
+                System.out.println("[GuiStartPage]: attempting to create chat clientConnection");
+                chatConnection = new ClientConnection(ClientConnection.ConnectionType.TEXT);
+                isChatConnected = true;
+
+                System.out.println("[GuiStartPage]: chat clientConnection creation successful");
+
 
                 String playerName = null;
-
                 if (!("".equals(nameInput.getText()) || defaultNameInputText.equals(nameInput.getText()))) {
                     playerName = nameInput.getText();
                 }
 
-                connection.getObjectOutputStream().writeUnshared(playerName);
+                System.out.println("[GuiStartPage]: attempts to write in oos");
+                gameConnection.getObjectOutputStream().writeUnshared(playerName);
 
-                newGame = (Game) connection.getObjectInputStream().readUnshared();
-                playerIndex = (Integer) connection.getObjectInputStream().readUnshared();
+                System.out.println("[GuiStartPage]: attempts to read in game from ois");
+                newGame = (Game) gameConnection.getObjectInputStream().readUnshared();
+                System.out.println("[GuiStartPage]: successful read, game=" + newGame);
+
+                System.out.println("[GuiStartPage]: attempts to read in playerIndex from ois");
+                playerIndex = (Integer) gameConnection.getObjectInputStream().readUnshared();
+                System.out.println("[GuiStartPage]: successful read, playerIndex=" + playerIndex);
                 System.out.println("[GuiStartPage]: Game object and player index received");
 
             } catch (IOException e) {
@@ -185,22 +212,22 @@ public class GuiStartPage extends JFrame {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
-            System.out.println("[GuiStartPage]: Launching GuiBoard");
-            launchGuiBoard(newGame, playerIndex);
         }
+
+        System.out.println("[GuiStartPage]: Launching GuiBoard");
+        launchGuiBoard(newGame, playerIndex);
 
 
     }
 
     private void launchGuiBoard(Game newGame, Integer playerIndex) {
         dispose();
-        GuiBoard guiBoard = new GuiBoard(connection, newGame, playerIndex);
+        GuiBoard guiBoard = new GuiBoard(gameConnection, chatConnection, newGame, playerIndex);
         guiBoard.setVisible(true);
         guiBoard.setFocusable(true);
         guiBoard.requestFocusInWindow();
 
-        Thread thread = new Thread(guiBoard);
+        Thread thread = new Thread(guiBoard);       //it is because of the continuous updates for game status
         thread.start();
     }
 
