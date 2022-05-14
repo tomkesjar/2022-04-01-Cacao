@@ -2,31 +2,46 @@ package players;
 
 import deck.WorkerTileDeck;
 import game.Game;
+import game.GameHandler;
+import gui.GuiBoard;
+import messages.Pair;
+import tiles.JungleTile;
 import tiles.WorkerTile;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class Player implements Serializable {
+    public enum PlayerType{
+        HUMAN,
+        BASIC_AI,
+        SMARTER_AI
+    }
+
     private static final int MAX_NUMBER_OF_CARDS_AT_HAND = 3;
     private PlayerColour playerColour;
 
     private String name;
+    private PlayerType playerType;
 
     private int numberOfCacaoBean;
     private int coins;
     private int waterPointIndex;
     private int waterPoint;
     private int worshipSymbol;
-    private WorkerTileDeck workerTileDeck;
-    private List<WorkerTile> cardsAtHand;
     private int templePoint;
     private int templePointBonus;
-
     private int point;
     private int rank;
+
+
+    private WorkerTileDeck workerTileDeck;
+    private List<WorkerTile> cardsAtHand;
+
 
     public WorkerTileDeck getWorkerTileDeck() {
         return workerTileDeck;
@@ -94,6 +109,66 @@ public class Player implements Serializable {
         this.templePoint = builder.getTemplePoint();
         this.templePointBonus = builder.getTemplePointBonus();
     }
+
+    ///**************
+    public void evaluateWorkerTilePlacement(GameHandler gameHandler, Point coord, WorkerTile workerTileToPlace) {
+        WorkerTile currentTile = (WorkerTile) gameHandler.getGame().getBoard().getField(coord.x, coord.y);
+        currentTile.processNeighbours(coord, gameHandler.getGame());
+        gameHandler.getGame().calculatePoints();
+        gameHandler.getGame().calculateRanks();
+
+        gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
+    }
+///**************
+
+
+    public void placeBasicWorkerTile(GameHandler gameHandler ){
+        gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
+
+        Random random = new Random();
+        List<Pair<Integer, Integer>> selectablePositions = gameHandler.getGame().getBoard().getSelectableWorkerPanelPositions();
+
+        int randomWorkerTileIndex = random.nextInt(100) % cardsAtHand.size();
+        int randomSelectablePositionIndex = random.nextInt(100) % selectablePositions.size();
+        int randomNumberOfRotation = random.nextInt(100) % 4;
+
+        Pair<Integer, Integer> position = selectablePositions.get(randomSelectablePositionIndex);
+
+        WorkerTile workerTileToPlace = cardsAtHand.get(randomWorkerTileIndex).turnRightWorkersNinetyDegreesTimes(randomNumberOfRotation);
+        gameHandler.setWorkerTile(workerTileToPlace);
+        gameHandler.getGame().getBoard().setField(position.getKey(), position.getValue(), workerTileToPlace);
+
+        gameHandler.setWorkerTilePlacementValid(true);
+        gameHandler.getGame().getBoard().setFreshWorkerTile(workerTileToPlace);
+        gameHandler.getGame().getBoard().setFreshWorkerTilePoint(new Point(position.getKey(), position.getValue()));
+        gameHandler.getGame().setHasPlacedWorkerTile(true);
+    }
+
+    public void placeBasicJungleTile(GameHandler gameHandler){
+        gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
+
+        Random random = new Random();
+        List<Pair<Integer, Integer>> selectablePositions = gameHandler.getGame().getBoard().getSelectableJunglePanelPositions();
+
+        int pickJungleTileIndex = random.nextInt(100) % gameHandler.getGame().getJungleTilesAvailable().size();
+        int pickSelectablePositionIndex = random.nextInt(100) % selectablePositions.size();
+        Pair<Integer, Integer> position = selectablePositions.get(pickSelectablePositionIndex);
+
+        JungleTile jungleTileToPlace = gameHandler.getGame().getJungleTilesAvailable().get(pickJungleTileIndex);
+
+        gameHandler.getGame().getBoard().setField(position.getKey(), position.getValue(), jungleTileToPlace);
+        gameHandler.setJungleTile(jungleTileToPlace);
+
+        gameHandler.setJungleTilePlacementValid(true);
+        gameHandler.getGame().getBoard().setFreshJungleTile(jungleTileToPlace);
+        gameHandler.getGame().getBoard().setFreshJungleTilePoint(new Point(position.getKey(), position.getValue()));
+        gameHandler.getGame().setHasPlacedJungleTile(true);
+        gameHandler.getGame().setHasPlacedWorkerTile(false);
+    }
+
+
+
+
 
     public static int getMaxNumberOfCardsAtHand() {
         return MAX_NUMBER_OF_CARDS_AT_HAND;
@@ -185,6 +260,14 @@ public class Player implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public PlayerType getPlayerType() {
+        return playerType;
+    }
+
+    public void setPlayerType(PlayerType playerType) {
+        this.playerType = playerType;
     }
 
     @Override

@@ -2,26 +2,31 @@ package gui;
 
 import connection.ClientConnection;
 import game.Game;
+import game.GameHandler;
 
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 
 public class GuiStartPage extends JFrame {
     private static final String FILE_NAME = "/background/cacaoFrontPage.jpg";
-    private static final String TEXTBOX_PREFIX= "<html><p>";
+    private static final String TEXTBOX_PREFIX = "<html><p>";
     private static final String TEXTBOX_SUFFIX = "</p></html>";
-    private static final int BUTTON_HEIGHT = 30;
+    private static final int BUTTON_HEIGHT = 25;
     private static final int BUTTON_WIDTH = 200;
-    private static final int TEXTBOX_HEIGHT = 30;
-    private static final int TEXTBOX_WIDTH = 300;
+    private static final int TEXTBOX_HEIGHT = 25;
+    private static final int TEXTBOX_WIDTH = 400;
     private static final int OPACITY_LEVEL = 50;
-    private static final int BUTTON_FONT_SIZE = 20;
+    private static final int BUTTON_FONT_SIZE = 16;
 
     private ClientConnection gameConnection;
     private ClientConnection chatConnection;
@@ -39,11 +44,18 @@ public class GuiStartPage extends JFrame {
     private JLabel messageLabel;
 
     private JPanel namePanel;
+    private JPanel hostNamePanel;
     private JTextField nameInput;
+    private JTextField hostNameInput;
     String defaultNameInputText = "Add Your Name";
+    String defaultHostNameInputText = "Add Host Name";
 
-
+    private int verticalAdjuster = 10;
     private Image backgroundImage = null;
+
+    private JMenuBar menuBar;
+    private JMenu menu;
+    private JMenuItem menuItem;
 
 
     public GuiStartPage() {
@@ -53,26 +65,48 @@ public class GuiStartPage extends JFrame {
 
         loadBackgroundImage();
 
+        menuBar = new JMenuBar();
+        menu = new JMenu("Menu");
+        menuItem = new JMenuItem(new AbstractAction("Rules - English") {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String fileName = "/rule/rulesEng.pdf";
+                    URL url = getClass().getResource(fileName);
+
+                    File myFile = new File(url.toURI());
+
+                    Desktop.getDesktop().open(myFile);
+                } catch (URISyntaxException | IOException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+
+        menu.add(menuItem);
+        menuBar.add(menu);
+
+
         dummyPanel = new JPanel();
-        dummyPanel.setBackground(new Color(0,0,0,0));
-        dummyPanel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT*9));  //set vertical alignment
+        dummyPanel.setBackground(new Color(0, 0, 0, 0));
+        dummyPanel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT * verticalAdjuster));  //set vertical alignment
 
 
         messagePanel = new JPanel();
-        messagePanel.setBackground(new Color(0,0,0,0));
+        messagePanel.setBackground(new Color(0, 0, 0, 0));
         messagePanel.setOpaque(false);
         messageLabel = new JLabel();
         messageLabel.setPreferredSize(new Dimension(TEXTBOX_WIDTH, TEXTBOX_HEIGHT));
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         messageLabel.setVerticalAlignment(SwingConstants.CENTER);
         messageLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        messageLabel.setForeground(new Color(255,255,255));
-        messageLabel.setBackground(new Color(0,0,0,0));
+        messageLabel.setForeground(new Color(255, 255, 255));
+        messageLabel.setBackground(new Color(0, 0, 0, 0));
         messageLabel.setOpaque(false);
         messagePanel.add(messageLabel);
 
         newGamePanel = new JPanel();
-        newGamePanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        newGamePanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
         JButton connectBtn = new JButton("Connect to Game");
         connectBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         connectBtn.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
@@ -84,13 +118,19 @@ public class GuiStartPage extends JFrame {
         newGamePanel.add(connectBtn);
 
         newGameWithBotsPanel = new JPanel();
-        newGameWithBotsPanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        newGameWithBotsPanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
         JButton playWithBots = new JButton("Play with bots");
         playWithBots.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         playWithBots.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
         playWithBots.setBackground(new Color(255, 204, 0));
         playWithBots.addActionListener((ActionEvent ae) -> {
-            startSinglePlayerMode();
+            try {
+                startSinglePlayerMode();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         });
         newGameWithBotsPanel.add(playWithBots);
 /*
@@ -107,7 +147,7 @@ public class GuiStartPage extends JFrame {
 
 
         exitPanel = new JPanel();
-        exitPanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
+        exitPanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
         JButton exitBtn = new JButton("Exit");
         exitBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         exitBtn.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
@@ -115,10 +155,26 @@ public class GuiStartPage extends JFrame {
         exitBtn.addActionListener((ActionEvent ae) -> System.exit(0));
         exitPanel.add(exitBtn);
 
+        hostNamePanel = new JPanel();
+        hostNamePanel.setLayout(new FlowLayout());
+        hostNamePanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
+        JLabel hostNameText = new JLabel(defaultHostNameInputText);
+        hostNameText.setForeground(Color.WHITE);
+        hostNameText.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE - 2));
+        hostNameInput = new JTextField("127.0.0.1", 9);
+        hostNameInput.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE - 4));
+        hostNamePanel.add(hostNameText);
+        hostNamePanel.add(hostNameInput);
+
         namePanel = new JPanel();
-        namePanel.setBackground(new Color(0,0,0,OPACITY_LEVEL));
-        nameInput = new JTextField(defaultNameInputText, 16);
-        nameInput.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE-4));
+        namePanel.setLayout(new FlowLayout());
+        namePanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
+        JLabel namePanelText = new JLabel(defaultNameInputText);
+        namePanelText.setForeground(Color.WHITE);
+        namePanelText.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE - 2));
+        nameInput = new JTextField("Player", 9);
+        nameInput.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE - 4));
+        namePanel.add(namePanelText);
         namePanel.add(nameInput);
 
         contentPane = new JPanel() {
@@ -130,6 +186,8 @@ public class GuiStartPage extends JFrame {
 
         contentPane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
+
+        this.setJMenuBar(menuBar);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -144,21 +202,26 @@ public class GuiStartPage extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
-        contentPane.add(namePanel, c);
+        contentPane.add(hostNamePanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 3;
-        contentPane.add(newGamePanel, c);
+        contentPane.add(namePanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 4;
-        contentPane.add(newGameWithBotsPanel, c);
+        contentPane.add(newGamePanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 5;
+        contentPane.add(newGameWithBotsPanel, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 6;
         contentPane.add(exitPanel, c);
 
         setContentPane(contentPane);
@@ -172,20 +235,43 @@ public class GuiStartPage extends JFrame {
         this.requestFocusInWindow();
     }
 
-    private void startSinglePlayerMode() {
+    private void startSinglePlayerMode() throws IOException, ClassNotFoundException {
+
+        String playerName = defineSinglePlayerName();
+
+        int numberOfBot = 3;        //TODO inputpanel
+
+        dispose();
+        GameHandler gameHandler = new GameHandler(playerName, numberOfBot);
+
+        GuiBoard guiBoard = new GuiBoard(gameHandler);
+
+        //launch GuiBoard
+
+
         //create new game
         //GameHandlerMulti gameHandlerMulti = new GameHandlerMulti();
-        //Game newGame = new Game();
+
         //add 3 bots
 
 
         //launchGuiBoard(newGame, playerIndex);
     }
 
+    private String defineSinglePlayerName() {
+        String playerName;
+        if (!("".equals(nameInput.getText()) || defaultNameInputText.equals(nameInput.getText()))) {
+            playerName = nameInput.getText();
+        } else {
+            playerName = "You";
+        }
+        return playerName;
+    }
+
     private void updateMessagePanelState() {
         messageLabel.setText(TEXTBOX_PREFIX + "Connected, waiting for others... " + TEXTBOX_SUFFIX);
         Color usedColor = Color.LIGHT_GRAY;
-        messageLabel.setBackground(new Color(usedColor.getRed(),usedColor.getGreen(),usedColor.getBlue(),usedColor.getAlpha()-25));
+        messageLabel.setBackground(new Color(usedColor.getRed(), usedColor.getGreen(), usedColor.getBlue(), usedColor.getAlpha() - 25));
         messageLabel.setOpaque(true);
         messageLabel.paintImmediately(messageLabel.getVisibleRect());
     }
@@ -206,12 +292,27 @@ public class GuiStartPage extends JFrame {
 
         Game newGame = null;
         Integer playerIndex = null;
+
+        String hostName = null;
+        if (!("".equals(hostNameInput.getText()))) {
+            hostName = hostNameInput.getText();
+        } else {
+            try {
+                hostName = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                JOptionPane.showMessageDialog(new JFrame(), "An error occured during connection.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                dispose();
+                System.exit(-1);
+            }
+        }
+
         if (!isGameConnected) {
             try {
                 System.out.println("[GuiStartPage]: attempting to create game clientConnection");
-                gameConnection = new ClientConnection(ClientConnection.ConnectionType.OBJECT);
+                gameConnection = new ClientConnection(hostName, ClientConnection.ConnectionType.OBJECT);
                 isGameConnected = true;
-                System.out.println("[GuiStartPage]: isGameConnected=" +isGameConnected);
+                System.out.println("[GuiStartPage]: isGameConnected=" + isGameConnected);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -219,12 +320,11 @@ public class GuiStartPage extends JFrame {
             }
         }
 
-        //****************************************
         if (!isChatConnected) {
             try {
 
                 System.out.println("[GuiStartPage]: attempting to create chat clientConnection");
-                chatConnection = new ClientConnection(ClientConnection.ConnectionType.TEXT);
+                chatConnection = new ClientConnection(hostName, ClientConnection.ConnectionType.TEXT);
                 isChatConnected = true;
 
                 System.out.println("[GuiStartPage]: chat clientConnection creation successful");

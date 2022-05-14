@@ -3,6 +3,8 @@ package gui;
 import board.Board;
 import connection.ClientConnection;
 import game.Game;
+import game.GameHandler;
+import messages.Pair;
 import messages.ResponseStatus;
 import messages.TilePlacementMessageResponse;
 import players.Player;
@@ -21,6 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 
 public class GuiBoard extends JFrame implements Runnable {
+    public enum GameType{
+        SINGLE,
+        MULTI
+    }
+
     private ClientConnection gameConnection;
     private ClientConnection chatConnection;
     private ImageLoader imageLoader;
@@ -35,7 +42,7 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int TILES_MAX_HEIGHT = 55;
     private static final int TILES_MAX_WIDTH = 55;
 
-    private static final int PANEL_MAX_WIDTH = 1_200;
+    private static int PANEL_MAX_WIDTH = 1_200;
     private static final int PANEL_MAX_HEIGHT = 800;
 
     private static final int INFOPANEL_UNIT_HEIGHT = 16;
@@ -66,39 +73,83 @@ public class GuiBoard extends JFrame implements Runnable {
 
     private JPanel contentPane;
 
+    private final GameHandler gameHandlerForSinglePlayer;
+    private GameType gameType;
+
 
     private Map<Player, Map<String, JLabel>> playerPanelLink;
-    private List<List<BoardTileButton>> boardTileButtonLink;
+    private List<List<AbstractBoardTileButton>> boardTileButtonLink;
     private List<ActionButtonJungleTile> jungleCardsPanelLink;
     private List<ActionButtonWorkerTile> workerCardsPanelLink;
 
-    private List<BoardTileButton> selectableJunglePanelLink;
-    private List<BoardTileButton> selectableWorkerPanelLink;
+    private Set<AbstractBoardTileButton> selectableJunglePanelLink;
+    private Set<AbstractBoardTileButton> selectableWorkerPanelLink;
 
-    public GuiBoard(ClientConnection gameConnection, ClientConnection chatConnection, Game game, int playerIndex) {
-        super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
-        this.setResizable(false);
+    //*****************************************************************************************
+    public GuiBoard(GameHandler gameHandler){
+        super("Cacao Board Game");
+        this.gameHandlerForSinglePlayer = gameHandler;
+        this.game = gameHandler.getGame();
+        this.gameType = GameType.SINGLE;
+
+        this.gameConnection = null;
+        this.chatConnection = null;
+        this.playerIndex = 0;
+        PANEL_MAX_WIDTH = 900;
+
+        loadImages();
+        initializeCommonVariables();
+        String textMessage = "'s turn, select and place worker tile";
+
+        createInitialDesign(textMessage);
+        collectJungleCardsPanelLink();
+        collectWorkerCardsPanelLink();
+        collectBoardTileButtonLink();
+
+        gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
+        collectSelectableJunglePanelLink();
+        collectSelectableWorkerPanelLink();
+
+        this.pack();    //ez rakja egybe
+        this.setVisible(true);
+        this.requestFocusInWindow();
+    }
+
+    protected void collectBoardTileButtonLink() {
+
+        boardTileButtonLink.forEach(tileColumn -> {
+            tileColumn.forEach(tile -> {
+                if (tile.getTile().getTileEnum() != TileEnum.EMPTY) {
+                    ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
+                    tile.setIcon(icon);
+                } else {
+                    tile.setBackground(new Color(0, 0, 0, OPACITY_LEVEL_LOW));
+                    tile.setOpaque(false);
+                    tile.setContentAreaFilled(false);
+                    //tile.setBorderPainted(false);
+
+                }
+            });
+        });
+    }
+
+    protected void collectWorkerCardsPanelLink() {
+        workerCardsPanelLink.forEach(tile -> {
+            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getWorkerTile().getNumberOfRotation(), tile.getWorkerTile().getTileEnum()));
+            tile.setIcon(icon);
+        });
+    }
+
+    protected void collectJungleCardsPanelLink() {
+        jungleCardsPanelLink.forEach(tile -> {
+            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getJungleTile().getNumberOfRotation(), tile.getJungleTile().getTileEnum()));
+            tile.setIcon(icon);
+        });
+    }
+
+    protected void createInitialDesign(String textMessage) {
 
         loadBackgroundImage();
-
-        this.gameConnection = gameConnection;
-        this.chatConnection = chatConnection;
-        this.game = game;
-        this.playerIndex = playerIndex;
-        this.imageLoader = new ImageLoader(TILES_MAX_WIDTH, TILES_MAX_HEIGHT);
-        this.selectableWorkerPanelLink = new ArrayList<>();
-        this.selectableJunglePanelLink = new ArrayList<>();
-        imageLoader.loadJungleImages();
-        imageLoader.loadWorkerImages();
-        imageLoader.loadIconImages();
-
-        selectedJungleTile = null;
-        selectedWorkerTile = null;
-        hasPlacedWorkerTile = false;
-        hasPlacedJungleTile = false;
-
-        playerPanelLink = new HashMap<>();
-        boardTileButtonLink = new ArrayList<>();
 
         contentPane = new JPanel() {
             @Override
@@ -113,7 +164,6 @@ public class GuiBoard extends JFrame implements Runnable {
         this.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        String textMessage = "'s turn, select and place worker tile (Other players are inactive)";
         infoPanel = generateInfoPanel(game, textMessage);
 
         this.getContentPane().setLayout(new BorderLayout(BOARD_HORIZONTAL_GAP, BOARD_VERTICAL_GAP));
@@ -121,48 +171,36 @@ public class GuiBoard extends JFrame implements Runnable {
 
         boardPanel = createBoardPanel(game.getBoard());
         this.getContentPane().add(boardPanel, BorderLayout.EAST);
-/*
-        ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
-        scrollPaneObject.add(boardPanel);
-        scrollPaneObject.setSize(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT);
-        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
-        this.getContentPane().add(scrollPaneObject, BorderLayout.CENTER);
-*/
-
-        chatBoxPanel = new ChatBoxPanel(this.chatConnection, 14, OPACITY_LEVEL_HIGH);
-        this.getContentPane().add(chatBoxPanel, BorderLayout.WEST);
-        new Thread(chatBoxPanel).start();
-
 
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
+    }
 
+    private void addChatBoxPanel() {
+        chatBoxPanel = new ChatBoxPanel(this.chatConnection, 14, OPACITY_LEVEL_HIGH);
+        this.getContentPane().add(chatBoxPanel, BorderLayout.WEST);
+        new Thread(chatBoxPanel).start();
+    }
 
-        jungleCardsPanelLink.forEach(tile -> {
-            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getJungleTile().getNumberOfRotation(), tile.getJungleTile().getTileEnum()));
-            tile.setIcon(icon);
-        });
+    public GuiBoard(ClientConnection gameConnection, ClientConnection chatConnection, Game game, int playerIndex) {
+        super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
+        this.setResizable(false);
+        this.gameType = GameType.MULTI;
 
-        workerCardsPanelLink.forEach(tile -> {
-            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getWorkerTile().getNumberOfRotation(), tile.getWorkerTile().getTileEnum()));
-            tile.setIcon(icon);
-        });
+        this.gameHandlerForSinglePlayer = null;
+        this.gameConnection = gameConnection;
+        this.chatConnection = chatConnection;
+        this.game = game;
+        this.playerIndex = playerIndex;
+        loadImages();
 
-        boardTileButtonLink.forEach(tileColumn -> {
-            tileColumn.forEach(tile -> {
-                if (tile.getTile().getTileEnum() != TileEnum.EMPTY){
-                    ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
-                    tile.setIcon(icon);
-                }else {
-                    tile.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
-                    tile.setOpaque(false);
-                    tile.setContentAreaFilled(false);
-                    //tile.setBorderPainted(false);
-
-                }
-            });
-        });
-
+        initializeCommonVariables();
+        String textMessage = "'s turn, select and place worker tile (Other players are inactive)";
+        createInitialDesign(textMessage);
+        addChatBoxPanel();
+        collectJungleCardsPanelLink();
+        collectWorkerCardsPanelLink();
+        collectBoardTileButtonLink();
         collectSelectableJunglePanelLink();
         collectSelectableWorkerPanelLink();
 
@@ -170,6 +208,24 @@ public class GuiBoard extends JFrame implements Runnable {
         this.setVisible(true);
         //this.setFocusable(true);
         this.requestFocusInWindow();
+    }
+
+    protected void initializeCommonVariables() {
+        this.selectableWorkerPanelLink = new HashSet<>();
+        this.selectableJunglePanelLink = new HashSet<>();
+        selectedJungleTile = null;
+        selectedWorkerTile = null;
+        hasPlacedWorkerTile = false;
+        hasPlacedJungleTile = false;
+        playerPanelLink = new HashMap<>();
+        boardTileButtonLink = new ArrayList<>();
+    }
+
+    protected void loadImages() {
+        this.imageLoader = new ImageLoader(TILES_MAX_WIDTH, TILES_MAX_HEIGHT);
+        imageLoader.loadJungleImages();
+        imageLoader.loadWorkerImages();
+        imageLoader.loadIconImages();
     }
 
     public void updateGuiBoard(Game gameReceived, String textMessage) {
@@ -195,47 +251,19 @@ public class GuiBoard extends JFrame implements Runnable {
         this.getContentPane().add(boardPanel, BorderLayout.EAST, 1);
 
 
-/*
-        //this.getContentPane().add(new JScrollPane(boardPanel), BorderLayout.EAST);
-        ScrollPane scrollPaneObject = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
-        scrollPaneObject.setSize(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT);
-        scrollPaneObject.add(boardPanel);
-        scrollPaneObject.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
-        this.getContentPane().add(scrollPaneObject, BorderLayout.CENTER);
-*/
-
-        //chatBox panel will not be removed! it is on index=2
-
-        this.getContentPane().remove(3);
+        this.getContentPane().remove(2);
         cardsPanel = generateTilesPanel(game, playerIndex);
-        this.getContentPane().add(cardsPanel, BorderLayout.SOUTH,3);
+        this.getContentPane().add(cardsPanel, BorderLayout.SOUTH,2);
 
-        jungleCardsPanelLink.forEach(tile -> {
-            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getJungleTile().getNumberOfRotation(), tile.getJungleTile().getTileEnum()));
-            tile.setIcon(icon);
-        });
+        //chatBox panel will not be removed! it is on index=3
 
-        workerCardsPanelLink.forEach(tile -> {
-            ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getWorkerTile().getNumberOfRotation(), tile.getWorkerTile().getTileEnum()));
-            tile.setIcon(icon);
-        });
+        collectJungleCardsPanelLink();
 
-        boardTileButtonLink.forEach(tileColumn -> {
-            tileColumn.forEach(tile -> {
-                if (tile.getTile().getTileEnum() != TileEnum.EMPTY){
-                    ImageIcon icon = new ImageIcon(allocateImageToTile(tile.getTile().getNumberOfRotation(), tile.getTile().getTileEnum()));
-                    tile.setIcon(icon);
-                }else {
-                    tile.setBackground(new Color(0,0,0,OPACITY_LEVEL_LOW));
-                    tile.setOpaque(false);
-                    tile.setContentAreaFilled(false);
-                    //tile.setBorderPainted(false);
-                }
-            });
-        });
+        collectWorkerCardsPanelLink();
+
+        collectBoardTileButtonLink();
 
         collectSelectableJunglePanelLink();
-
         collectSelectableWorkerPanelLink();
 
         this.invalidate();
@@ -243,9 +271,9 @@ public class GuiBoard extends JFrame implements Runnable {
     }
 
     private void collectSelectableWorkerPanelLink() {
-        selectableWorkerPanelLink = new ArrayList<>();
-        selectableWorkerPanelLink = new ArrayList<>();
+        selectableWorkerPanelLink = new HashSet<>();
 
+        /*
         boardTileButtonLink.forEach(tileRow -> tileRow.forEach(tile -> {
             game.getBoard().getSelectableWorkerPanelPositions().forEach(selectable ->{
                 if (selectable.getKey() == tile.getCoord().x && selectable.getValue() == tile.getCoord().y){
@@ -253,12 +281,21 @@ public class GuiBoard extends JFrame implements Runnable {
                 }
             });
         }));
+         */
+        for (List<AbstractBoardTileButton> tileRow : boardTileButtonLink) {
+            for (AbstractBoardTileButton tile : tileRow) {
+                for (Pair<Integer, Integer> selectable : game.getBoard().getSelectableWorkerPanelPositions()) {
+                    if (selectable.getKey() == tile.getCoord().x && selectable.getValue() == tile.getCoord().y) {
+                        selectableWorkerPanelLink.add(tile);
+                    }
+                }
+            }
+        }
         System.out.println("[GuiBoard]: selectableWorkerPanelLink.size="+ selectableWorkerPanelLink.size());
     }
 
     private void collectSelectableJunglePanelLink() {
-        selectableJunglePanelLink = new ArrayList<>();
-        selectableJunglePanelLink = new ArrayList<>();
+        selectableJunglePanelLink = new HashSet<>();
         boardTileButtonLink.forEach(tileRow -> tileRow.forEach(tile -> {
             game.getBoard().getSelectableJunglePanelPositions().forEach(selectable ->{
                 if (selectable.getKey() == tile.getCoord().x && selectable.getValue() == tile.getCoord().y){
@@ -588,11 +625,17 @@ public class GuiBoard extends JFrame implements Runnable {
         result.setLayout(new CustomGridLayout(board.getHeight(), board.getWidth()));
         result.setBackground(new Color(0,0,0,0));
         result.setOpaque(false);
+        boardTileButtonLink = new ArrayList<>();
 
         for (int y = 0; y < board.getHeight(); ++y) {
-            boardTileButtonLink.add(new ArrayList<BoardTileButton>());
+            boardTileButtonLink.add(new ArrayList<AbstractBoardTileButton>());
             for (int x = 0; x < board.getWidth(); ++x) {
-                BoardTileButton boardTileButton = new BoardTileButton(new Point(x, y), this);
+                AbstractBoardTileButton boardTileButton = null;
+                if (GameType.MULTI == this.gameType) {
+                    boardTileButton = new BoardTileButtonMulti(new Point(x, y), this);
+                }else{
+                    boardTileButton = new BoardTileButtonSingle(new Point(x, y), this, this.gameHandlerForSinglePlayer);
+                }
                 boardTileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
                 boardTileButtonLink.get(y).add(boardTileButton);
                 result.add(boardTileButton);
@@ -756,24 +799,28 @@ public class GuiBoard extends JFrame implements Runnable {
         return workerCardsPanelLink;
     }
 
-    public List<List<BoardTileButton>> getBoardTileButtonLink() {
+    public List<List<AbstractBoardTileButton>> getBoardTileButtonLink() {
         return boardTileButtonLink;
     }
 
-    public List<BoardTileButton> getSelectableJunglePanelLink() {
+    public Set<AbstractBoardTileButton> getSelectableJunglePanelLink() {
         return selectableJunglePanelLink;
     }
 
-    public void setSelectableJunglePanelLink(List<BoardTileButton> selectableJunglePanelLink) {
+    public void setSelectableJunglePanelLink(Set<AbstractBoardTileButton> selectableJunglePanelLink) {
         this.selectableJunglePanelLink = selectableJunglePanelLink;
     }
 
-    public List<BoardTileButton> getSelectableWorkerPanelLink() {
+    public Set<AbstractBoardTileButton> getSelectableWorkerPanelLink() {
         return selectableWorkerPanelLink;
     }
 
-    public void setSelectableWorkerPanelLink(List<BoardTileButton> selectableWorkerPanelLink) {
+    public void setSelectableWorkerPanelLink(Set<AbstractBoardTileButton> selectableWorkerPanelLink) {
         this.selectableWorkerPanelLink = selectableWorkerPanelLink;
+    }
+
+    public GameHandler getGameHandlerForSinglePlayer() {
+        return gameHandlerForSinglePlayer;
     }
 
     private void loadBackgroundImage() {
