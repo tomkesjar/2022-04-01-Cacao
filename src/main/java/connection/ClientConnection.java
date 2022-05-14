@@ -3,6 +3,7 @@ package connection;
 import game.Game;
 import messages.ActionMessage;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -12,7 +13,7 @@ public class ClientConnection {
         TEXT
     }
 
-    private static final String SERVER_IP = "127.0.0.1";
+    //private static String SERVER_IP = "127.0.0.1";
 
     private static final int SERVER_GAME_PORT = 5555;
     private static final int SERVER_CHAT_PORT = 5550;
@@ -29,12 +30,12 @@ public class ClientConnection {
 
 
 
-    public ClientConnection(ConnectionType type) throws IOException, ClassNotFoundException {
+    public ClientConnection(String hostName, ConnectionType type) throws IOException, ClassNotFoundException {
         try {
             this.type = type;
 
             if (this.type == ConnectionType.OBJECT) {
-                this.socket = new Socket(SERVER_IP, SERVER_GAME_PORT);
+                this.socket = new Socket(hostName, SERVER_GAME_PORT);
                 System.out.println("[ClientConnection]: Successful connection to game server");
                 this.objectInputStream = new ObjectInputStream(this.socket.getInputStream());
                 System.out.println("[ClientConnection]: InputStream successfully created");
@@ -42,7 +43,7 @@ public class ClientConnection {
                 System.out.println("[ClientConnection]: OutputStreams successfully created");
             }
             else {
-                this.socket = new Socket(SERVER_IP, SERVER_CHAT_PORT);
+                this.socket = new Socket(hostName, SERVER_CHAT_PORT);
                 System.out.println("[ClientConnection]: Successful connection to chat server");
                 this.printWriter = new PrintWriter(this.socket.getOutputStream(), true);
                 System.out.println("[ClientConnection]: PrintWriter successfully created");
@@ -53,7 +54,11 @@ public class ClientConnection {
             System.out.println("[ClientConnection]: Connection, InputStream and OutputStream are successfully created");
 
         } catch (IOException e) {
+            //todo popup
+            JOptionPane.showMessageDialog(new JFrame(), "An error occured during connection.", "Connection Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+
+            System.exit(-1);
         }
 
 
