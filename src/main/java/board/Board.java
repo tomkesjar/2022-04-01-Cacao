@@ -71,9 +71,7 @@ public class Board implements Serializable {
     }
 
 
-    public boolean isValidPlacementAsWorkerTile(TilePlacementMessageRequest tilePlacementMessageRequest) {
-        Point coord = new Point(tilePlacementMessageRequest.getCoord());
-
+    public boolean isValidPlacementAsWorkerTile(Point coord) {
         return isValidPlacementAsWorkerTile(coord.x, coord.y);
     }
 
@@ -103,8 +101,7 @@ public class Board implements Serializable {
     }
 
 
-    public boolean isValidPlacementAsJungleTile(TilePlacementMessageRequest tilePlacementMessageRequest) {
-        Point coord = new Point(tilePlacementMessageRequest.getCoord());
+    public boolean isValidPlacementAsJungleTile(Point coord) {
         return isValidPlacementAsJungleTile(coord.x, coord.y);
     }
 
@@ -180,6 +177,8 @@ public class Board implements Serializable {
     public void setFreshWorkerTilePoint(Point freshWorkerTilePoint) {
         this.freshWorkerTilePoint = freshWorkerTilePoint;
     }
+
+
 
     public Point getFreshJungleTilePoint() {
         return freshJungleTilePoint;
