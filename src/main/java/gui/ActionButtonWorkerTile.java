@@ -59,20 +59,19 @@ public class ActionButtonWorkerTile extends JButton implements MouseListener {
                         actionButtonWorkerTile.setTileSelected(component == this ? true : false);
                     }
                 });
-                //System.out.println("[ActionButtonWorkerTile]: single click -> select tile=" + workerTile.toShortString());
 
                 guiBoard.getSelectableWorkerPanelLink().forEach( boardTileButton -> boardTileButton.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 4)));
 
                 System.out.println("[ActionButtonWorkerTile]: getSelectableWorkerPanelPositions=" + guiBoard.getGame().getBoard().getSelectableWorkerPanelPositions().toString() );
                 System.out.println("[ActionButtonWorkerTile]: getSelectableWorkerPanelLink=");
                 StringBuilder stringBuilder = new StringBuilder();
-                for ( BoardTileButton button :  guiBoard.getSelectableWorkerPanelLink()){
+                /*for ( AbstractBoardTileButton button :  guiBoard.getSelectableWorkerPanelLink()){
                     stringBuilder.append(System.lineSeparator());
                     stringBuilder.append(button.getCoord());
                     stringBuilder.append(button.getTile());
                     stringBuilder.append(button.getBorder() != null ? button.getBorder().toString() : "no border");
                 }
-                System.out.println(stringBuilder.toString());
+                System.out.println(stringBuilder.toString());*/
 
                 guiBoard.setSelectedWorkerTile(this.workerTile);
                 isTileSelected = true;

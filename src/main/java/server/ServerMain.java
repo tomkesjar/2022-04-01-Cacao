@@ -2,6 +2,8 @@ package server;
 
 import game.GameHandler;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ServerMain {
     //connection & timing
@@ -20,10 +23,10 @@ public class ServerMain {
     private static final int SERVER_CHAT_PORT = 5550;
     private static int PLAYER_COUNTER = 0;
     private static LocalTime START_TIME;
-    private static final long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
+    private static long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
     private static final int SO_TIMEOUT = 10;       //TODO to decide (millisec)
 
-    private static final int MAX_NUMBER_OF_PLAYERS = 2;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
+    private static int MAX_NUMBER_OF_PLAYERS = 2;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
 
     private static List<GameServerClientHandler> gameClients = new ArrayList<>();
     private static List<ChatServerClientHandler> chatClients = new ArrayList<>();
@@ -32,8 +35,32 @@ public class ServerMain {
     private static ExecutorService gamePool = Executors.newFixedThreadPool(poolSize);
     private static ExecutorService chatPool = Executors.newFixedThreadPool(poolSize);
 
+    private static ServerGui serverGui;
+
     //*******************************************
     public static void main(String[] args) {
+        serverGui = new ServerGui();
+
+        synchronized (serverGui.getSendButton()){
+            try{
+                serverGui.getSendButton().wait();
+            }catch (InterruptedException e){
+                System.out.println("[SERVER]: Interrupted exception occured");
+            }
+        }
+
+
+        WAIT_TIME_IN_SECOND = Integer.parseInt(serverGui.getWaitTimeInput().getText());
+        serverGui.appendToTextArea("[Server]: wait time is set to " + WAIT_TIME_IN_SECOND + " sec");
+        MAX_NUMBER_OF_PLAYERS = Integer.parseInt(serverGui.getNumberOfPlayersInput().getText());
+        serverGui.appendToTextArea("[Server]: max number of players= " + MAX_NUMBER_OF_PLAYERS);
+
+
+
+
+
+
+
         ServerSocket serverSocketGame = null;
         ServerSocket serverSocketChat = null;
         try {
@@ -53,42 +80,45 @@ public class ServerMain {
 
 
         while (checkWaitTime() && !isMaxNumberOfPlayersReached()) {             //**
-            System.out.println("[SERVER]: waiting for client (game + chat) connection...");
+            String messageToSend = "[SERVER]: waiting for client (game + chat) connection...";
+            System.out.println(messageToSend);
+            serverGui.appendToTextArea(messageToSend);
 
             Socket gameClient = null;
             Socket chatClient = null;
             try {
                 if ((gameClients.size() <= chatClients.size())) {
-                    System.out.println("[SERVER]: Attempts to connect to gameClient, gameClients connected=" + gameClients.size());
+                    messageToSend = "[SERVER]: Attempts to connect to gameClient, gameClients connected=" + gameClients.size();
+                    System.out.println(messageToSend);
+                    serverGui.appendToTextArea(messageToSend);
                     gameClient = serverSocketGame.accept();
 
                     GameServerClientHandler gameServerClientHandler = new GameServerClientHandler(gameClient, gameClients);
                     gameClients.add(gameServerClientHandler);
-                    System.out.println("[SERVER]: Connected to gameClient, gameClients connected=" + gameClients.size());
+                    messageToSend = "[SERVER]: Connected to gameClient, gameClients connected=" + gameClients.size();
+                    System.out.println(messageToSend);
+                    serverGui.appendToTextArea(messageToSend);
                 }
 
                 if ((gameClients.size() > chatClients.size())){
-                    System.out.println("[SERVER]: Attempts to connect to chatClient, chatClients connected=" + chatClients.size());
+                    messageToSend = "[SERVER]: Attempts to connect to chatClient, chatClients connected=" + chatClients.size();
+                    System.out.println(messageToSend);
+                    serverGui.appendToTextArea(messageToSend);
                     chatClient = serverSocketChat.accept();
 
                     ChatServerClientHandler chatServerClientHandler = new ChatServerClientHandler(chatClient, chatClients);
                     chatClients.add(chatServerClientHandler);
-                    System.out.println("[SERVER]: Connected to chatClient, chatClients connected=" + chatClients.size());
+
+                    messageToSend = "[SERVER]: Connected to chatClient, chatClients connected=" + chatClients.size();
+                    System.out.println(messageToSend);
+                    serverGui.appendToTextArea(messageToSend);
                 }
-/*
-                if (gameClients.size() != chatClients.size()){
-                    System.out.println("[SERVER]: gameClients and chatClients size differ! gameClients=" +gameClients.size() + ", chatClients=" + chatClients.size());
-                    //TODO Throw SocketException vmi
-                }
-*/
 
 
         //creates oos ois
-                System.out.println("[SERVER]: Attempts to create gameServerClientHandler");
-                //GameServerClientHandler gameServerClientHandler = new GameServerClientHandler(gameClient, gameClients);
-                //ChatServerClientHandler chatServerClientHandler = new ChatServerClientHandler(chatClient, chatClients);
-
-                //String playerName = (String) gameServerClientHandler.getObjectInputStream().readUnshared();
+                messageToSend = "[SERVER]: Attempts to create gameServerClientHandler";
+                System.out.println(messageToSend);
+                serverGui.appendToTextArea(messageToSend);
 
                 String playerName = (String) gameClients.get(gameClients.size()-1).getObjectInputStream().readUnshared();
                 System.out.println("[SERVER]: playerName received from gameServerClientHandler, playerName=" + playerName);
@@ -97,8 +127,6 @@ public class ServerMain {
                     playerName = "Player " + String.valueOf(gameClients.size());
                     System.out.println("[SERVER]: playerName changed to playerName=" + playerName);
                 }
-                //gameServerClientHandler.setPlayerName(playerName);
-                //chatServerClientHandler.setPlayerName(playerName);
 
                 gameClients.get(gameClients.size()-1).setPlayerName(playerName);
                 if (gameClients.size() == chatClients.size()) {
@@ -107,33 +135,38 @@ public class ServerMain {
                 }
 
 
-
-                //gameClients.add(gameServerClientHandler);
-                //System.out.println("[SERVER]: gameServerClientHandler added to list");
-                //chatClients.add(chatServerClientHandler);
-                //System.out.println("[SERVER]: chatServerClientHandler added to list");
-
-                //gamePool.execute(gameServerClientHandler);
                 gamePool.execute(gameClients.get(gameClients.size()-1));
-                System.out.println("[SERVER]: start processing gamePool threads with executorService" );
-                //chatPool.execute(chatServerClientHandler);
+                messageToSend = "[SERVER]: start processing gamePool threads with executorService";
+                System.out.println(messageToSend);
+                serverGui.appendToTextArea(messageToSend);
+
                 chatPool.execute(chatClients.get(chatClients.size() - 1));
-                System.out.println("[SERVER]: start processing chatPool threads with executorService" );
+                messageToSend = "[SERVER]: start processing chatPool threads with executorService";
+                System.out.println(messageToSend);
+                serverGui.appendToTextArea(messageToSend);
 
             } catch (SocketException se) {
                 System.out.println("SERVER]: No successful connection this time SE");
-                se.printStackTrace();
+                //se.printStackTrace();
             } catch (IOException e) {
                 System.out.println("SERVER]: No successful connection this time IOE");
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("[SERVER]: waiting time expired or all slots are filled, clients connected=" + gameClients.size());
+        String messageToSend = "[SERVER]: waiting time expired or all slots are filled, clients connected=" + gameClients.size();
+        System.out.println(messageToSend);
+        serverGui.appendToTextArea(messageToSend);
 
-        //System.out.println("[SERVER]: start processing threads with executorService" );
-        //gameClients.forEach(client -> gamePool.execute(client));
+        if (gameClients.isEmpty() || chatClients.isEmpty()) {
+            messageToSend = "[SERVER]: Nobody joined, closing server.  gameClients=" + gameClients.size() + ", chatClients=" + gameClients.size();
+            System.out.println(messageToSend);
+            serverGui.appendToTextArea(messageToSend);
+            JOptionPane.showMessageDialog(new Frame(), "Nobody joined, closing server.  gameClients=" + gameClients.size() + ", chatClients=" + gameClients.size(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
 
         System.out.println("SERVER]: === Move to GameHandler ===");
         GameHandler gameHandler = new GameHandler(gameClients);     //chatClients

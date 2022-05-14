@@ -98,57 +98,57 @@ public class ImageLoader {
 
     public void loadWorkerImages() {
         try {
-            URL urlForR111 = this.getClass().getResource("/icons/worker/dummy_r1111.png");
+            URL urlForR111 = this.getClass().getResource("/icons/worker/final_1111r.png");
             r1111 = getScaledImage(urlForR111, ImageTypes.TILE);
 
-            URL urlForR2101 = this.getClass().getResource("/icons/worker/dummy_r2101.png");
+            URL urlForR2101 = this.getClass().getResource("/icons/worker/final_2101r.png");
             r2101 = getScaledImage(urlForR2101, ImageTypes.TILE);
 
-            URL urlForR3100 = this.getClass().getResource("/icons/worker/dummy_r3100.png");
+            URL urlForR3100 = this.getClass().getResource("/icons/worker/final_3100r.png");
             r3100 = getScaledImage(urlForR3100, ImageTypes.TILE);
 
-            URL urlForR3001 = this.getClass().getResource("/icons/worker/dummy_r3001.png");
+            URL urlForR3001 = this.getClass().getResource("/icons/worker/final_3001r.png");
             r3001 = getScaledImage(urlForR3001, ImageTypes.TILE);
 
 
-            URL urlForB111 = this.getClass().getResource("/icons/worker/dummy_b1111.png");
+            URL urlForB111 = this.getClass().getResource("/icons/worker/final_1111b.png");
             b1111 = getScaledImage(urlForB111, ImageTypes.TILE);
 
-            URL urlForB2101 = this.getClass().getResource("/icons/worker/dummy_b2101.png");
+            URL urlForB2101 = this.getClass().getResource("/icons/worker/final_2101b.png");
             b2101 = getScaledImage(urlForB2101, ImageTypes.TILE);
 
-            URL urlForB3100 = this.getClass().getResource("/icons/worker/dummy_b3100.png");
+            URL urlForB3100 = this.getClass().getResource("/icons/worker/final_3100b.png");
             b3100 = getScaledImage(urlForB3100, ImageTypes.TILE);
 
-            URL urlForB3001 = this.getClass().getResource("/icons/worker/dummy_b3001.png");
+            URL urlForB3001 = this.getClass().getResource("/icons/worker/final_3001b.png");
             b3001 = getScaledImage(urlForB3001, ImageTypes.TILE);
 
 
 
-            URL urlForG111 = this.getClass().getResource("/icons/worker/dummy_g1111.png");
+            URL urlForG111 = this.getClass().getResource("/icons/worker/final_1111p.png");
             g1111 = getScaledImage(urlForG111, ImageTypes.TILE);
 
-            URL urlForG2101 = this.getClass().getResource("/icons/worker/dummy_g2101.png");
+            URL urlForG2101 = this.getClass().getResource("/icons/worker/final_2101p.png");
             g2101 = getScaledImage(urlForG2101, ImageTypes.TILE);
 
-            URL urlForG3100 = this.getClass().getResource("/icons/worker/dummy_g3100.png");
+            URL urlForG3100 = this.getClass().getResource("/icons/worker/final_3100p.png");
             g3100 = getScaledImage(urlForG3100, ImageTypes.TILE);
 
-            URL urlForG3001 = this.getClass().getResource("/icons/worker/dummy_g3001.png");
+            URL urlForG3001 = this.getClass().getResource("/icons/worker/final_3001p.png");
             g3001 = getScaledImage(urlForG3001, ImageTypes.TILE);
 
 
 
-            URL urlForY111 = this.getClass().getResource("/icons/worker/dummy_y1111.png");
+            URL urlForY111 = this.getClass().getResource("/icons/worker/final_1111y.png");
             y1111 = getScaledImage(urlForY111, ImageTypes.TILE);
 
-            URL urlForY2101 = this.getClass().getResource("/icons/worker/dummy_y2101.png");
+            URL urlForY2101 = this.getClass().getResource("/icons/worker/final_2101y.png");
             y2101 = getScaledImage(urlForY2101, ImageTypes.TILE);
 
-            URL urlForY3100 = this.getClass().getResource("/icons/worker/dummy_y3100.png");
+            URL urlForY3100 = this.getClass().getResource("/icons/worker/final_3100y.png");
             y3100 = getScaledImage(urlForY3100, ImageTypes.TILE);
 
-            URL urlForY3001 = this.getClass().getResource("/icons/worker/dummy_y3001.png");
+            URL urlForY3001 = this.getClass().getResource("/icons/worker/final_3001y.png");
             y3001 = getScaledImage(urlForY3001, ImageTypes.TILE);
 
             //TODO SOS add remaining

@@ -83,7 +83,6 @@ public class JungleTileDeck implements Serializable {
 
 
     public void moreThanTwoPlayersSetup() {
-        //currently dummy
         createTiles(6, TileEnum.PLANTATION_1);
         createTiles(2, TileEnum.PLANTATION_2);
         createTiles(2, TileEnum.MARKET_LOW);
@@ -98,7 +97,7 @@ public class JungleTileDeck implements Serializable {
     }
 
     public void twoPlayersSetup() {
-        //currently dummy
+
         createTiles(4, TileEnum.PLANTATION_1);  //-2
         createTiles(2, TileEnum.PLANTATION_2);
         createTiles(2, TileEnum.MARKET_LOW);

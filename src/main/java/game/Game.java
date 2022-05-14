@@ -10,9 +10,10 @@ import tiles.JungleTile;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game implements Serializable {
-    private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 1;
+    private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 2;
     private static final int MAX_NUMBER_OF_PLAYERS = 2;      //TODO <link with ServerMain's MAX_PLAYER_NUMBER field>
 
     private static final int MAX_NUMBER_OF_CACAO_BEANS = 5;
@@ -42,8 +43,12 @@ public class Game implements Serializable {
     }
 
     public Game(List<GameServerClientHandler> clients) {
-        this.playerList = createPlayerList(clients);
-        this.jungleTileDeck = new JungleTileDeck(clients.size());
+        this(clients.stream().map(client -> client.getPlayerName()).collect(Collectors.toList()), clients.size());
+    }
+
+    public Game(List<String> nameList, int numberOfHumanPlayers) {
+        this.playerList = createPlayerList(nameList, numberOfHumanPlayers);
+        this.jungleTileDeck = new JungleTileDeck(nameList.size());
         this.board = new Board();
 
         this.activePlayer = 0;
@@ -64,11 +69,16 @@ public class Game implements Serializable {
         return result;
     }
 
-    private List<Player> createPlayerList(List<GameServerClientHandler> clients) {
+    private List<Player> createPlayerList(List<String> clients, int numberOfHumanPlayers) {
         List<Player> result = new ArrayList<>();
         List<Integer> counter = Arrays.asList(1);
         clients.forEach(c -> {
-            Player newPlayer = new Player(counter.get(0), clients.size(), c.getPlayerName());
+            Player newPlayer = new Player(counter.get(0), clients.size(), c);
+            if (numberOfHumanPlayers >= counter.get(0)) {
+                newPlayer.setPlayerType(Player.PlayerType.HUMAN);
+            }else{
+                newPlayer.setPlayerType(Player.PlayerType.BASIC_AI);
+            }
             result.add(newPlayer);
             counter.set(0, counter.get(0) + 1);
         });
@@ -218,6 +228,14 @@ public class Game implements Serializable {
 
     public static int getMaxNumberOfWorshipSites() {
         return MAX_NUMBER_OF_WORSHIP_SITES;
+    }
+
+    public boolean isGameEnded() {
+        return isGameEnded;
+    }
+
+    public void setGameEnded(boolean gameEnded) {
+        isGameEnded = gameEnded;
     }
 
     @Override
