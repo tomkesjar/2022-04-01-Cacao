@@ -33,7 +33,7 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && guiBoard.hasPlacedWorkerTile()) {
+        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && guiBoard.hasPlacedWorkerTile() && !game.isGameEnded()) {
             //select
             if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) && !isTileSelected) {
                 Arrays.stream(this.getParent().getComponents()).forEach(component -> {
@@ -85,14 +85,14 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected) {
+        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected && !game.isGameEnded()) {
             this.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 4));
         }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected) {
+        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected && !game.isGameEnded()) {
             this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         }
     }

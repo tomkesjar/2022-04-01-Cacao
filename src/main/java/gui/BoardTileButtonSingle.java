@@ -31,8 +31,6 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
         super.mousePressed(e);
 
         try {
-            Thread.sleep(500);
-
             gameHandler.checkEndGameStatus();
             if(gameHandler.getGame().isGameEnded()){
                 Thread.sleep(1_000);

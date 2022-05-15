@@ -39,11 +39,14 @@ public class GuiBoard extends JFrame implements Runnable {
     private static final int OPACITY_LEVEL_HIGH = 85;
     private static final int OPACITY_LEVEL_LOW = 25;
 
-    private static final int TILES_MAX_HEIGHT = 55;
-    private static final int TILES_MAX_WIDTH = 55;
+    private static final int TILES_MAX_HEIGHT = 62;
+    private static final int TILES_MAX_WIDTH = 62;
 
-    private static int PANEL_MAX_WIDTH = 1_200;
-    private static final int PANEL_MAX_HEIGHT = 800;
+    private static int PANEL_MAX_WIDTH = 1_290;
+    private static final int PANEL_MAX_HEIGHT = 832;
+
+    private static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
 
     private static final int INFOPANEL_UNIT_HEIGHT = 16;
 

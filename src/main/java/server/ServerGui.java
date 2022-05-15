@@ -1,9 +1,12 @@
 package server;
 
+import jdk.vm.ci.meta.Local;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalTime;
 
 public class ServerGui extends JFrame {
     private JPanel inputPanel;
@@ -57,9 +60,10 @@ public class ServerGui extends JFrame {
                 if (!hasSentInputToServer()) {
                     if ((Integer.parseInt(getNumberOfPlayersInput().getText()) > 0
                             && Integer.parseInt(getNumberOfPlayersInput().getText()) < 5)
-                            && (Integer.parseInt(getWaitTimeInput().getText()) > 20
-                            && Integer.parseInt(getWaitTimeInput().getText()) < 300)) {
+                            && (Integer.parseInt(getWaitTimeInput().getText()) >= 20
+                            && Integer.parseInt(getWaitTimeInput().getText()) <= 300)) {
                         hasSentInputToServer = true;
+                        appendToTextArea("Server started at " + LocalTime.now());
                         synchronized (sendButton) {
                             sendButton.notify();
                         }
@@ -68,8 +72,8 @@ public class ServerGui extends JFrame {
                             && Integer.parseInt(getNumberOfPlayersInput().getText()) < 5)) {
                         appendToTextArea("Number of Players should be between 1-4");
                         System.out.println("[ServerGui]: Number of Players should be between 1-4");
-                    } else if (!(Integer.parseInt(getWaitTimeInput().getText()) > 20
-                            && Integer.parseInt(getWaitTimeInput().getText()) < 300)) {
+                    } else if (!(Integer.parseInt(getWaitTimeInput().getText()) >= 20
+                            && Integer.parseInt(getWaitTimeInput().getText()) <= 300)) {
                         appendToTextArea("Wait time should be between 20 sec and 300 sec");
                         System.out.println("[ServerGui]: Wait time should be between 20 sec and 300 sec");
                     }
@@ -120,7 +124,7 @@ public class ServerGui extends JFrame {
         this.add(textArea, c);
 
 
-        this.pack();    //ez rakja egybe
+        this.pack();
         this.setVisible(true);
         this.requestFocusInWindow();
     }

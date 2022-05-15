@@ -55,7 +55,7 @@ public class GameHandler {
             String botName = "Bot " + String.valueOf(i+1);
             nameList.add(botName);
         }
-        this.game = new Game(nameList, 1);      //only the gameClients.size() matters
+        this.game = new Game(nameList, 1);
     }
 
 

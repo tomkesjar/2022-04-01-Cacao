@@ -10,9 +10,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +23,9 @@ public class ServerMain {
     private static int PLAYER_COUNTER = 0;
     private static LocalTime START_TIME;
     private static long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
-    private static final int SO_TIMEOUT = 10;       //TODO to decide (millisec)
+    private static final int SO_TIMEOUT = 10;       //TODO to decide (sec)
 
-    private static int MAX_NUMBER_OF_PLAYERS = 2;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
+    private static int MAX_NUMBER_OF_PLAYERS = 4;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
 
     private static List<GameServerClientHandler> gameClients = new ArrayList<>();
     private static List<ChatServerClientHandler> chatClients = new ArrayList<>();
@@ -57,10 +56,6 @@ public class ServerMain {
 
 
 
-
-
-
-
         ServerSocket serverSocketGame = null;
         ServerSocket serverSocketChat = null;
         try {
@@ -78,6 +73,7 @@ public class ServerMain {
 
         START_TIME = LocalTime.now();
 
+        Map<String, Integer> namesMap = new HashMap<>();
 
         while (checkWaitTime() && !isMaxNumberOfPlayersReached()) {             //**
             String messageToSend = "[SERVER]: waiting for client (game + chat) connection...";
@@ -124,8 +120,21 @@ public class ServerMain {
                 System.out.println("[SERVER]: playerName received from gameServerClientHandler, playerName=" + playerName);
 
                 if (Objects.isNull(playerName)){
+                    int index = 0;
                     playerName = "Player " + String.valueOf(gameClients.size());
                     System.out.println("[SERVER]: playerName changed to playerName=" + playerName);
+
+                    if (!namesMap.containsKey("Player")) {
+                        namesMap.put("Player", 1);
+                    } else {
+                        namesMap.put("Player", namesMap.get("Player") + 1);
+                    }
+
+                }else if(namesMap.containsKey(playerName)) {
+                    namesMap.put(playerName, namesMap.get(playerName)+1);
+                    playerName = playerName + String.valueOf(namesMap.get(playerName));
+                } else {
+                    namesMap.put(playerName, 1);
                 }
 
                 gameClients.get(gameClients.size()-1).setPlayerName(playerName);
@@ -164,6 +173,7 @@ public class ServerMain {
             System.out.println(messageToSend);
             serverGui.appendToTextArea(messageToSend);
             JOptionPane.showMessageDialog(new Frame(), "Nobody joined, closing server.  gameClients=" + gameClients.size() + ", chatClients=" + gameClients.size(), "Error", JOptionPane.ERROR_MESSAGE);
+            serverGui.dispose();
             return;
         }
 
