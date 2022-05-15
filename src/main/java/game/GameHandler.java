@@ -99,7 +99,7 @@ public class GameHandler {
                     //* end of extract manageDeck
 
                     //extract method communicator.sendMessage (ebbol a game + textMessage kell a single-be
-                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, "worker tile placement successful, now select and place jungle tile");
+                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, " worker tile placement successful, now select and place jungle tile");
                     sendMessageToAll(response);
                     // end of extract sendMessage
 
