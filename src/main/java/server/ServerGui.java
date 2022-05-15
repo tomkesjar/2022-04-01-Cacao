@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalTime;
 
 public class ServerGui extends JFrame {
@@ -15,6 +17,8 @@ public class ServerGui extends JFrame {
 
     private JLabel numberOfPlayersText;
     private JLabel waitTimeText;
+    private JLabel serverNameText;
+    private JLabel serverName;
     private JTextField numberOfPlayersInput = new JTextField();
     private JTextField waitTimeInput = new JTextField();
     private JMenuBar menuBar = new JMenuBar();
@@ -37,6 +41,20 @@ public class ServerGui extends JFrame {
 
         numberOfPlayersText = new JLabel("Number of Players:");
         numberOfPlayersText.setPreferredSize(new Dimension(200, 20));
+
+        serverNameText = new JLabel("Server name:");
+        serverNameText.setPreferredSize(new Dimension(200, 20));
+
+        String hostName = "no data";
+        try {
+            hostName = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        serverName = new JLabel(hostName);
+        serverName.setPreferredSize(new Dimension(200, 20));
+
         numberOfPlayersInput.setText("4");
         numberOfPlayersInput.setPreferredSize(new Dimension(200, 20));
         numberOfPlayersInput.setToolTipText("Number of Players");
@@ -114,12 +132,24 @@ public class ServerGui extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
+        c.gridwidth = 1;
+        this.add(serverNameText, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        this.add(serverName, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 3;
         c.gridwidth = 2;
         this.add(sendButton, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 4;
         c.gridwidth = 2;
         this.add(textArea, c);
 
