@@ -98,7 +98,7 @@ public class GuiBoard extends JFrame implements Runnable {
         this.gameConnection = null;
         this.chatConnection = null;
         this.playerIndex = 0;
-        PANEL_MAX_WIDTH = 900;
+        PANEL_MAX_WIDTH = 1_000;
 
         loadImages();
         initializeCommonVariables();
@@ -173,7 +173,8 @@ public class GuiBoard extends JFrame implements Runnable {
         this.getContentPane().add(infoPanel, BorderLayout.NORTH);
 
         boardPanel = createBoardPanel(game.getBoard());
-        this.getContentPane().add(boardPanel, BorderLayout.EAST);
+        //this.getContentPane().add(boardPanel, BorderLayout.EAST);
+        this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH);
@@ -324,6 +325,14 @@ public class GuiBoard extends JFrame implements Runnable {
         panel.add(beanValue);
         playerPanelLink.get(player).put("beanIcon", beanIcon);
         playerPanelLink.get(player).put("beanValue", beanValue);
+
+        JLabel coinIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getCoinIcon())); //TODO: add coin icon
+        JLabel coinValue = new JLabel(String.valueOf(player.getCoins()));      //TODO: add boxes instead of number + colourify boxes based on number
+        coinValue.setForeground(Color.WHITE);
+        panel.add(coinIcon);
+        panel.add(coinValue);
+        playerPanelLink.get(player).put("coinIcon", coinIcon);
+        playerPanelLink.get(player).put("coinValue", coinValue);
 
         JLabel shrineIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getShrineIcon())); //TODO: add coin icon
         JLabel shrineValue = new JLabel(String.valueOf(player.getWorshipSymbol()) + "/" + String.valueOf(Game.getMaxNumberOfWorshipSites()));
@@ -540,8 +549,6 @@ public class GuiBoard extends JFrame implements Runnable {
             }
         }
         try {
-
-            System.out.println("[GuiBoard]: final read: checkIfIsGameEnd=" + game.checkIfIsGameEnd());
             TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
             this.game = response.getGame();
 
@@ -570,16 +577,16 @@ public class GuiBoard extends JFrame implements Runnable {
             Color selectedColour;
             switch (game.getPlayerList().indexOf(player)) {
                 case 0:
-                    selectedColour = Color.RED;
+                    selectedColour = new Color(255,50,0);
                     break;
                 case 1:
-                    selectedColour = Color.CYAN;
+                    selectedColour = new Color(0,0,255);
                     break;
                 case 2:
-                    selectedColour = Color.GREEN;
+                    selectedColour = new Color(204,0,102);
                     break;
                 case 3:
-                    selectedColour = Color.YELLOW;
+                    selectedColour = new Color(255,255,0);
                     break;
                 default:
                     selectedColour = Color.GRAY;
@@ -590,7 +597,11 @@ public class GuiBoard extends JFrame implements Runnable {
             c.gridwidth = 1;
             c.gridy = game.getPlayerList().indexOf(player) > 1 ? 2 : 1;
             playerPanel.setBackground(new Color(0,0,0, OPACITY_LEVEL_LOW));
-            playerPanel.setBorder(BorderFactory.createLineBorder(selectedColour, 2));
+            if (game.getPlayerList().get(game.getActivePlayer()) == player){
+                playerPanel.setBorder(BorderFactory.createLineBorder(selectedColour, 5));
+            }else {
+                playerPanel.setBorder(BorderFactory.createLineBorder(selectedColour, 1));
+            }
 
             infoPanel.add(playerPanel,c);
         }

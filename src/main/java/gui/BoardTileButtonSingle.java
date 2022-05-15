@@ -148,7 +148,7 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
                 }
 
             } else {
-                String workerTileUnsuccessfulMessage = "Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile";
+                String workerTileUnsuccessfulMessage = " Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile";
                 guiBoard.updateGuiBoard(gameHandler.getGame(), workerTileUnsuccessfulMessage);
             }
         }

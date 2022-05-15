@@ -108,7 +108,7 @@ public class GameHandler {
                 } else {
                     //extract method communicator.sendMessage (ebbol a game + textMessage kell a single-be
                     System.out.println("[GameHandler]: Invalid WorkerTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select an empty tile and place worker tile adjacent to a jungle tile");
+                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, " Invalid placement, select an empty tile and place worker tile adjacent to a jungle tile");
                     sendMessageToPlayer(response, currentClient);
                     // end of extract sendMessage
                 }
@@ -144,7 +144,7 @@ public class GameHandler {
                 } else {
                     //extract method communicator.sendMessage (ebbol a game + textMessage kell a single-be
                     System.out.println("[GameHandler]: Invalid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, "Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile");
+                    TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, " Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile");
                     sendMessageToPlayer(response, currentClient);
                     // end of extract sendMessage
                 }
