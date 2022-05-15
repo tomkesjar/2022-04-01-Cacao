@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class Game implements Serializable {
     private static final int MAX_NUMBER_OF_JUNGLE_TILES_AVAILABLE = 2;
-    private static final int MAX_NUMBER_OF_PLAYERS = 4;      //TODO <link with ServerMain's MAX_PLAYER_NUMBER field>
+    private static int MAX_NUMBER_OF_PLAYERS;
 
     private static final int MAX_NUMBER_OF_CACAO_BEANS = 5;
     private static final int MAX_NUMBER_OF_WORSHIP_SITES = 3;
@@ -47,6 +47,7 @@ public class Game implements Serializable {
     }
 
     public Game(List<String> nameList, int numberOfHumanPlayers) {
+        this.MAX_NUMBER_OF_PLAYERS = nameList.size();
         this.playerList = createPlayerList(nameList, numberOfHumanPlayers);
         this.jungleTileDeck = new JungleTileDeck(nameList.size());
         this.board = new Board();
@@ -243,24 +244,8 @@ public class Game implements Serializable {
         StringBuilder result = new StringBuilder();
         result.append("playerList=" + playerList);
         result.append(System.lineSeparator());
-        /*
-        result.append("board=" + board);
-
-        result.append(System.lineSeparator());
-        result.append("jungleTileDeck=" + jungleTileDeck);
-        result.append(System.lineSeparator());
-        result.append("jungleTilesAvailable=" + jungleTilesAvailable);
-        result.append(System.lineSeparator());
-
-         */
         result.append("activePlayer=" + activePlayer);
         result.append(System.lineSeparator());
-        /*
-        result.append("hasPlacedWorkerTile=" + hasPlacedWorkerTile);
-        result.append(System.lineSeparator());
-        result.append("hasPlacedJungleTile=" + hasPlacedJungleTile);
-        result.append(System.lineSeparator());
-         */
         result.append("isGameEnded=" + isGameEnded);
 
         return result.toString();
@@ -273,6 +258,8 @@ public class Game implements Serializable {
                 '}';
     }
 
+
+    //testing GameBoard setup
     public static void main(String[] args) {
         List<Player> playerList = new ArrayList<>();
 
