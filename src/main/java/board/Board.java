@@ -2,7 +2,7 @@ package board;
 
 //import javafx.util.messages.Pair;
 import messages.Pair;
-import messages.TilePlacementMessageRequest;
+import players.Player;
 import tiles.*;
 
 import java.awt.*;
@@ -81,6 +81,19 @@ public class Board implements Serializable {
         boolean isAdjacentToJungleTile = isAdjacentToJungleTile(xCoord, yCoord);
 
         return positionCheck && emptyCheck && isAdjacentToJungleTile;
+    }
+
+    public boolean isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(Point coord, Player activePlayer) {
+        return isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(coord.x, coord.y, activePlayer);
+    }
+
+    public boolean isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(int xCoord, int yCoord, Player activePlayer) {
+        boolean positionCheck = (xCoord + yCoord) % 2 == 0;
+        boolean workerTileCheck = getField(xCoord, yCoord) instanceof WorkerTile;
+        boolean sameColourWorkerCheck = workerTileCheck ? ((WorkerTile) getField(xCoord, yCoord)).getColour() == activePlayer.getPlayerColour() : false;
+        boolean hasWorshipSymbol = activePlayer.getWorshipSymbol() > 0;
+
+        return positionCheck && workerTileCheck && sameColourWorkerCheck && hasWorshipSymbol;
     }
 
     private boolean isAdjacentToJungleTile(int xCoord, int yCoord) {

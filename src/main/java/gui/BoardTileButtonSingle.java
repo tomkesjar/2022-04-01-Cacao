@@ -75,16 +75,22 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
 
     @Override
     void placeWorkerTile(WorkerTile selectedWorkerTile) {
-        //gameHandler.getGame().getBoard().getSelectableWorkerPanelPositions();
-        if (!gameHandler.getGame().isGameEnded()) {
-            if (!gameHandler.isWorkerTilePlacementValid()
-                    && gameHandler.getGame().getBoard().isValidPlacementAsWorkerTile(this.getCoord())) {
+        boolean isGameEndVariable = gameHandler.getGame().isGameEnded();
+        boolean isWorkerTilePlacementValidVariable = gameHandler.isWorkerTilePlacementValid();
+        boolean isValidPlacementAsWorkerTile = (gameHandler.getGame().getBoard().isValidPlacementAsWorkerTile(this.getCoord()));
+        Player activePlayer = gameHandler.getGame().getPlayerList().get(gameHandler.getGame().getActivePlayer());
+        boolean isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed = gameHandler.getGame().getBoard().isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(this.getCoord(), activePlayer);
+
+        if (!isGameEndVariable) {
+            if (!isWorkerTilePlacementValidVariable
+                    && (isValidPlacementAsWorkerTile || isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed)
+            ) {
+                if (isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed) {
+                    activePlayer.setWorshipSymbol(activePlayer.getWorshipSymbol() - 1);
+                }
+
                 WorkerTile workerTileToPlace = guiBoard.getSelectedWorkerTile();
-
                 gameHandler.placeAndEvaluateWorkerTile(this.coord, workerTileToPlace);
-
-                int activePlayerIndex = gameHandler.getGame().getActivePlayer();
-                Player activePlayer = gameHandler.getGame().getPlayerList().get(activePlayerIndex);
                 gameHandler.manageWorkerTileDeck(activePlayer);
 
                 String workerTileSuccessfulMessage = ": worker tile placement successful, now select and place jungle tile";
