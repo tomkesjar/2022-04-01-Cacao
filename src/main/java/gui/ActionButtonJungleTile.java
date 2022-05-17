@@ -85,7 +85,7 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && !isTileSelected && !game.isGameEnded()) {
+        if (playerIndex == game.getActivePlayer() && !guiBoard.hasPlacedJungleTile() && guiBoard.hasPlacedWorkerTile() && !isTileSelected && !game.isGameEnded()) {
             this.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 4));
         }
     }
