@@ -1,6 +1,11 @@
 package server;
 
-import game.GameHandler;
+
+import common.game.GameHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import server.handlers.ChatServerClientHandler;
+import server.handlers.GameServerClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,10 +19,9 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class ServerMain {
-    //connection & timing
+    //client.connection & timing
     private static final int SERVER_GAME_PORT = 5555;
     private static final int SERVER_CHAT_PORT = 5550;
     private static int PLAYER_COUNTER = 0;
@@ -36,8 +40,12 @@ public class ServerMain {
 
     private static ServerGui serverGui;
 
+    private static Logger logger;
+
     //*******************************************
     public static void main(String[] args) {
+        logger = (Logger) LogManager.getLogger(ServerMain.class);
+
         serverGui = new ServerGui();
 
         synchronized (serverGui.getSendButton()){
@@ -52,7 +60,7 @@ public class ServerMain {
         WAIT_TIME_IN_SECOND = Integer.parseInt(serverGui.getWaitTimeInput().getText());
         serverGui.appendToTextArea("[Server]: wait time is set to " + WAIT_TIME_IN_SECOND + " sec");
         MAX_NUMBER_OF_PLAYERS = Integer.parseInt(serverGui.getNumberOfPlayersInput().getText());
-        serverGui.appendToTextArea("[Server]: max number of players= " + MAX_NUMBER_OF_PLAYERS);
+        serverGui.appendToTextArea("[Server]: max number of common.players= " + MAX_NUMBER_OF_PLAYERS);
 
 
 
@@ -76,7 +84,7 @@ public class ServerMain {
         Map<String, Integer> namesMap = new HashMap<>();
 
         while (checkWaitTime() && !isMaxNumberOfPlayersReached()) {             //**
-            String messageToSend = "[SERVER]: waiting for client (game + chat) connection...";
+            String messageToSend = "[SERVER]: waiting for client (common.game + chat) client.connection...";
             System.out.println(messageToSend);
             serverGui.appendToTextArea(messageToSend);
 
@@ -155,10 +163,10 @@ public class ServerMain {
                 serverGui.appendToTextArea(messageToSend);
 
             } catch (SocketException se) {
-                System.out.println("SERVER]: No successful connection this time SE");
+                System.out.println("SERVER]: No successful client.connection this time SE");
                 //se.printStackTrace();
             } catch (IOException e) {
-                System.out.println("SERVER]: No successful connection this time IOE");
+                System.out.println("SERVER]: No successful client.connection this time IOE");
                 //e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

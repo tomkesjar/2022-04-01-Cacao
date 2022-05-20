@@ -1,0 +1,76 @@
+package common.tiles;
+
+public enum TileEnum {
+    PLANTATION_1,
+    PLANTATION_2,
+    MINE_1,
+    MINE_2,
+    WATER,
+    TEMPLE,
+    MARKET_LOW,
+    MARKET_MID,
+    MARKET_HIGH,
+    WORSHIP_SITE,
+    EMPTY,
+
+    R1111,
+    R2101,
+    R3100,
+    R3001,
+    B1111,
+    B2101,
+    B3100,
+    B3001,
+    G1111,
+    G2101,
+    G3100,
+    G3001,
+    Y1111,
+    Y2101,
+    Y3100,
+    Y3001,
+
+    R1012,
+    R1003,
+    R0013,
+    B1012,
+    B1003,
+    B0013,
+    G1012,
+    G1003,
+    G0013,
+    Y1012,
+    Y1003,
+    Y0013,
+
+
+
+    R0121,
+    R0031,
+    R0130,
+    B0121,
+    B0031,
+    B0130,
+    G0121,
+    G0031,
+    G0130,
+    Y0121,
+    Y0031,
+    Y0130,
+
+
+
+    R1210,
+    R0310,
+    R1300,
+    B1210,
+    B0310,
+    B1300,
+    G1210,
+    G0310,
+    G1300,
+    Y1210,
+    Y0310,
+    Y1300;
+
+    }
