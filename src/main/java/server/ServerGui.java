@@ -1,7 +1,5 @@
 package server;
 
-import jdk.vm.ci.meta.Local;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +11,7 @@ import java.time.LocalTime;
 public class ServerGui extends JFrame {
     private JPanel inputPanel;
     private JTextArea textArea = new JTextArea();
-    private JScrollPane jp = new JScrollPane(textArea);
+    private JScrollPane scrollPane = new JScrollPane(textArea);
 
     private JLabel numberOfPlayersText;
     private JLabel waitTimeText;
@@ -33,7 +31,7 @@ public class ServerGui extends JFrame {
         setFont(new Font("Times New Roman", Font.PLAIN, 12));
 
         textArea.setForeground(Color.GREEN);
-        textArea.setPreferredSize(new Dimension(400, 450));
+
         textArea.setBackground(Color.GRAY);
         textArea.setEditable(false);
         textArea.setFont(new Font("Times New Roman", Font.PLAIN, 12));
@@ -99,6 +97,8 @@ public class ServerGui extends JFrame {
             }
         });
 
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(400,400));
 
         setSize(400, 600);
 
@@ -151,7 +151,7 @@ public class ServerGui extends JFrame {
         c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 2;
-        this.add(textArea, c);
+        this.add(scrollPane, c);
 
 
         this.pack();
