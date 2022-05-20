@@ -172,7 +172,7 @@ public class GameHandler {
             System.out.println("[GameHandler]: values After switched player, isGameEnded=" + game.isGameEnded() + ", activePlayer=" + game.getActivePlayer() + "status: workerPlacement=" + game.hasPlacedWorkerTile() + ", junglePlacement=" + game.hasPlacedJungleTile());
 
             //extract method communicator.sendMessage (ebbol a common.game + textMessage kell a single-be
-            TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, messageStatus, "'s turn, first select and place worker tile (Other common.players are inactive)");
+            TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, messageStatus, "'s turn, first select and place worker tile (Other players are inactive)");
             sendMessageToAll(response);
             System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
             // end of extract sendMessage

@@ -108,7 +108,7 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
                 gameHandler.placeAndEvaluateJungleTile(this.coord, jungleTileToPlace);
 
                 gameHandler.manageJungleTileDeck();
-                String workerTileSuccessfulMessage = "'s turn, first select and place worker tile (Other common.players are inactive)";
+                String workerTileSuccessfulMessage = "'s turn, first select and place worker tile (Other players are inactive)";
 
 
                 gameHandler.switchPlayer();
@@ -203,7 +203,7 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
                 System.out.println("[GameHandler]: values After switched player, isGameEnded=" + common.game.isGameEnded() + ", activePlayer=" + common.game.getActivePlayer() + "status: workerPlacement=" + common.game.hasPlacedWorkerTile() + ", junglePlacement=" + common.game.hasPlacedJungleTile());
 
                 //extract method communicator.sendMessage (ebbol a common.game + textMessage kell a single-be
-                TilePlacementMessageResponse response = new TilePlacementMessageResponse(common.game, messageStatus, "'s turn, first select and place worker tile (Other common.players are inactive)");
+                TilePlacementMessageResponse response = new TilePlacementMessageResponse(common.game, messageStatus, "'s turn, first select and place worker tile (Other players are inactive)");
                 sendMessageToAll(response);
                 System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
                 // end of extract sendMessage

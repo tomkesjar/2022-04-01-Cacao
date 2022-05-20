@@ -199,7 +199,7 @@ public class GuiBoard extends JFrame implements Runnable {
         loadImages();
 
         initializeCommonVariables();
-        String textMessage = "'s turn, select and place worker tile (Other common.players are inactive)";
+        String textMessage = "'s turn, select and place worker tile (Other players are inactive)";
         createInitialDesign(textMessage);
         addChatBoxPanel();
         collectJungleCardsPanelLink();
