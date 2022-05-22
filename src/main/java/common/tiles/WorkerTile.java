@@ -123,34 +123,6 @@ public class WorkerTile extends AbstractTile {
         processOrder.forEach(neighbour -> processNeighbour(neighbour.getKey(), game, neighbour.getValue()));
     }
 
-    public void processRightNeighbourOfWorker(Point coord, Game game) {
-        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
-
-        processNeighbour(new Point(coord.x + 1, coord.y), game, rightWorker);
-
-    }
-
-    public void processLeftNeighbourOfWorker(Point coord, Game game) {
-        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
-
-        processNeighbour(new Point(coord.x - 1, coord.y), game, leftWorker);
-
-    }
-
-    public void processDownNeighbourOfWorker(Point coord, Game game) {
-        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
-
-        processNeighbour(new Point(coord.x, coord.y + 1), game, downWorker);
-
-    }
-
-    public void processUpNeighbourOfWorker(Point coord, Game game) {
-        Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
-
-        processNeighbour(new Point(coord.x, coord.y - 1), game, upWorker);
-
-    }
-
     private void processNeighbour(Point coord, Game game, int numberOfWorker) {
         if (!(coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight())) {
             Player activePlayer = game.getPlayerList().get(game.getActivePlayer());

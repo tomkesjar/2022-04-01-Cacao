@@ -42,7 +42,7 @@ public class Board implements Serializable {
         setField(midXCoord+1, midYCoord+1, new Market(Market.MarketPrice.LOW));
     }
 
-    public Board(Board originalBoard){
+    /*public Board(Board originalBoard){
         board = new ArrayList<>();
         for (int y = 0; y < INITIAL_HEIGHT; ++y) {
             List<AbstractTile> tempList = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Board implements Serializable {
             }
             board.add(tempList);
         }
-    }
+    }*/
 
 
     public void selectPossibleWorkerAndJungleTilesForPlacement(){

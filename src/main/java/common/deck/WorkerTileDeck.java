@@ -78,34 +78,5 @@ public class WorkerTileDeck implements Serializable {
                 '}';
     }
 
-    /*
-    //TODO delete, only for testing shuffle and drawCard methods
-    public static void main(String[] args) {
-        WorkerTileDeck common.deck = new WorkerTileDeck(PlayerColour.BLUE, 4);
-        System.out.println("Before shuffle");
-        common.deck.getDeck().forEach(d -> System.out.println(d.toString()));
 
-
-        common.deck.shuffleDeck();
-        System.out.println("After shuffle");
-        common.deck.getDeck().forEach(d -> System.out.println(d.toString()));
-
-        System.out.println("card 1");
-        Optional<WorkerTile> card1 = common.deck.drawCard();
-        System.out.println(card1.get());
-
-        System.out.println("card 2");
-        Optional<WorkerTile> card2 = common.deck.drawCard();
-        System.out.println(card2.get());
-
-        System.out.println("card 3");
-        Optional<WorkerTile> card3 = common.deck.drawCard();
-        System.out.println(card3.get());
-
-        System.out.println("remaining common.deck");
-        common.deck.getDeck().forEach(d -> System.out.println(d.toString()));
-
-
-    }
-    */
 }
