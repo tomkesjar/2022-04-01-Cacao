@@ -1,5 +1,8 @@
 package server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,12 +26,15 @@ public class ServerGui extends JFrame {
 
     private JButton sendButton;
 
+    private static Logger logger;
 
     private volatile boolean hasSentInputToServer = false;
 
     public ServerGui() {
         super("ServerGui");
         setFont(new Font("Times New Roman", Font.PLAIN, 12));
+
+        logger = (Logger) LogManager.getLogger(ServerGui.class);
 
         textArea.setForeground(Color.GREEN);
 
@@ -80,6 +86,7 @@ public class ServerGui extends JFrame {
                             && Integer.parseInt(getWaitTimeInput().getText()) <= 300)) {
                         hasSentInputToServer = true;
                         appendToTextArea("Server started at " + LocalTime.now());
+                        logger.info("Server started at " + LocalTime.now());
                         synchronized (sendButton) {
                             sendButton.notify();
                         }
@@ -88,9 +95,11 @@ public class ServerGui extends JFrame {
                             && Integer.parseInt(getNumberOfPlayersInput().getText()) < 5)) {
                         appendToTextArea("Number of Players should be between 1-4");
                         System.out.println("[ServerGui]: Number of Players should be between 1-4");
+                        logger.info("[ServerGui]: Number of Players should be between 1-4");
                     } else if (!(Integer.parseInt(getWaitTimeInput().getText()) >= 20
                             && Integer.parseInt(getWaitTimeInput().getText()) <= 300)) {
                         appendToTextArea("Wait time should be between 20 sec and 300 sec");
+                        logger.info("Wait time should be between 20 sec and 300 sec");
                         System.out.println("[ServerGui]: Wait time should be between 20 sec and 300 sec");
                     }
                 }

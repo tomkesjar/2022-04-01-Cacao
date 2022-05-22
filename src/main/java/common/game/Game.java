@@ -259,38 +259,5 @@ public class Game implements Serializable {
     }
 
 
-    //testing GameBoard setup
-    public static void main(String[] args) {
-        List<Player> playerList = new ArrayList<>();
-
-        Player player1 = new Player(1, 4, "AAA");
-        Player player2 = new Player(2, 4, "BBB");
-        Player player3 = new Player(3, 4, "CCC");
-        Player player4 = new Player(4, 4, "DDD");
-
-
-        player3.setPoint(3);
-        player3.setNumberOfCacaoBean(3);
-
-        player4.setPoint(3);
-        player4.setNumberOfCacaoBean(4);
-
-        player2.setPoint(3);
-        player2.setNumberOfCacaoBean(3);
-
-        player1.setPoint(3);
-        player1.setNumberOfCacaoBean(3);
-
-        playerList.add(player1);
-        playerList.add(player2);
-        playerList.add(player3);
-        playerList.add(player4);
-
-        playerList.sort(Comparator.comparing(Player::getPoint).thenComparingInt(Player::getNumberOfCacaoBean).reversed());
-
-        playerList.forEach(p -> System.out.println(p));
-    }
-
-
 
 }
