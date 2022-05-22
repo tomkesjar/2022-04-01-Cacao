@@ -1,10 +1,42 @@
 plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'java'
+    id 'application'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'org.cacao'
+version '1.0'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+
+    implementation  group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.2'
+    implementation  group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.2'
+
+}
+
+application {
+    mainClassName = 'server.ServerMain'
+}
+
+task createStartScripts(type: CreateStartScripts) {
+    outputDir = file('build/install/Cacao/bin')
+    mainClassName = 'client.Client'
+    applicationName = 'Client'
+    //mainClassName = 'server.ServerMain'
+    //applicationName = 'serverMain'
+    //classpath = sourceSets.main.runtimeClasspath
+    classpath = files('install/Cacao/lib')
+}
+
+
+
+test {
+    reports {
+        html.enabled = true
+    }
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -20,6 +52,4 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
+
