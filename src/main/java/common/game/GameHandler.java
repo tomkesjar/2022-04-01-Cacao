@@ -177,8 +177,7 @@ public class GameHandler {
 
 
 
-        //TODO
-            //send rank
+
         TilePlacementMessageResponse finalMessage = new TilePlacementMessageResponse(game, ResponseStatus.FINAL, "Game End)");
             sendMessageToAll(finalMessage);
         System.out.println("[GameHandler]: final game status sent to all players");
@@ -226,7 +225,7 @@ public class GameHandler {
     }
 
     public void manageJungleTileDeck() {
-        Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();      //TODO SOS CHECK!!!
+        Optional<JungleTile> matchingJungleTile = game.getJungleTilesAvailable().stream().filter(tile -> jungleTile.equals(tile)).findFirst();
         if (matchingJungleTile.isPresent()) {
             game.getJungleTilesAvailable().remove(matchingJungleTile.get());
         }

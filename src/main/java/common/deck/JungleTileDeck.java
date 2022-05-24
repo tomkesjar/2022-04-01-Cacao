@@ -24,7 +24,6 @@ public class JungleTileDeck implements Serializable {
                 moreThanTwoPlayersSetup();
                 break;
             default:
-                //TODO clear this out, potentially with exception
                 System.out.println("[JungleTileDeck]: Invalid number of common.players, by default 2 player setup will start");
                 twoPlayersSetup();
         }

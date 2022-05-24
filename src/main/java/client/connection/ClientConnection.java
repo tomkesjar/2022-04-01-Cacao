@@ -49,7 +49,6 @@ public class ClientConnection {
             System.out.println("[ClientConnection]: Connection, InputStream and OutputStream are successfully created");
 
         } catch (IOException e) {
-            //todo popup
             JOptionPane.showMessageDialog(new JFrame(), "An error occured during client.connection.", "Connection Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
 

@@ -133,7 +133,7 @@ public class WorkerTile extends AbstractTile {
                 case WATER:
                     for (int i = 0; i < numberOfWorker; ++i) {
                         if (activePlayer.getWaterPointIndex() < Game.getWaterPositionValueList().size()) {
-                            activePlayer.setWaterPointIndex(activePlayer.getWaterPointIndex() + 1);       //TODO: meet actual common.game rule
+                            activePlayer.setWaterPointIndex(activePlayer.getWaterPointIndex() + 1);
                             activePlayer.setWaterPoint(Game.getWaterPositionValue(activePlayer.getWaterPointIndex()));
                         }
                     }

@@ -229,7 +229,7 @@ public class GuiStartPage extends JFrame {
 
         String playerName = defineSinglePlayerName();
 
-        int numberOfBot = 3;        //TODO inputpanel
+        int numberOfBot = 3;
 
         dispose();
         GameHandler gameHandler = new GameHandler(playerName, numberOfBot);

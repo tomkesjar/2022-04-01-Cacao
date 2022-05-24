@@ -32,15 +32,7 @@ public class Game implements Serializable {
     private boolean isGameEnded;
 
 
-    //TODO: delete it, it is only for testing purpose
-    public Game(List<Player> playerList, Board board, JungleTileDeck jungleTileDeck) {
-        this.playerList = playerList;
-        this.board = board;
-        this.jungleTileDeck = jungleTileDeck;
-        this.jungleTilesAvailable = createJungleTilesAvailable();
-        this.activePlayer = 0;
-        this.isGameEnded = false;
-    }
+
 
     public Game(List<GameServerClientHandler> clients) {
         this(clients.stream().map(client -> client.getPlayerName()).collect(Collectors.toList()), clients.size());
@@ -111,7 +103,6 @@ public class Game implements Serializable {
     }
 
 
-    //TODO: add unit test
     public void calculatePoints() {
         Pair<Optional<Integer>, Optional<Integer>> maxValues = calculateTempleBonuses();
 

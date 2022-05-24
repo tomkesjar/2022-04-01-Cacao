@@ -151,7 +151,6 @@ public class ImageLoader {
             URL urlForY3001 = this.getClass().getResource("/icons/worker/final_3001y.png");
             y3001 = getScaledImage(urlForY3001, ImageTypes.TILE);
 
-            //TODO SOS add remaining
 
         } catch (IOException e) {
             System.out.println("[ImageLoader]: Error with loading the images icons");
