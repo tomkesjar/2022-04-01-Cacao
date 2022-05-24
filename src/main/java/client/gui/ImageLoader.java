@@ -193,7 +193,6 @@ public class ImageLoader {
 
 
     private BufferedImage getScaledImage(URL urlForTileIcon, ImageTypes type) throws IOException {
-        //return (BufferedImage) ImageIO.read(urlForMarket1).getScaledInstance(TILES_MAX_WIDTH, TILES_MAX_HEIGHT, java.awt.Image.SCALE_SMOOTH);
         switch (type){
             case TILE: return resizeImage(ImageIO.read(urlForTileIcon), TILES_MAX_WIDTH, TILES_MAX_HEIGHT);
             case ICON: return resizeImage(ImageIO.read(urlForTileIcon), ICON_MAX_WIDTH, ICON_MAX_HEIGHT);

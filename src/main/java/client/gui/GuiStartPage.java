@@ -133,17 +133,7 @@ public class GuiStartPage extends JFrame {
             }
         });
         newGameWithBotsPanel.add(playWithBots);
-/*
-        JButton playWithBots2 = new JButton("Play wit bots");
-        playWithBots2.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
-        playWithBots2.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
-        playWithBots2.setBackground(new Color(255, 204, 0));
-        playWithBots2.addActionListener((ActionEvent ae) -> {
-            updateMessagePanelState();
-            requestConnection();
-        });
-        newGameWithBotsPanel.add(playWithBots2);
-*/
+
 
 
         exitPanel = new JPanel();
@@ -245,17 +235,6 @@ public class GuiStartPage extends JFrame {
         GameHandler gameHandler = new GameHandler(playerName, numberOfBot);
 
         GuiBoard guiBoard = new GuiBoard(gameHandler);
-
-        //launch GuiBoard
-
-
-        //create new common.game
-        //GameHandlerMulti gameHandlerMulti = new GameHandlerMulti();
-
-        //add 3 bots
-
-
-        //launchGuiBoard(newGame, playerIndex);
     }
 
     private String defineSinglePlayerName() {
@@ -372,7 +351,7 @@ public class GuiStartPage extends JFrame {
         guiBoard.setFocusable(true);
         guiBoard.requestFocusInWindow();
 
-        Thread thread = new Thread(guiBoard);       //it is because of the continuous updates for common.game status
+        Thread thread = new Thread(guiBoard);
         thread.start();
     }
 

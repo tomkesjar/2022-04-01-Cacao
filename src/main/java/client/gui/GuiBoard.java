@@ -88,7 +88,6 @@ public class GuiBoard extends JFrame implements Runnable {
     private Set<AbstractBoardTileButton> selectableJunglePanelLink;
     private Set<AbstractBoardTileButton> selectableWorkerPanelLink;
 
-    //*****************************************************************************************
     public GuiBoard(GameHandler gameHandler){
         super("Cacao Board Game");
         this.gameHandlerForSinglePlayer = gameHandler;
@@ -129,8 +128,6 @@ public class GuiBoard extends JFrame implements Runnable {
                     tile.setBackground(new Color(0, 0, 0, OPACITY_LEVEL_LOW));
                     tile.setOpaque(false);
                     tile.setContentAreaFilled(false);
-                    //tile.setBorderPainted(false);
-
                 }
             });
         });
@@ -173,7 +170,6 @@ public class GuiBoard extends JFrame implements Runnable {
         this.getContentPane().add(infoPanel, BorderLayout.NORTH);
 
         boardPanel = createBoardPanel(game.getBoard());
-        //this.getContentPane().add(boardPanel, BorderLayout.EAST);
         this.getContentPane().add(boardPanel, BorderLayout.CENTER);
 
         cardsPanel = generateTilesPanel(game, playerIndex);
@@ -208,9 +204,8 @@ public class GuiBoard extends JFrame implements Runnable {
         collectSelectableJunglePanelLink();
         collectSelectableWorkerPanelLink();
 
-        this.pack();    //ez rakja egybe
+        this.pack();
         this.setVisible(true);
-        //this.setFocusable(true);
         this.requestFocusInWindow();
     }
 
@@ -233,11 +228,7 @@ public class GuiBoard extends JFrame implements Runnable {
     }
 
     public void updateGuiBoard(Game gameReceived, String textMessage) {
-        System.out.println("[GuiBoard]: Before Update getSelectableWorkerPanelPositions=" + game.getBoard().getSelectableWorkerPanelPositions().toString() );
-        System.out.println("[GuiBoard]: Before getSelectableWorkerPanelPositions=" + game.getBoard().getSelectableWorkerPanelPositions() );
         this.game = gameReceived;
-        System.out.println("[GuiBoard]: After Update getSelectableWorkerPanelPositions=" + game.getBoard().getSelectableWorkerPanelPositions().toString() );
-
 
         this.hasPlacedWorkerTile = game.hasPlacedWorkerTile();
         this.hasPlacedJungleTile = game.hasPlacedJungleTile();
@@ -259,8 +250,6 @@ public class GuiBoard extends JFrame implements Runnable {
         cardsPanel = generateTilesPanel(game, playerIndex);
         this.getContentPane().add(cardsPanel, BorderLayout.SOUTH,2);
 
-        //chatBox panel will not be removed! it is on index=3
-
         collectJungleCardsPanelLink();
 
         collectWorkerCardsPanelLink();
@@ -277,15 +266,6 @@ public class GuiBoard extends JFrame implements Runnable {
     private void collectSelectableWorkerPanelLink() {
         selectableWorkerPanelLink = new HashSet<>();
 
-        /*
-        boardTileButtonLink.forEach(tileRow -> tileRow.forEach(tile -> {
-            common.game.getBoard().getSelectableWorkerPanelPositions().forEach(selectable ->{
-                if (selectable.getKey() == tile.getCoord().x && selectable.getValue() == tile.getCoord().y){
-                    selectableWorkerPanelLink.add(tile);
-                }
-            });
-        }));
-         */
         for (List<AbstractBoardTileButton> tileRow : boardTileButtonLink) {
             for (AbstractBoardTileButton tile : tileRow) {
                 for (Pair<Integer, Integer> selectable : game.getBoard().getSelectableWorkerPanelPositions()) {
@@ -318,23 +298,23 @@ public class GuiBoard extends JFrame implements Runnable {
         panel.add(playerName);
         playerPanelLink.get(player).put("name", playerName);
 
-        JLabel beanIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getBeanIcon())); //TODO: add coin icon
-        JLabel beanValue = new JLabel(String.valueOf(player.getNumberOfCacaoBean()) + "/5");      //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel beanIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getBeanIcon()));
+        JLabel beanValue = new JLabel(String.valueOf(player.getNumberOfCacaoBean()) + "/5");
         beanValue.setForeground(Color.WHITE);
         panel.add(beanIcon);
         panel.add(beanValue);
         playerPanelLink.get(player).put("beanIcon", beanIcon);
         playerPanelLink.get(player).put("beanValue", beanValue);
 
-        JLabel coinIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getCoinIcon())); //TODO: add coin icon
-        JLabel coinValue = new JLabel(String.valueOf(player.getCoins()));      //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel coinIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getCoinIcon()));
+        JLabel coinValue = new JLabel(String.valueOf(player.getCoins()));
         coinValue.setForeground(Color.WHITE);
         panel.add(coinIcon);
         panel.add(coinValue);
         playerPanelLink.get(player).put("coinIcon", coinIcon);
         playerPanelLink.get(player).put("coinValue", coinValue);
 
-        JLabel shrineIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getShrineIcon())); //TODO: add coin icon
+        JLabel shrineIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getShrineIcon()));
         JLabel shrineValue = new JLabel(String.valueOf(player.getWorshipSymbol()) + "/" + String.valueOf(Game.getMaxNumberOfWorshipSites()));
         shrineValue.setForeground(Color.WHITE);
         panel.add(shrineIcon);
@@ -342,33 +322,33 @@ public class GuiBoard extends JFrame implements Runnable {
         playerPanelLink.get(player).put("shrineIcon", shrineIcon);
         playerPanelLink.get(player).put("shrineValue", shrineValue);
 
-        JLabel templeIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getTempleIcon())); //TODO: add coin icon
-        JLabel templeValue = new JLabel(String.valueOf(player.getTemplePoint()));       //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel templeIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getTempleIcon()));
+        JLabel templeValue = new JLabel(String.valueOf(player.getTemplePoint()));
         templeValue.setForeground(Color.WHITE);
         panel.add(templeIcon);
         panel.add(templeValue);
         playerPanelLink.get(player).put("templeIcon", templeIcon);
         playerPanelLink.get(player).put("templeValue", templeValue);
 
-        JLabel waterIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getWaterIcon())); //TODO: add coin icon
+        JLabel waterIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getWaterIcon()));
         String nextLevelMessage = (player.getWaterPointIndex() + 1) >= Game.getWaterPositionValueList().size() ? "Maxed" : Objects.toString(Game.getWaterPositionValue(player.getWaterPointIndex() + 1));
-        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()) + " (next level: " + nextLevelMessage + ")");      //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel waterValue = new JLabel(String.valueOf(player.getWaterPoint()) + " (next level: " + nextLevelMessage + ")");
         waterValue.setForeground(Color.WHITE);
         panel.add(waterIcon);
         panel.add(waterValue);
         playerPanelLink.get(player).put("waterIcon", waterIcon);
         playerPanelLink.get(player).put("waterValue", waterValue);
 
-        JLabel pointIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getPointIcon())); //TODO: add coin icon
-        JLabel pointValue = new JLabel(String.valueOf(player.getPoint()-player.getTemplePointBonus()) + " + " + String.valueOf(player.getTemplePointBonus()));       //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel pointIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getPointIcon()));
+        JLabel pointValue = new JLabel(String.valueOf(player.getPoint()-player.getTemplePointBonus()) + " + " + String.valueOf(player.getTemplePointBonus()));
         pointValue.setForeground(Color.WHITE);
         panel.add(pointIcon);
         panel.add(pointValue);
         playerPanelLink.get(player).put("pointIcon", pointIcon);
         playerPanelLink.get(player).put("pointValue", pointValue);
 
-        JLabel rankIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getRankIcon())); //TODO: add coin icon
-        JLabel rankValue = new JLabel(String.valueOf(player.getRank()));       //TODO: add boxes instead of number + colourify boxes based on number
+        JLabel rankIcon = new JLabel(new ImageIcon((BufferedImage) imageLoader.getRankIcon()));
+        JLabel rankValue = new JLabel(String.valueOf(player.getRank()));
         rankValue.setForeground(Color.WHITE);
         panel.add(rankIcon);
         panel.add(rankValue);
@@ -526,11 +506,10 @@ public class GuiBoard extends JFrame implements Runnable {
                     TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
                     messageStatus = response.getStatus();
                     this.game = response.getGame();
-                    System.out.println("[GuiBoard]: void run: updated common.game.activePlayer=" + game.getActivePlayer());
+                    System.out.println("[GuiBoard]: void run: updated activePlayer=" + game.getActivePlayer());
                     this.updateGuiBoard(game, response.getTextMessage());
 
                     this.setVisible(true);
-                    //this.setFocusable(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
@@ -540,7 +519,6 @@ public class GuiBoard extends JFrame implements Runnable {
 
             //own turn, simple waiting
             this.setVisible(true);
-            //this.setFocusable(true);
             try {
                 System.out.println("[GuiBoard]: void Sleep: current common.game.activePlayer=" + game.getActivePlayer());
                 TimeUnit.SECONDS.sleep(5);
@@ -573,7 +551,6 @@ public class GuiBoard extends JFrame implements Runnable {
             JPanel playerPanel = generatePlayerPanel(player);
             playerPanel.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, INFOPANEL_UNIT_HEIGHT));
 
-            //System.out.println("[GuiBoard]: playerPanel width: panel max=" + PANEL_MAX_WIDTH + "  screen width="+this.getSize().width);
             Color selectedColour;
             switch (game.getPlayerList().indexOf(player)) {
                 case 0:
@@ -670,7 +647,6 @@ public class GuiBoard extends JFrame implements Runnable {
         JPanel jungleTilesPanel = new JPanel();
         for (JungleTile jungleTile : game.getJungleTilesAvailable()) {
             ActionButtonJungleTile tileButton = new ActionButtonJungleTile(this, jungleTile);
-            //tileButton.setText(jungleTile.toShortString());
             tileButton.setFont(new java.awt.Font("Calibri", 1, FONT_SIZE));
             tileButton.setPreferredSize(new Dimension(TILES_MAX_WIDTH, TILES_MAX_HEIGHT));
             jungleTilesPanel.add(tileButton);

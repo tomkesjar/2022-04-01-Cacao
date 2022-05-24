@@ -38,32 +38,7 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
         }
     }
 
-   /*
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        System.out.println("[BoardTileButtonSingle]: mouse release event happened");
 
-        try {
-            Thread.sleep(500);
-
-            gameHandler.checkEndGameStatus();
-            if(gameHandler.getGame().isGameEnded()){
-                Thread.sleep(1_000);
-                GuiEndGameResult guiEndGameResult = new GuiEndGameResult(gameHandler.getGame());
-                System.out.println("[BoardTileButtonSingle]: guiEndGameResult created");
-
-                guiEndGameResult.setVisible(true);
-                guiEndGameResult.setFocusable(true);
-                guiEndGameResult.requestFocusInWindow();
-            }
-
-
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
-    }
- */
 
     @Override
     void placeWorkerTile(WorkerTile selectedWorkerTile) {
@@ -153,96 +128,6 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
     }
 
 
-
-/*
-                System.out.println("[GameHandler]: Moving to JungleTile placement, player=" + common.game.getActivePlayer());
-                while (!isJungleTilePlacementValid) {
-                    //* extract from here
-                    GameServerClientHandler currentClient = clients.get(common.game.getActivePlayer());
-                    System.out.println("[GameHandler]: clients=" + clients);
-
-                    //extract method communicator.getMessage
-                    TilePlacementMessageRequest tilePlacementMessageRequest = (TilePlacementMessageRequest) clients.get(common.game.getActivePlayer()).getObjectInputStream().readUnshared();
-                    //System.out.println("[GameHandler]: TilePlacement message received from player=" + common.game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-                    Point jungleCoordExtracted = tilePlacementMessageRequest.getCoord();
-                    AbstractTile jungleTileExtracted =  (JungleTile) tilePlacementMessageRequest.getTile();
-                    //* end extract getMessage
-
-                    if (common.game.getBoard().isValidPlacementAsJungleTile(jungleCoordExtracted)) {
-                        System.out.println("[GameHandler]: Valid JungleTile Placement for player=" +common.game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-
-                        isJungleTilePlacementValid = true;
-
-                        Point coord = tilePlacementMessageRequest.getCoord();
-                        jungleTile = (JungleTile) tilePlacementMessageRequest.getTile();
-                        placeAndEvaluateJungleTile(coord);
-
-
-                        //* extract method manageJungleDeck  update + manage jungle tile common.deck
-                        manageJungleTileDeck();
-                        //* end of manageJungleDeck
-                    } else {
-                        //extract method communicator.sendMessage (ebbol a common.game + textMessage kell a single-be
-                        System.out.println("[GameHandler]: Invalid JungleTile Placement for player=" +common.game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
-                        TilePlacementMessageResponse response = new TilePlacementMessageResponse(common.game, ResponseStatus.FAILED, "Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile");
-                        sendMessageToPlayer(response, currentClient);
-                        // end of extract sendMessage
-                    }
-                }
-
-
-
-
-                System.out.println("[GameHandler]: values Before switch, isGameEnded=" + common.game.isGameEnded() + ", activePlayer=" + common.game.getActivePlayer() + "status: workerPlacement=" + common.game.hasPlacedWorkerTile() + ", junglePlacement=" + common.game.hasPlacedJungleTile());
-
-                switchPlayer();
-                checkEndGameStatus();
-                ResponseStatus messageStatus = common.game.isGameEnded() ? ResponseStatus.FINAL : ResponseStatus.SUCCESSFUL;
-
-                System.out.println("[GameHandler]: =================================================================SWITCH=");
-                System.out.println("[GameHandler]: values After switched player, isGameEnded=" + common.game.isGameEnded() + ", activePlayer=" + common.game.getActivePlayer() + "status: workerPlacement=" + common.game.hasPlacedWorkerTile() + ", junglePlacement=" + common.game.hasPlacedJungleTile());
-
-                //extract method communicator.sendMessage (ebbol a common.game + textMessage kell a single-be
-                TilePlacementMessageResponse response = new TilePlacementMessageResponse(common.game, messageStatus, "'s turn, first select and place worker tile (Other players are inactive)");
-                sendMessageToAll(response);
-                System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
-                // end of extract sendMessage
-            }
-                ///**************************************************************************************************
-    }
-    */
-
-
-
-
-/*
-    void placeWorkerTile2 (WorkerTile selectedWorkerTile) {
-        try {
-            System.out.println("[BoardTileButton]: Attempting to send SelectedWorkerTile. "); //SelectedWorkerTile=" + selectedWorkerTile);
-            TilePlacementMessageRequest tilePlacementMessageRequest = new TilePlacementMessageRequest(getCoord(), selectedWorkerTile);
-            guiBoard.getGameConnection().getObjectOutputStream().writeUnshared(tilePlacementMessageRequest);
-            System.out.println("[BoardTileButton]: TilePlacementMessageRequest sent successfully. tilePlacementMessageRequest=" + tilePlacementMessageRequest);
-
-            // waitForResponse() + update guiBoard if needed
-            TilePlacementMessageResponse response = (TilePlacementMessageResponse) guiBoard.getGameConnection().getObjectInputStream().readUnshared();
-            System.out.println("[BoardTileButton]: TilePlacementMessageResponse received successfully."); // tilePlacementMessageResponse=" + response);
-            responseStatus = response.getStatus();
-            Game gameReceived = response.getGame();
-
-            guiBoard.setHasPlacedWorkerTile(gameReceived.hasPlacedWorkerTile());
-            //System.out.println("[BoardTileButton]: guiBoard hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile());
-            //update common.board + panels
-            guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
-            System.out.println("[BoardTileButton]: guiBoard updated after workerTile placement");
-
-
-        } catch (IOException | ClassNotFoundException ioException) {
-            ioException.printStackTrace();
-            System.out.println("[BoardTileButton]: TilePlacementMessageRequest sending or reading failed. TilePlacementMessageRequest=" + selectedWorkerTile);
-        }
-    }
-
- */
 }
 
 

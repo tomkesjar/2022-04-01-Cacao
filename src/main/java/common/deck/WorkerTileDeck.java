@@ -6,14 +6,13 @@ import common.tiles.WorkerTile;
 import java.io.Serializable;
 import java.util.*;
 
-//TODO: hogyan lehetne a 2 osztalyt kozos oshoz kotni, ha a List<> belso resze eltero?
 public class WorkerTileDeck implements Serializable {
     private List<WorkerTile> deck;
     private PlayerColour colour;
 
 
     public WorkerTileDeck(PlayerColour colour, int numberOfPlayers) {
-        this.deck = new LinkedList<>();  //new ArrayList<>();
+        this.deck = new LinkedList<>();
         this.colour = colour;
 
         switch (numberOfPlayers) {
@@ -27,7 +26,6 @@ public class WorkerTileDeck implements Serializable {
                 generateTileDeck(3,4,1,1);
                 break;
             default:
-                //TODO clear this out, potentially with exception
                 System.out.println("[WorkerTileDeck]: Invalid number of common.players, by default 2 player setup will start");
                 generateTileDeck(3,5,1,1);
         }

@@ -10,8 +10,6 @@ public class ClientConnection {
         TEXT
     }
 
-    //private static String SERVER_IP = "127.0.0.1";
-
     private static final int SERVER_GAME_PORT = 5555;
     private static final int SERVER_CHAT_PORT = 5550;
 

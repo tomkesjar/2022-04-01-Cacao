@@ -109,7 +109,6 @@ public class Player implements Serializable {
         this.templePointBonus = builder.getTemplePointBonus();
     }
 
-    ///**************
     public void evaluateWorkerTilePlacement(GameHandler gameHandler, Point coord, WorkerTile workerTileToPlace) {
         WorkerTile currentTile = (WorkerTile) gameHandler.getGame().getBoard().getField(coord.x, coord.y);
         currentTile.processNeighbours(coord, gameHandler.getGame());
@@ -118,7 +117,6 @@ public class Player implements Serializable {
 
         gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
     }
-///**************
 
 
     public void placeBasicWorkerTile(GameHandler gameHandler ){

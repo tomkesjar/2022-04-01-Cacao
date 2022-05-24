@@ -1,6 +1,5 @@
 package common.board;
 
-//import javafx.util.common.messages.Pair;
 import common.messages.Pair;
 import common.players.Player;
 import common.tiles.*;
@@ -41,17 +40,6 @@ public class Board implements Serializable {
         setField(midXCoord, midYCoord, new Plantation(1));
         setField(midXCoord+1, midYCoord+1, new Market(Market.MarketPrice.LOW));
     }
-
-    /*public Board(Board originalBoard){
-        board = new ArrayList<>();
-        for (int y = 0; y < INITIAL_HEIGHT; ++y) {
-            List<AbstractTile> tempList = new ArrayList<>();
-            for (int x = 0; x < INITIAL_WIDTH; ++x) {
-                tempList.add(originalBoard.getField(x,y).clone());
-            }
-            board.add(tempList);
-        }
-    }*/
 
 
     public void selectPossibleWorkerAndJungleTilesForPlacement(){

@@ -27,8 +27,8 @@ public class Game implements Serializable {
     private List<JungleTile> jungleTilesAvailable;
 
     private int activePlayer;
-    private boolean hasPlacedWorkerTile;    //TODO: reconsider if this is needed here (already in GuiBoard with same name)
-    private boolean hasPlacedJungleTile;    //TODO: reconsider if this is needed here (already in GuiBoard with same name)
+    private boolean hasPlacedWorkerTile;
+    private boolean hasPlacedJungleTile;
     private boolean isGameEnded;
 
 

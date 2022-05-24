@@ -38,15 +38,11 @@ public class BoardTileButton extends JButton implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         System.out.println("[BoardTileButton]: btb press event guiBoard.getPlayerIndex=" + guiBoard.getPlayerIndex() + ", common.game.activePlayer=" + guiBoard.getGame().getActivePlayer());
-        System.out.println("============== MOUSE PRESS START ===============");
-        //System.out.println("[BoardTileButton]: guiBoard.getSelectedWorkerTile=" + guiBoard.getSelectedWorkerTile() + ", guiBoard.getSelectedJungleTile=" + guiBoard.getSelectedJungleTile());
         if (guiBoard.getPlayerIndex() == guiBoard.getGame().getActivePlayer()) {
             WorkerTile selectedWorkerTile = guiBoard.getSelectedWorkerTile();
             JungleTile selectedJungleTile = guiBoard.getSelectedJungleTile();
-            //System.out.println("[BoardTileButton - TEST]: SelectedWorkerTile=" + selectedWorkerTile + " - SelectedJungleTile=" + selectedJungleTile + " -- coords=" + coord.x + ":" + coord.y);
 
             //sending workerTile
-            //if (Objects.nonNull(selectedWorkerTile) && Objects.isNull(selectedJungleTile)) {
             if (Objects.nonNull(selectedWorkerTile) && guiBoard.getGame().hasPlacedWorkerTile() == false) {
                 try {
                     System.out.println("[BoardTileButton]: Attempting to send SelectedWorkerTile. "); //SelectedWorkerTile=" + selectedWorkerTile);
@@ -61,7 +57,6 @@ public class BoardTileButton extends JButton implements MouseListener {
                     Game gameReceived = response.getGame();
 
                     guiBoard.setHasPlacedWorkerTile(gameReceived.hasPlacedWorkerTile());
-                    //System.out.println("[BoardTileButton]: guiBoard hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile());
                     //update common.board + panels
                     guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
                     System.out.println("[BoardTileButton]: guiBoard updated after workerTile placement");
@@ -122,7 +117,6 @@ public class BoardTileButton extends JButton implements MouseListener {
                 System.out.println("[BoardTileButton]: No tile selected yet");
             }
         }
-        System.out.println("============== MOUSE PRESS END ===============");
     }
 
     @Override

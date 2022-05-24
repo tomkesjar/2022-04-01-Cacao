@@ -21,15 +21,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerMain {
-    //client.connection & timing
     private static final int SERVER_GAME_PORT = 5555;
     private static final int SERVER_CHAT_PORT = 5550;
     private static int PLAYER_COUNTER = 0;
     private static LocalTime START_TIME;
-    private static long WAIT_TIME_IN_SECOND = 60;       //TODO to decide
-    private static final int SO_TIMEOUT = 10;       //TODO to decide (sec)
+    private static long WAIT_TIME_IN_SECOND = 60;
+    private static final int SO_TIMEOUT = 10; //sec
 
-    private static int MAX_NUMBER_OF_PLAYERS = 4;     //TODO <link with Game's MAX_NUMBER_OF_PLAYERS field>
+    private static int MAX_NUMBER_OF_PLAYERS = 4;
 
     private static List<GameServerClientHandler> gameClients = new ArrayList<>();
     private static List<ChatServerClientHandler> chatClients = new ArrayList<>();

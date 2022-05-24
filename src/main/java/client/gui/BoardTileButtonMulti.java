@@ -31,7 +31,6 @@ public class BoardTileButtonMulti extends AbstractBoardTileButton{
             Game gameReceived = response.getGame();
 
             guiBoard.setHasPlacedWorkerTile(gameReceived.hasPlacedWorkerTile());
-            //System.out.println("[BoardTileButton]: guiBoard hasPlacedWorkerTile=" + guiBoard.hasPlacedWorkerTile());
             //update common.board + panels
             guiBoard.updateGuiBoard(gameReceived, response.getTextMessage());
             System.out.println("[BoardTileButton]: guiBoard updated after workerTile placement");

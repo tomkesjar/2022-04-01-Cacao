@@ -22,7 +22,6 @@ public class JungleTileDeckTest {
     public void testWorkerTileDeckWithTwoPlayers() {
         JungleTileDeck deck = new JungleTileDeck(2);
 
-
         int expectedSize = 20;
         Assert.assertEquals(expectedSize, deck.getDeck().size());
     }

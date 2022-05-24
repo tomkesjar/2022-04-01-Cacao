@@ -7,15 +7,13 @@ import java.util.List;
 public class ChatServerClientHandler implements  Runnable {
     private Socket socket;
     private List<ChatServerClientHandler> clients;
-    //private ObjectOutputStream objectOutputStream;
-    //private ObjectInputStream objectInputStream;
 
 
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
 
     String inputLine;
-    String outputLine;
+
 
     private String playerName;
 
@@ -35,23 +33,6 @@ public class ChatServerClientHandler implements  Runnable {
         }
     }
 
-    /*
-    public ObjectOutputStream getObjectOutputStream() {
-        return objectOutputStream;
-    }
-
-    public void setObjectOutputStream(ObjectOutputStream objectOutputStream) {
-        this.objectOutputStream = objectOutputStream;
-    }
-
-    public ObjectInputStream getObjectInputStream() {
-        return objectInputStream;
-    }
-
-    public void setObjectInputStream(ObjectInputStream objectInputStream) {
-        this.objectInputStream = objectInputStream;
-    }
-        */
 
         public PrintWriter getPrintWriter() {
             return printWriter;
@@ -107,8 +88,6 @@ public class ChatServerClientHandler implements  Runnable {
             e.printStackTrace();
         }
 
-
-        //try{    ide kellene a common.game reakciokat betenni    }
     }
 
 

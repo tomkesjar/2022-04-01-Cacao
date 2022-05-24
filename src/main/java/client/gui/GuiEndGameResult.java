@@ -88,9 +88,6 @@ public class GuiEndGameResult extends JFrame {
             contentPane.add(createPlayerPanel(sortedPlayerListByRank.get(i)), c);
         }
 
-       /* sortedPlayerListByRank.forEach(player -> {
-            playerRankPanel.add(createPlayerPanel(player));
-        });*/
         setContentPane(contentPane);
 
         this.setPreferredSize(new Dimension(backgroundImage.getWidth(this), backgroundImage.getHeight(this)));
@@ -113,7 +110,6 @@ public class GuiEndGameResult extends JFrame {
         playerPanel.add(playerNameLabel);
         playerPanel.add(pointLabel);
         playerPanel.setBackground(new Color(Color.DARK_GRAY.getRed(),Color.DARK_GRAY.getGreen(),Color.DARK_GRAY.getBlue(),Color.DARK_GRAY.getAlpha()-50));
-        //playerPanel.setBackground(Color.DARK_GRAY);
 
         return playerPanel;
     }
@@ -141,21 +137,4 @@ public class GuiEndGameResult extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        Player player1 = new Player.PlayerBuilder().setName("AAA").setRank(1).setPoint(20).build();
-        Player player2 = new Player.PlayerBuilder().setName("BBB").setRank(2).setPoint(15).build();
-        Player player3 = new Player.PlayerBuilder().setName("CCC").setRank(3).setPoint(10).build();
-        Player player4 = new Player.PlayerBuilder().setName("DDD").setRank(4).setPoint(5).build();
-
-        List<Player> playerList = new ArrayList<>();
-        playerList.add(player1);
-        playerList.add(player2);
-        playerList.add(player3);
-        playerList.add(player4);
-
-
-        Game game = new Game(playerList, null, new JungleTileDeck(4));
-
-        GuiEndGameResult gui = new GuiEndGameResult(game);
-    }
 }

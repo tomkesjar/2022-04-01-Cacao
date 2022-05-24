@@ -38,15 +38,12 @@ public class ChatBoxPanel extends JPanel implements ActionListener, Runnable {
 
         textArea = new JTextArea();
         scrollPane = new JScrollPane(new AlphaContainer(textArea));
-        //scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         inputTextField = new JTextField();
 
 
-        ///**** DESIGN
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        //this.setBackground(new Color(0,0,0,this.opacity));
         this.setBackground(new Color(0,0,0,0));
         this.setOpaque(false);
 
@@ -60,18 +57,12 @@ public class ChatBoxPanel extends JPanel implements ActionListener, Runnable {
         textArea.setEditable(false);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0,0  ,0,this.opacity));
-        //textArea.setBackground(Color.CYAN);
-        //textArea.setOpaque(false);
+
         textArea.setFont(new Font( "Calibri", Font.BOLD, this.fontSize));
         textArea.setForeground(Color.MAGENTA);
         Border textAreaBorder = BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1);
         textArea.setBorder(textAreaBorder);
-        //textArea.setPreferredSize(new Dimension(PANEL_WIDTH, TEXT_AREA_PANEL_HEIGHT));
 
-        //scrollPane.setBackground(new Color(0,0  ,0,this.opacity));
-        //scrollPane.setOpaque(false);
-
-        //scrollPane.add(textArea);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -104,7 +95,6 @@ public class ChatBoxPanel extends JPanel implements ActionListener, Runnable {
         this.add(dummyPanel, c);
 
 
-        ///**** DESIGN
 
         inputTextField.addActionListener(this);
 

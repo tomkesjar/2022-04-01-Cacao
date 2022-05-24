@@ -11,7 +11,7 @@ public class JungleTileDeck implements Serializable {
 
 
     public JungleTileDeck(int numberOfPlayers) {
-        this.deck = new LinkedList<>(); //new ArrayList<>();
+        this.deck = new LinkedList<>();
 
         switch (numberOfPlayers) {
             case 2:
