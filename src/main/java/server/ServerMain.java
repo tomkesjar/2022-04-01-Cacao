@@ -53,6 +53,7 @@ public class ServerMain {
                 serverGui.getSendButton().wait();
             }catch (InterruptedException e){
                 System.out.println("[SERVER]: Interrupted exception occured");
+                logger.error("[SERVER]: Interrupted exception occured");
             }
         }
 
