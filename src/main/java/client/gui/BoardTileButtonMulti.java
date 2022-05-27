@@ -19,14 +19,14 @@ public class BoardTileButtonMulti extends AbstractBoardTileButton{
     @Override
     void placeWorkerTile(WorkerTile selectedWorkerTile) {
         try {
-            System.out.println("[BoardTileButton]: Attempting to send SelectedWorkerTile. "); //SelectedWorkerTile=" + selectedWorkerTile);
+            System.out.println("[BoardTileButton]: Attempting to send SelectedWorkerTile. ");
             TilePlacementMessageRequest tilePlacementMessageRequest = new TilePlacementMessageRequest(getCoord(), selectedWorkerTile);
             guiBoard.getGameConnection().getObjectOutputStream().writeUnshared(tilePlacementMessageRequest);
             System.out.println("[BoardTileButton]: TilePlacementMessageRequest sent successfully. tilePlacementMessageRequest=" + tilePlacementMessageRequest);
 
             // waitForResponse() + update guiBoard if needed
             TilePlacementMessageResponse response = (TilePlacementMessageResponse) guiBoard.getGameConnection().getObjectInputStream().readUnshared();
-            System.out.println("[BoardTileButton]: TilePlacementMessageResponse received successfully."); // tilePlacementMessageResponse=" + response);
+            System.out.println("[BoardTileButton]: TilePlacementMessageResponse received successfully.");
             responseStatus = response.getStatus();
             Game gameReceived = response.getGame();
 
@@ -59,8 +59,6 @@ public class BoardTileButtonMulti extends AbstractBoardTileButton{
             guiBoard.setHasPlacedJungleTile(gameReceived.hasPlacedJungleTile());
             System.out.println("[BoardTileButton]: guiBoard hasPlacedJungleTile=" + guiBoard.hasPlacedJungleTile());
 
-
-            // clear selection  ONLY IF SUCCESSFUL JUNGLE TILE PLACEMENT
             if (guiBoard.hasPlacedJungleTile()) {
 
                 guiBoard.getJungleCardsPanelLink().forEach(tile -> {

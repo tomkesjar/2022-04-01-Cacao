@@ -74,12 +74,10 @@ public class ActionButtonJungleTile extends JButton implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        //nothing to add here
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        //nothing to add here
     }
 
     @Override

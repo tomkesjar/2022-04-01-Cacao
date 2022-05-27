@@ -41,7 +41,6 @@ public class ServerGui extends JFrame {
         textArea.setBackground(Color.GRAY);
         textArea.setEditable(false);
         textArea.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        //textArea.setBackground(new Color(0, 0, 0));
 
         numberOfPlayersText = new JLabel("Number of Players:");
         numberOfPlayersText.setPreferredSize(new Dimension(200, 20));

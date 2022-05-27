@@ -97,7 +97,6 @@ public class JungleTileTest {
         playerList.add(dummyPlayer4);
 
         when(mockGame.getPlayerList()).thenReturn(playerList);
-        //when(mockGame.getActivePlayer()).thenReturn(0);
 
         when(mockGame.isFieldValid(1,2)).thenReturn(true);
         when(mockGame.isFieldValid(2,1)).thenReturn(true);
@@ -165,31 +164,4 @@ public class JungleTileTest {
         Assert.assertEquals(3,mockGame.getPlayerList().get(3).getWorshipSymbol());
     }
 
-
-
-
-
-
-
-
-/*
-    public void processNeighbours(Point coord, Game game) {
-        LinkedList<Pair<Point, Integer>> processOrder = new LinkedList<>();
-        List<Point> sides = new ArrayList<>();
-
-        Point leftNeighbour = new Point(coord.x - 1, coord.y);
-        Point rightNeighbour = new Point(coord.x + 1, coord.y);
-        Point upNeighbour = new Point(coord.x, coord.y - 1);
-        Point downNeighbour = new Point(coord.x, coord.y + 1);
-
-        if (validatePointAndTileType(leftNeighbour, game)) processOrder.add(new Pair(leftNeighbour, ((WorkerTile) game.getBoard().getField(leftNeighbour.x, leftNeighbour.y)).getRightWorker()));
-        if (validatePointAndTileType(rightNeighbour, game)) processOrder.add(new Pair(rightNeighbour, ((WorkerTile) game.getBoard().getField(rightNeighbour.x, rightNeighbour.y)).getLeftWorker()));
-        if (validatePointAndTileType(upNeighbour, game)) processOrder.add(new Pair(upNeighbour, ((WorkerTile) game.getBoard().getField(upNeighbour.x, upNeighbour.y)).getDownWorker()));
-        if (validatePointAndTileType(downNeighbour, game)) processOrder.add(new Pair(downNeighbour, ((WorkerTile) game.getBoard().getField(downNeighbour.x, downNeighbour.y)).getUpWorker()));
-
-        processOrder.forEach(side ->
-                processNeighbour(side.getKey(), game, side.getValue()));
-    }
-
- */
 }

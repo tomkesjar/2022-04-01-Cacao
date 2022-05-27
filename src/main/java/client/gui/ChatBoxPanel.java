@@ -84,7 +84,6 @@ public class ChatBoxPanel extends JPanel implements ActionListener, Runnable {
         this.add(inputTextField, c);
 
 
-        //placeholder dummy panel
         dummyPanel = new JPanel();
         dummyPanel.setPreferredSize(new Dimension(PANEL_WIDTH,DUMMY_PANEL_HEIGHT));
         dummyPanel.setBackground(new Color(0,0,0, 0));
