@@ -8,6 +8,7 @@ import java.util.*;
 public class JungleTileDeck implements Serializable {
 
     private List<JungleTile> deck;
+    private final int initialJungleDeckSize;
 
 
     public JungleTileDeck(int numberOfPlayers) {
@@ -27,6 +28,8 @@ public class JungleTileDeck implements Serializable {
                 System.out.println("[JungleTileDeck]: Invalid number of common.players, by default 2 player setup will start");
                 twoPlayersSetup();
         }
+
+        initialJungleDeckSize = deck.size();
     }
 
 
@@ -112,6 +115,10 @@ public class JungleTileDeck implements Serializable {
 
     public List<JungleTile> getDeck() {
         return deck;
+    }
+
+    public int getInitialJungleDeckSize() {
+        return initialJungleDeckSize;
     }
 
     @Override
