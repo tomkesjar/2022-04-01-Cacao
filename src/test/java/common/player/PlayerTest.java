@@ -57,7 +57,7 @@ public class PlayerTest {
     }
 
     private Board createBoard(){
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
         return board;
     }
 
