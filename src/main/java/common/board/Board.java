@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class Board implements Serializable {
-    private final int INITIAL_HEIGHT = 10;//20;
-    private final int INITIAL_WIDTH = 16;//30;
+    private final int INITIAL_HEIGHT = 10;
+    private final int INITIAL_WIDTH = 16;
     private List<List<AbstractTile>> board;
 
     private AbstractTile freshWorkerTile;
@@ -24,7 +24,17 @@ public class Board implements Serializable {
     private List<Pair<Integer, Integer>> selectableJunglePanelPositions;
     private List<Pair<Integer, Integer>> selectableWorkerPanelPositions;
 
-    public Board() {
+    private static Board singleInstance = null;
+
+    public static Board getInstance(){
+        if (singleInstance == null){
+            singleInstance = new Board();
+        }
+        return singleInstance;
+    }
+
+
+    private Board() {
         board = new ArrayList<>();
         for (int y = 0; y < INITIAL_HEIGHT; ++y) {
             List<AbstractTile> tempList = new ArrayList<>();
