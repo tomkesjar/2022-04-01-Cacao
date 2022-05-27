@@ -22,13 +22,13 @@ public class BoardTest {
     }
 
     private Board createTestBoard() {
-        Board result = new Board();
+        Board result = Board.getInstance(); //new Board();
         return result;
     }
 
     @Test
     public void testInitialSize() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
 
         int expectedWidth = 16;
         int expectedHeight = 10;
@@ -38,7 +38,7 @@ public class BoardTest {
 
     @Test
     public void testInitialFields() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
 
         JungleTile expectedUpperJungleTile = new Plantation(1);
         JungleTile expectedLowerJungleTile = new Market(Market.MarketPrice.LOW);
@@ -48,7 +48,7 @@ public class BoardTest {
 
     @Test
     public void testSelectablePositionAtStart() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
 
         board.selectPossibleWorkerAndJungleTilesForPlacement();
         Assert.assertEquals(6, board.getSelectableWorkerPanelPositions().size());
@@ -57,7 +57,7 @@ public class BoardTest {
 
     @Test
     public void testisValidPlacementAsWorkerTile() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
 
         Assert.assertTrue(board.isValidPlacementAsWorkerTile(7, 5));
         Assert.assertFalse(board.isValidPlacementAsWorkerTile(5, 5));
@@ -65,7 +65,7 @@ public class BoardTest {
 
     @Test
     public void testisValidPlacementAsJungleTile() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
         board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
         Assert.assertTrue(board.isValidPlacementAsJungleTile(7, 6));
@@ -76,7 +76,7 @@ public class BoardTest {
 
     @Test
     public void testSelectablePositionAfterWorkerTilePlacement() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
 
         Assert.assertTrue(board.isValidPlacementAsWorkerTile(7, 5));
         Assert.assertFalse(board.isValidPlacementAsWorkerTile(5, 5));
@@ -90,7 +90,7 @@ public class BoardTest {
 
     @Test
     public void testSelectablePositionAfterJungleTilePlacement() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
         board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
         Assert.assertTrue(board.isValidPlacementAsJungleTile(6, 5));
@@ -105,7 +105,7 @@ public class BoardTest {
 
     @Test
     public void testisValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed() {
-        Board board = new Board();
+        Board board = Board.getInstance(); //new Board();
         board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
         Player activePlayer = new Player.PlayerBuilder()
