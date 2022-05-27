@@ -3,6 +3,7 @@ package client.gui;
 import client.connection.ClientConnection;
 import common.game.Game;
 import common.game.GameHandler;
+import common.players.Player;
 
 
 import javax.imageio.ImageIO;
@@ -37,7 +38,8 @@ public class GuiStartPage extends JFrame {
     private JPanel messagePanel;
     private JPanel dummyPanel;
     private JPanel newGamePanel;
-    private JPanel newGameWithBotsPanel;
+    private JPanel newGameWithBasicBotsPanel;
+    private JPanel newGameWithSmarterBotsPanel;
     private JPanel exitPanel;
     private JPanel contentPane;
 
@@ -50,7 +52,7 @@ public class GuiStartPage extends JFrame {
     String defaultNameInputText = "Add Your Name";
     String defaultHostNameInputText = "Add Host Name";
 
-    private int verticalAdjuster = 10;
+    private int verticalAdjuster = 8;
     private Image backgroundImage = null;
 
     private JMenuBar menuBar;
@@ -117,22 +119,39 @@ public class GuiStartPage extends JFrame {
         });
         newGamePanel.add(connectBtn);
 
-        newGameWithBotsPanel = new JPanel();
-        newGameWithBotsPanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
-        JButton playWithBots = new JButton("Play with bots");
-        playWithBots.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
-        playWithBots.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
-        playWithBots.setBackground(new Color(255, 204, 0));
-        playWithBots.addActionListener((ActionEvent ae) -> {
+        newGameWithBasicBotsPanel = new JPanel();
+        newGameWithBasicBotsPanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
+        JButton playWithBasicBots = new JButton("Play with basic bots");
+        playWithBasicBots.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
+        playWithBasicBots.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
+        playWithBasicBots.setBackground(new Color(255, 244, 0));
+        playWithBasicBots.addActionListener((ActionEvent ae) -> {
             try {
-                startSinglePlayerMode();
+                startSinglePlayerMode(Player.PlayerType.BASIC_AI);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         });
-        newGameWithBotsPanel.add(playWithBots);
+        newGameWithBasicBotsPanel.add(playWithBasicBots);
+
+        newGameWithSmarterBotsPanel = new JPanel();
+        newGameWithSmarterBotsPanel.setBackground(new Color(0, 0, 0, OPACITY_LEVEL));
+        JButton playWithSmarterBots = new JButton("Play with smart bots");
+        playWithSmarterBots.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
+        playWithSmarterBots.setFont(new Font("Serif", Font.BOLD, BUTTON_FONT_SIZE));
+        playWithSmarterBots.setBackground(new Color(255, 204, 0));
+        playWithSmarterBots.addActionListener((ActionEvent ae) -> {
+            try {
+                startSinglePlayerMode(Player.PlayerType.SMARTER_AI);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+        newGameWithSmarterBotsPanel.add(playWithSmarterBots);
 
 
 
@@ -207,11 +226,16 @@ public class GuiStartPage extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 5;
-        contentPane.add(newGameWithBotsPanel, c);
+        contentPane.add(newGameWithBasicBotsPanel, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 6;
+        contentPane.add(newGameWithSmarterBotsPanel, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 7;
         contentPane.add(exitPanel, c);
 
         setContentPane(contentPane);
@@ -225,14 +249,14 @@ public class GuiStartPage extends JFrame {
         this.requestFocusInWindow();
     }
 
-    private void startSinglePlayerMode() throws IOException, ClassNotFoundException {
+    private void startSinglePlayerMode(Player.PlayerType playerType) throws IOException, ClassNotFoundException {
 
         String playerName = defineSinglePlayerName();
 
         int numberOfBot = 3;
 
         dispose();
-        GameHandler gameHandler = new GameHandler(playerName, numberOfBot);
+        GameHandler gameHandler = new GameHandler(playerName, numberOfBot, playerType);
 
         GuiBoard guiBoard = new GuiBoard(gameHandler);
     }

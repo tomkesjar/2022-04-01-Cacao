@@ -94,8 +94,11 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
                     if (Player.PlayerType.HUMAN != botPlayer.getPlayerType()) {
                         if (!gameHandler.getGame().isGameEnded()) {
                             //worker
-
-                            botPlayer.placeBasicWorkerTile(gameHandler);
+                            if(Player.PlayerType.BASIC_AI == botPlayer.getPlayerType()) {
+                                botPlayer.placeBasicWorkerTile(gameHandler);
+                            } else {
+                                botPlayer.placeSmartWorkerTile(gameHandler);
+                            }
                             gameHandler.manageWorkerTileDeck(botPlayer);
                             botPlayer.evaluateWorkerTilePlacement(gameHandler, gameHandler.getGame().getBoard().getFreshWorkerTilePoint(), gameHandler.getWorkerTile());
 
@@ -105,7 +108,11 @@ public class BoardTileButtonSingle extends AbstractBoardTileButton {
 
 
                             //jungle
-                            botPlayer.placeBasicJungleTile(gameHandler);
+                            if(Player.PlayerType.BASIC_AI == botPlayer.getPlayerType()) {
+                                botPlayer.placeBasicJungleTile(gameHandler);
+                            } else {
+                                botPlayer.placeSmartJungleTile(gameHandler);
+                            }
                             gameHandler.manageJungleTileDeck();
                             gameHandler.getJungleTile().processNeighbours(gameHandler.getGame().getBoard().getFreshJungleTilePoint(), gameHandler.getGame());
 

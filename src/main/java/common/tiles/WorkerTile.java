@@ -1,7 +1,6 @@
 package common.tiles;
 
 import common.game.Game;
-//import javafx.util.common.messages.Pair;
 import common.messages.Pair;
 import common.players.Player;
 import common.players.PlayerColour;
@@ -10,6 +9,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class WorkerTile extends AbstractTile {
 
@@ -94,7 +94,6 @@ public class WorkerTile extends AbstractTile {
     public String toShortString() {
         String colour = (getColour().toString());
         String shortColour = colour.substring(0, Math.min(colour.length(), 1));
-        //return "W_"+ shortColour;
         return shortColour + this.leftWorker + this.upWorker + this.rightWorker + this.downWorker;
     }
 
@@ -110,7 +109,6 @@ public class WorkerTile extends AbstractTile {
 
         for (Pair<Point, Integer> side : sidesAndWorkers) {
             if (game.isFieldValid(side.getKey().x, side.getKey().y)) {
-                //System.out.println("[WorkerTile]: validation for x=" + side.getKey().x + ", y=" + side.getKey().y);
                 AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
                 if ((TileEnum.MARKET_LOW.equals(tile.getTileEnum()) || TileEnum.MARKET_MID.equals(tile.getTileEnum()) || TileEnum.MARKET_HIGH.equals(tile.getTileEnum()))) {
                     processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
@@ -122,6 +120,7 @@ public class WorkerTile extends AbstractTile {
 
         processOrder.forEach(neighbour -> processNeighbour(neighbour.getKey(), game, neighbour.getValue()));
     }
+
 
     private void processNeighbour(Point coord, Game game, int numberOfWorker) {
         if (!(coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight())) {
@@ -195,6 +194,146 @@ public class WorkerTile extends AbstractTile {
                     break;
             }
         }
+    }
+
+    public Pair<Integer, Integer> processForRobotEvaluation(Pair<Integer, Integer> coord, Game game) {
+        LinkedList<Pair<Point, Integer>> processOrder = new LinkedList<>();
+
+        List<Pair<Point, Integer>> sidesAndWorkers = Arrays.asList(
+                new Pair<Point, Integer>(new Point(coord.getKey() - 1, coord.getValue()), leftWorker),
+                new Pair<Point, Integer>(new Point(coord.getKey() + 1, coord.getValue()), rightWorker),
+                new Pair<Point, Integer>(new Point(coord.getKey(), coord.getValue() - 1), upWorker),
+                new Pair<Point, Integer>(new Point(coord.getKey(), coord.getValue() + 1), downWorker));
+
+        for (Pair<Point, Integer> side : sidesAndWorkers) {
+            if (game.isFieldValid(side.getKey().x, side.getKey().y)) {
+                AbstractTile tile = game.getBoard().getField(side.getKey().x, side.getKey().y);
+                if ((TileEnum.MARKET_LOW.equals(tile.getTileEnum()) || TileEnum.MARKET_MID.equals(tile.getTileEnum()) || TileEnum.MARKET_HIGH.equals(tile.getTileEnum()))) {
+                    processOrder.addLast(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
+                } else if (!TileEnum.EMPTY.equals(tile.getTileEnum())) {
+                    processOrder.addFirst(new Pair<>(new Point(side.getKey().x, side.getKey().y), side.getValue()));
+                }
+            }
+        }
+
+        Integer cocoa = 0;
+        Integer point = 0;
+
+
+        for (Pair<Point, Integer> neighbour : processOrder) {
+            Optional<Pair<Integer, Integer>> result = processNeighbourForRobotEvaluation(neighbour.getKey(), game, neighbour.getValue());
+            if(result.isPresent()){
+                cocoa += result.get().getKey();
+                point += result.get().getValue();
+            }
+        }
+        return new Pair<>(cocoa, point);
+    }
+
+    private Optional<Pair<Integer, Integer>> processNeighbourForRobotEvaluation(Point coord, Game game, int numberOfWorker) {
+        if (!(coord.x < 0 || coord.x >= game.getBoard().getWidth() || coord.y < 0 || coord.y >= game.getBoard().getHeight())) {
+            Player activePlayer = game.getPlayerList().get(game.getActivePlayer());
+
+            int startCocoaBean = activePlayer.getNumberOfCacaoBean();
+            int startCoin = activePlayer.getCoins();
+            int startWaterPointIndex = activePlayer.getWaterPointIndex();
+            int startWaterPoint = activePlayer.getWaterPoint();
+            int startPoint = activePlayer.getPoint();
+            int startTemplePoint = activePlayer.getTemplePoint();
+            int startTempleBonus = activePlayer.getTemplePointBonus();
+            int startWorship = activePlayer.getWorshipSymbol();
+
+            int incrementPoint;
+            int incrementCocaBean;
+
+
+
+
+            JungleTile neighbourJungleTile = (JungleTile) game.getBoard().getField(coord.x, coord.y);
+
+            switch (neighbourJungleTile.getTileEnum()) {
+                case WATER:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        if (activePlayer.getWaterPointIndex() < Game.getWaterPositionValueList().size()) {
+                            activePlayer.setWaterPointIndex(activePlayer.getWaterPointIndex() + 1);
+                            activePlayer.setWaterPoint(Game.getWaterPositionValue(activePlayer.getWaterPointIndex()));
+                        }
+                    }
+                    break;
+                case TEMPLE:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        activePlayer.setTemplePoint(activePlayer.getTemplePoint() + 1);
+                    }
+                    break;
+                case WORSHIP_SITE:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        activePlayer.setWorshipSymbol(Math.min(activePlayer.getWorshipSymbol() + 1, Game.getMaxNumberOfWorshipSites()));
+                    }
+                    break;
+                case MINE_1:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        activePlayer.setCoins(activePlayer.getCoins() + 1);
+                    }
+                    break;
+                case MINE_2:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        activePlayer.setCoins(activePlayer.getCoins() + 2);
+                    }
+                    break;
+                case PLANTATION_1:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        activePlayer.setNumberOfCacaoBean(Math.min(activePlayer.getNumberOfCacaoBean() + 1, Game.getMaxNumberOfCacaoBeans()));
+                    }
+                    break;
+                case PLANTATION_2:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        activePlayer.setNumberOfCacaoBean(Math.min(activePlayer.getNumberOfCacaoBean() + 2, Game.getMaxNumberOfCacaoBeans()));
+                    }
+                    break;
+
+                case MARKET_LOW:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        if (activePlayer.getNumberOfCacaoBean() > 0) {
+                            activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                            activePlayer.setCoins(activePlayer.getCoins() + Market.MarketPrice.LOW.getValue());
+                        }
+                    }
+                    break;
+                case MARKET_MID:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        if (activePlayer.getNumberOfCacaoBean() > 0) {
+                            activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                            activePlayer.setCoins(activePlayer.getCoins() + Market.MarketPrice.MID.getValue());
+                        }
+                    }
+                    break;
+                case MARKET_HIGH:
+                    for (int i = 0; i < numberOfWorker; ++i) {
+                        if (activePlayer.getNumberOfCacaoBean() > 0) {
+                            activePlayer.setNumberOfCacaoBean(activePlayer.getNumberOfCacaoBean() - 1);
+                            activePlayer.setCoins(activePlayer.getCoins() + Market.MarketPrice.HIGH.getValue());
+                        }
+                    }
+                    break;
+            }
+
+            game.calculatePoints();
+
+            incrementPoint = activePlayer.getPoint() - startPoint;
+            incrementCocaBean = activePlayer.getNumberOfCacaoBean() - startCocoaBean;
+
+            activePlayer.setNumberOfCacaoBean(startCocoaBean);
+            activePlayer.setCoins(startCoin);
+            activePlayer.setWaterPointIndex(startWaterPointIndex);
+            activePlayer.setWaterPoint(startWaterPoint);
+            activePlayer.setPoint(startPoint);
+            activePlayer.setTemplePoint(startTemplePoint);
+            activePlayer.setTemplePointBonus(startTempleBonus);
+            activePlayer.setWorshipSymbol(startWorship);
+
+            return Optional.of(new Pair<>(incrementCocaBean, incrementPoint));
+        }
+        return Optional.empty();        //this is never reached
     }
 
     @Override

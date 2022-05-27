@@ -2,7 +2,7 @@ package common.game;
 
 import common.board.Board;
 import common.deck.JungleTileDeck;
-//import javafx.util.common.messages.Pair;
+
 import common.messages.Pair;
 import common.players.Player;
 import server.handlers.GameServerClientHandler;
@@ -35,14 +35,14 @@ public class Game implements Serializable {
 
 
     public Game(List<GameServerClientHandler> clients) {
-        this(clients.stream().map(client -> client.getPlayerName()).collect(Collectors.toList()), clients.size());
+        this(clients.stream().map(client -> client.getPlayerName()).collect(Collectors.toList()), clients.size(), Player.PlayerType.HUMAN);
     }
 
-    public Game(List<String> nameList, int numberOfHumanPlayers) {
+    public Game(List<String> nameList, int numberOfHumanPlayers, Player.PlayerType playerType) {
         this.MAX_NUMBER_OF_PLAYERS = nameList.size();
-        this.playerList = createPlayerList(nameList, numberOfHumanPlayers);
+        this.playerList = createPlayerList(nameList, numberOfHumanPlayers, playerType);
         this.jungleTileDeck = new JungleTileDeck(nameList.size());
-        this.board = new Board();
+        this.board = Board.getInstance();   //new Board();
 
         this.activePlayer = 0;
         this.hasPlacedWorkerTile = false;
@@ -62,7 +62,7 @@ public class Game implements Serializable {
         return result;
     }
 
-    private List<Player> createPlayerList(List<String> clients, int numberOfHumanPlayers) {
+    private List<Player> createPlayerList(List<String> clients, int numberOfHumanPlayers, Player.PlayerType playerType) {
         List<Player> result = new ArrayList<>();
         List<Integer> counter = Arrays.asList(1);
         clients.forEach(c -> {
@@ -70,7 +70,7 @@ public class Game implements Serializable {
             if (numberOfHumanPlayers >= counter.get(0)) {
                 newPlayer.setPlayerType(Player.PlayerType.HUMAN);
             }else{
-                newPlayer.setPlayerType(Player.PlayerType.BASIC_AI);
+                newPlayer.setPlayerType(playerType);
             }
             result.add(newPlayer);
             counter.set(0, counter.get(0) + 1);

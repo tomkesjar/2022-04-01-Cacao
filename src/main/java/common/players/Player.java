@@ -4,15 +4,14 @@ import common.deck.WorkerTileDeck;
 import common.game.Game;
 import common.game.GameHandler;
 import common.messages.Pair;
+import common.messages.Triple;
 import common.tiles.JungleTile;
 import common.tiles.WorkerTile;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 public class Player implements Serializable {
     public enum PlayerType{
@@ -163,7 +162,119 @@ public class Player implements Serializable {
         gameHandler.getGame().setHasPlacedWorkerTile(false);
     }
 
+    public void placeSmartJungleTile(GameHandler gameHandler){
+        gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
+        List<Pair<Integer, Integer>> selectablePositions = gameHandler.getGame().getBoard().getSelectableJunglePanelPositions();
+        int activePlayerIndex = gameHandler.getGame().getActivePlayer();
+        Player activePlayer = gameHandler.getGame().getPlayerList().get(activePlayerIndex);
 
+        int iPosition = 0;
+        int iTile = 0;
+        int iRotation = 0;
+
+        Pair<Triple<Integer, Integer, Integer>, Pair<Integer,Integer>> maxResult = new Pair<>(new Triple<>(0,0,0),new Pair<>(-99,-99));
+
+        for (iPosition = 0; iPosition < selectablePositions.size(); ++iPosition){
+            for (iTile = 0; iTile < gameHandler.getGame().getJungleTilesAvailable().size(); ++iTile){
+                Map<Integer, Pair<Integer, Integer>> resultMap = gameHandler.getGame().getJungleTilesAvailable().get(iTile).processForRobotEvaluation(selectablePositions.get(iPosition), gameHandler.getGame());
+
+                Map<Integer, Integer> goalSeekMap = new HashMap<>();
+                for (Map.Entry<Integer, Pair<Integer, Integer>> entry : resultMap.entrySet()) {
+                    int cocoa = entry.getValue().getKey();
+                    int value = entry.getValue().getValue();
+                    goalSeekMap.put(entry.getKey(), cocoa + value);
+                }
+
+                int maxValueIndexInGoalSeekMap = goalSeekMap.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+                int maxValueInGoalSeekMap = goalSeekMap.get(maxValueIndexInGoalSeekMap);
+                int activePlayerValue = goalSeekMap.containsKey(activePlayerIndex) ? goalSeekMap.get(activePlayerIndex) : 0;
+
+                int resultPoint = activePlayerValue - maxValueInGoalSeekMap;
+
+                if(resultPoint >= maxResult.getValue().getKey() && activePlayerValue > maxResult.getValue().getValue()) {
+                    maxResult = new Pair<>(new Triple<>(iPosition, iTile, iRotation), new Pair<>(resultPoint, activePlayerValue));
+                }
+            }
+        }
+
+        Pair<Integer, Integer> position = selectablePositions.get(maxResult.getKey().getFirst());         //1. for cycle
+
+        JungleTile jungleTileToPlace = gameHandler.getGame().getJungleTilesAvailable().get(maxResult.getKey().getSecond());             //2. for cycle
+
+        gameHandler.getGame().getBoard().setField(position.getKey(), position.getValue(), jungleTileToPlace);
+        gameHandler.setJungleTile(jungleTileToPlace);
+        System.out.println("[Player]: Robot=" + activePlayer.playerColour + "; placed workerTile at=" + position + "; jungleTile=" + jungleTileToPlace);
+
+        gameHandler.setJungleTilePlacementValid(true);
+        gameHandler.getGame().getBoard().setFreshJungleTile(jungleTileToPlace);
+        gameHandler.getGame().getBoard().setFreshJungleTilePoint(new Point(position.getKey(), position.getValue()));
+        gameHandler.getGame().setHasPlacedJungleTile(true);
+        gameHandler.getGame().setHasPlacedWorkerTile(false);
+    }
+
+    public void placeSmartWorkerTile(GameHandler gameHandler ){
+        gameHandler.getGame().getBoard().selectPossibleWorkerAndJungleTilesForPlacement();
+        List<Pair<Integer, Integer>> selectablePositions = gameHandler.getGame().getBoard().getSelectableWorkerPanelPositions();
+        Random random = new Random();
+        Player activePlayer = gameHandler.getGame().getPlayerList().get(gameHandler.getGame().getActivePlayer());
+
+        int iPosition = 0;
+        int iTile = 0;
+        int iRotation = 0;
+
+        Pair<Triple<Integer, Integer, Integer>, Pair<Integer, Integer>> maxResult = new Pair<>(new Triple<>(0,0,0), new Pair<>(0,0));
+
+        for (iPosition = 0; iPosition < selectablePositions.size(); ++iPosition){
+            for (iTile = 0; iTile < cardsAtHand.size(); ++iTile){
+                for (iRotation = 0; iRotation < 4; ++iRotation){
+                    //rotate
+                    cardsAtHand.get(iTile).turnRightWorkersNinetyDegreesTimes(4 - cardsAtHand.get(iTile).getNumberOfRotation() + iRotation);
+                    Pair<Integer, Integer> result = cardsAtHand.get(iTile).processForRobotEvaluation(selectablePositions.get(iPosition), gameHandler.getGame());
+
+                    int cocoaMultiplier;
+                    double gameProgressMultiplier;
+
+                    if(activePlayer.getNumberOfCacaoBean() < 2) {
+                        cocoaMultiplier = 4;
+                    }else if(activePlayer.getNumberOfCacaoBean() < 4){
+                        cocoaMultiplier = 3;
+                    }else {
+                        cocoaMultiplier = 2;
+                    }
+
+                    double gameProgress = gameHandler.getGame().getJungleTileDeck().getDeck().size() / (double) gameHandler.getGame().getJungleTileDeck().getInitialJungleDeckSize();
+
+                    if(gameProgress > 0.6) {
+                        gameProgressMultiplier = 1.5;
+                    }else if(gameProgress> 0.3){
+                        gameProgressMultiplier = 1.0;
+                    }else {
+                        gameProgressMultiplier = 0.5;
+                    }
+
+                    double resultPoint = result.getKey() * cocoaMultiplier * gameProgressMultiplier + result.getValue();
+                    double maxPoint = maxResult.getValue().getKey() * cocoaMultiplier * gameProgressMultiplier + maxResult.getValue().getValue();
+                    if(resultPoint > maxPoint) {
+                        maxResult = new Pair<>(new Triple<>(iPosition, iTile, iRotation), new Pair<>(result.getKey(), result.getValue()));
+                    }
+                }
+            }
+
+        }
+
+
+        Pair<Integer, Integer> position = selectablePositions.get(maxResult.getKey().getFirst());
+
+        WorkerTile workerTileToPlace = cardsAtHand.get(maxResult.getKey().getSecond()).turnRightWorkersNinetyDegreesTimes(4 - cardsAtHand.get(maxResult.getKey().getSecond()).getNumberOfRotation() + maxResult.getKey().getThird());
+        gameHandler.setWorkerTile(workerTileToPlace);
+        gameHandler.getGame().getBoard().setField(position.getKey(), position.getValue(), workerTileToPlace);
+        System.out.println("[Player]: Robot=" + activePlayer.playerColour + ";  placed workerTile at=" + position + "; workerTile=" + workerTileToPlace + "; rotation=" + maxResult.getKey().getThird());
+
+        gameHandler.setWorkerTilePlacementValid(true);
+        gameHandler.getGame().getBoard().setFreshWorkerTile(workerTileToPlace);
+        gameHandler.getGame().getBoard().setFreshWorkerTilePoint(new Point(position.getKey(), position.getValue()));
+        gameHandler.getGame().setHasPlacedWorkerTile(true);
+    }
 
 
 

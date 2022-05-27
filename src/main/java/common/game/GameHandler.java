@@ -52,18 +52,18 @@ public class GameHandler {
         this.clients = gameClients;
         this.game = new Game(gameClients);
         logger = (Logger) LogManager.getLogger(GameHandler.class);
-        System.out.println("[GameHandler]: Game instance created with common.players=" + gameClients.size());
+        //System.out.println("[GameHandler]: Game instance created with common.players=" + gameClients.size());
         logger.info("[GameHandler]: Game instance created with common.players=" + gameClients.size());
     }
 
-    public GameHandler(String playerName, int numberOfBot) {
+    public GameHandler(String playerName, int numberOfBot, Player.PlayerType playerType) {
         logger = (Logger) LogManager.getLogger(GameHandler.class);
         List<String> nameList = new ArrayList<String>(Arrays.asList(playerName));
         for (int i=0; i<numberOfBot; ++i){
             String botName = "Bot " + String.valueOf(i+1);
             nameList.add(botName);
         }
-        this.game = new Game(nameList, 1);
+        this.game = new Game(nameList, 1, playerType);
     }
 
 
@@ -79,9 +79,9 @@ public class GameHandler {
 
 
         while (!game.isGameEnded()) {
-            System.out.println("[GameHandler]: starting the loop, checkIfIsGameEnd=" +game.checkIfIsGameEnd());
+            //System.out.println("[GameHandler]: starting the loop, checkIfIsGameEnd=" +game.checkIfIsGameEnd());
             logger.info("[GameHandler]: starting the loop, checkIfIsGameEnd=" +game.checkIfIsGameEnd());
-            System.out.println("[GameHandler]: Moving to WorkerTile placement for player=" +game.getActivePlayer());
+            //System.out.println("[GameHandler]: Moving to WorkerTile placement for player=" +game.getActivePlayer());
             logger.info("[GameHandler]: Moving to WorkerTile placement for player=" +game.getActivePlayer());
             while (!isWorkerTilePlacementValid) {
                 GameServerClientHandler currentClient = clients.get(game.getActivePlayer());
@@ -95,7 +95,7 @@ public class GameHandler {
 
                 if (game.getBoard().isValidPlacementAsWorkerTile(workerCoordExtracted)
                 ||  game.getBoard().isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(workerCoordExtracted, activePlayer)){
-                    System.out.println("[GameHandler]: Valid WorkerTile Placement for player=" +game.getActivePlayer() + " tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
+                    //System.out.println("[GameHandler]: Valid WorkerTile Placement for player=" +game.getActivePlayer() + " tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     logger.info("[GameHandler]: Valid WorkerTile Placement for player=" +game.getActivePlayer() + " tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     if (game.getBoard().isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(workerCoordExtracted, activePlayer)) {
                         activePlayer.setWorshipSymbol(activePlayer.getWorshipSymbol()  - 1);
@@ -112,10 +112,10 @@ public class GameHandler {
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.SUCCESSFUL, ": worker tile placement successful, now select and place jungle tile");
                     sendMessageToAll(response);
 
-                    System.out.println("[GameHandler]: successful response sent to all player after WORKER placement."/* response=" + response*/);
-                    logger.info("[GameHandler]: successful response sent to all player after WORKER placement."/* response=" + response*/);
+                    //System.out.println("[GameHandler]: successful response sent to all player after WORKER placement.");
+                    logger.info("[GameHandler]: successful response sent to all player after WORKER placement.");
                 } else {
-                    System.out.println("[GameHandler]: Invalid WorkerTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
+                    //System.out.println("[GameHandler]: Invalid WorkerTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     logger.info("[GameHandler]: Invalid WorkerTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, ": Invalid placement, select an empty tile and place worker tile adjacent to a jungle tile");
                     sendMessageToPlayer(response, currentClient);
@@ -125,11 +125,11 @@ public class GameHandler {
 
 
 
-            System.out.println("[GameHandler]: Moving to JungleTile placement, player=" + game.getActivePlayer());
+            //System.out.println("[GameHandler]: Moving to JungleTile placement, player=" + game.getActivePlayer());
             logger.info("[GameHandler]: Moving to JungleTile placement, player=" + game.getActivePlayer());
             while (!isJungleTilePlacementValid) {
                 GameServerClientHandler currentClient = clients.get(game.getActivePlayer());
-                System.out.println("[GameHandler]: clients=" + clients);
+                //System.out.println("[GameHandler]: clients=" + clients);
                 logger.info("[GameHandler]: clients=" + clients);
 
                 TilePlacementMessageRequest tilePlacementMessageRequest = (TilePlacementMessageRequest) clients.get(game.getActivePlayer()).getObjectInputStream().readUnshared();
@@ -137,7 +137,7 @@ public class GameHandler {
                 AbstractTile jungleTileExtracted =  (JungleTile) tilePlacementMessageRequest.getTile();
 
                 if (game.getBoard().isValidPlacementAsJungleTile(jungleCoordExtracted)) {
-                    System.out.println("[GameHandler]: Valid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
+                    //System.out.println("[GameHandler]: Valid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     logger.info("[GameHandler]: Valid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
 
                     Point coord = tilePlacementMessageRequest.getCoord();
@@ -147,7 +147,7 @@ public class GameHandler {
 
                     manageJungleTileDeck();
                 } else {
-                    System.out.println("[GameHandler]: Invalid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
+                    //System.out.println("[GameHandler]: Invalid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     logger.info("[GameHandler]: Invalid JungleTile Placement for player=" +game.getActivePlayer() + " , tilePlacementMessageRequest=" + tilePlacementMessageRequest.toString());
                     TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, ResponseStatus.FAILED, ": Invalid placement, select an empty tile and place jungle tile adjacent to any worker tile");
                     sendMessageToPlayer(response, currentClient);
@@ -167,7 +167,7 @@ public class GameHandler {
 
             TilePlacementMessageResponse response = new TilePlacementMessageResponse(game, messageStatus, "'s turn, first select and place worker tile (Other players are inactive)");
             sendMessageToAll(response);
-            System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
+            //System.out.println("[GameHandler]: successful response sent to all player after JUNGLE placement");
             logger.info("[GameHandler]: successful response sent to all player after JUNGLE placement");
         }
 
@@ -180,9 +180,9 @@ public class GameHandler {
 
         TilePlacementMessageResponse finalMessage = new TilePlacementMessageResponse(game, ResponseStatus.FINAL, "Game End)");
             sendMessageToAll(finalMessage);
-        System.out.println("[GameHandler]: final game status sent to all players");
+        //System.out.println("[GameHandler]: final game status sent to all players");
         logger.info("[GameHandler]: final game status sent to all players");
-        System.out.println("[GameHandler]: Game Ended");
+        //System.out.println("[GameHandler]: Game Ended");
         logger.info("[GameHandler]: Game Ended");
     }
 
@@ -240,7 +240,7 @@ public class GameHandler {
         if (matchingWorkerTile.isPresent()){
             activePlayer.getCardsAtHand().remove(matchingWorkerTile.get());
         } else {
-            System.out.println("[GameHandler]: ERROR!! matchingWorkerTile was not found");
+            //System.out.println("[GameHandler]: ERROR!! matchingWorkerTile was not found");
             logger.error("[GameHandler]: ERROR!! matchingWorkerTile was not found");
         }
 
@@ -277,7 +277,7 @@ public class GameHandler {
                 e.printStackTrace();
             }
         });
-        System.out.println("[GameHandler]: Starting common.game instance and player indices sent to common.players");
+        //System.out.println("[GameHandler]: Starting common.game instance and player indices sent to common.players");
         logger.info("[GameHandler]: Starting common.game instance and player indices sent to common.players");
     }
 
@@ -297,7 +297,7 @@ public class GameHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("[GameHandler]: Message sent to Player " + (int) (clients.indexOf(client) + 1) + "; message=" + message.toString());
+        //System.out.println("[GameHandler]: Message sent to Player " + (int) (clients.indexOf(client) + 1) + "; message=" + message.toString());
         logger.info("[GameHandler]: Message sent to Player " + (int) (clients.indexOf(client) + 1) + "; message=" + message.toString());
     }
 
@@ -310,7 +310,7 @@ public class GameHandler {
                 e.printStackTrace();
             }
         });
-        System.out.println("[GameHandler]: Message sent to all common.players, message=" + message.toString());
+        //System.out.println("[GameHandler]: Message sent to all common.players, message=" + message.toString());
         logger.info("[GameHandler]: Message sent to all common.players, message=" + message.toString());
     }
 

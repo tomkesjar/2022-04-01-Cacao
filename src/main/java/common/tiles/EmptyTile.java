@@ -1,8 +1,10 @@
 package common.tiles;
 
 import common.game.Game;
+import common.messages.Pair;
 
 import java.awt.*;
+import java.util.Optional;
 
 public class EmptyTile extends JungleTile {
 
@@ -12,7 +14,11 @@ public class EmptyTile extends JungleTile {
 
     @Override
     protected void processNeighbour(Point side, Game game, int numberOfWorkers) {
+    }
 
+    @Override
+    public Optional<Pair<Integer,Pair<Integer, Integer>>> processNeighbourForRobotEvaluation(Point coord, Game game, int numberOfWorker) {
+        return Optional.empty();
     }
 
     @Override
