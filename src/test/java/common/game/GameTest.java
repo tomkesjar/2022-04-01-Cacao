@@ -1,6 +1,5 @@
 package common.game;
 
-import common.board.Board;
 import common.players.Player;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,14 +16,15 @@ public class GameTest {
 
     @Before
     public void setup(){
-        underTest = createGame();
+        underTest = createBasicGame();
     }
 
-    private Game createGame() {
+    private Game createBasicGame() {
         List<String> names = Arrays.asList("Joe", "Bot", "Bot2", "Bot3");
-        Game result = new Game(names, 1);
+        Game result = new Game(names, 1, Player.PlayerType.BASIC_AI);
         return result;
     }
+
 
     @Test
     public void testisFieldValidWhenInvalid(){

@@ -28,92 +28,94 @@ public class BoardTest {
 
     @Test
     public void testInitialSize() {
-        Board board = Board.getInstance(); //new Board();
+        underTest.resetBoardToInitialState();
 
         int expectedWidth = 16;
         int expectedHeight = 10;
-        Assert.assertEquals(expectedHeight, board.getHeight());
-        Assert.assertEquals(expectedWidth, board.getWidth());
+        Assert.assertEquals(expectedHeight, underTest.getHeight());
+        Assert.assertEquals(expectedWidth, underTest.getWidth());
     }
 
     @Test
     public void testInitialFields() {
-        Board board = Board.getInstance(); //new Board();
+        underTest.resetBoardToInitialState();
 
         JungleTile expectedUpperJungleTile = new Plantation(1);
         JungleTile expectedLowerJungleTile = new Market(Market.MarketPrice.LOW);
-        Assert.assertEquals(expectedUpperJungleTile, board.getField(7, 4));
-        Assert.assertEquals(expectedLowerJungleTile, board.getField(8, 5));
+        Assert.assertEquals(expectedUpperJungleTile, underTest.getField(7, 4));
+        Assert.assertEquals(expectedLowerJungleTile, underTest.getField(8, 5));
     }
 
     @Test
     public void testSelectablePositionAtStart() {
-        Board board = Board.getInstance(); //new Board();
+        underTest.resetBoardToInitialState();
 
-        board.selectPossibleWorkerAndJungleTilesForPlacement();
-        Assert.assertEquals(6, board.getSelectableWorkerPanelPositions().size());
-        Assert.assertEquals(0, board.getSelectableJunglePanelPositions().size());
+        underTest.selectPossibleWorkerAndJungleTilesForPlacement();
+        Assert.assertEquals(6, underTest.getSelectableWorkerPanelPositions().size());
+        Assert.assertEquals(0, underTest.getSelectableJunglePanelPositions().size());
     }
 
     @Test
     public void testisValidPlacementAsWorkerTile() {
-        Board board = Board.getInstance(); //new Board();
+        underTest.resetBoardToInitialState();
 
-        Assert.assertTrue(board.isValidPlacementAsWorkerTile(7, 5));
-        Assert.assertFalse(board.isValidPlacementAsWorkerTile(5, 5));
+        Assert.assertTrue(underTest.isValidPlacementAsWorkerTile(7, 5));
+        Assert.assertFalse(underTest.isValidPlacementAsWorkerTile(5, 5));
     }
 
     @Test
     public void testisValidPlacementAsJungleTile() {
-        Board board = Board.getInstance(); //new Board();
-        board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
-        Assert.assertTrue(board.isValidPlacementAsJungleTile(7, 6));
-        Assert.assertTrue(board.isValidPlacementAsJungleTile(6, 5));
+        underTest.resetBoardToInitialState();
+        underTest.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
-        Assert.assertFalse(board.isValidPlacementAsJungleTile(4, 5));
+        Assert.assertTrue(underTest.isValidPlacementAsJungleTile(7, 6));
+        Assert.assertTrue(underTest.isValidPlacementAsJungleTile(6, 5));
+
+        Assert.assertFalse(underTest.isValidPlacementAsJungleTile(4, 5));
     }
 
     @Test
     public void testSelectablePositionAfterWorkerTilePlacement() {
-        Board board = Board.getInstance(); //new Board();
+        underTest.resetBoardToInitialState();
 
-        Assert.assertTrue(board.isValidPlacementAsWorkerTile(7, 5));
-        Assert.assertFalse(board.isValidPlacementAsWorkerTile(5, 5));
+        Assert.assertTrue(underTest.isValidPlacementAsWorkerTile(7, 5));
+        Assert.assertFalse(underTest.isValidPlacementAsWorkerTile(5, 5));
 
-        board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
+        underTest.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
-        board.selectPossibleWorkerAndJungleTilesForPlacement();
-        Assert.assertEquals(5, board.getSelectableWorkerPanelPositions().size());
-        Assert.assertEquals(2, board.getSelectableJunglePanelPositions().size());
+        underTest.selectPossibleWorkerAndJungleTilesForPlacement();
+        Assert.assertEquals(5, underTest.getSelectableWorkerPanelPositions().size());
+        Assert.assertEquals(2, underTest.getSelectableJunglePanelPositions().size());
     }
 
     @Test
     public void testSelectablePositionAfterJungleTilePlacement() {
-        Board board = Board.getInstance(); //new Board();
-        board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
+        underTest.resetBoardToInitialState();
+        underTest.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
-        Assert.assertTrue(board.isValidPlacementAsJungleTile(6, 5));
-        Assert.assertTrue(board.isValidPlacementAsJungleTile(7, 6));
+        Assert.assertTrue(underTest.isValidPlacementAsJungleTile(6, 5));
+        Assert.assertTrue(underTest.isValidPlacementAsJungleTile(7, 6));
 
-        board.setField(6, 5, new Temple());
+        underTest.setField(6, 5, new Temple());
 
-        board.selectPossibleWorkerAndJungleTilesForPlacement();
-        Assert.assertEquals(7, board.getSelectableWorkerPanelPositions().size());
-        Assert.assertEquals(1, board.getSelectableJunglePanelPositions().size());
+        underTest.selectPossibleWorkerAndJungleTilesForPlacement();
+        Assert.assertEquals(7, underTest.getSelectableWorkerPanelPositions().size());
+        Assert.assertEquals(1, underTest.getSelectableJunglePanelPositions().size());
     }
 
     @Test
     public void testisValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed() {
-        Board board = Board.getInstance(); //new Board();
-        board.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
+        underTest.resetBoardToInitialState();
+
+        underTest.setField(7, 5, new WorkerTile(1, 1, 1, 1, PlayerColour.RED));
 
         Player activePlayer = new Player.PlayerBuilder()
                 .setPlayerColour(PlayerColour.RED)
                 .build();
         activePlayer.setWorshipSymbol(2);
 
-        Assert.assertFalse(board.isValidPlacementAsWorkerTile(7, 5));
-        Assert.assertTrue(board.isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(7, 5, activePlayer));
+        Assert.assertFalse(underTest.isValidPlacementAsWorkerTile(7, 5));
+        Assert.assertTrue(underTest.isValidPlacementAsWorkerTileWhenWorshipSymbolIsUsed(7, 5, activePlayer));
     }
 }
