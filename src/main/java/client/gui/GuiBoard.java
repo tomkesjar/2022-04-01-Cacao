@@ -162,6 +162,7 @@ public class GuiBoard extends JFrame implements Runnable {
         this.setContentPane(contentPane);
 
         this.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT));
+        this.setMinimumSize(new Dimension(1024, 768));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         infoPanel = generateInfoPanel(game, textMessage);
@@ -184,7 +185,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
     public GuiBoard(ClientConnection gameConnection, ClientConnection chatConnection, Game game, int playerIndex) {
         super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
-        this.setResizable(false);
+
         this.gameType = GameType.MULTI;
 
         this.gameHandlerForSinglePlayer = null;

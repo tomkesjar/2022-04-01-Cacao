@@ -52,6 +52,7 @@ public class ChatBoxPanel extends JPanel implements ActionListener, Runnable {
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setPreferredSize(new Dimension(PANEL_WIDTH, TEXT_AREA_PANEL_HEIGHT));
+        scrollPane.setMinimumSize(new Dimension(PANEL_WIDTH, 200));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         textArea.setEditable(false);
