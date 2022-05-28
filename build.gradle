@@ -22,10 +22,10 @@ application {
 
 task createStartScripts(type: CreateStartScripts) {
     outputDir = file('build/install/Cacao/bin')
-    mainClassName = 'client.Client'
-    applicationName = 'Client'
-    //mainClassName = 'server.ServerMain'
-    //applicationName = 'serverMain'
+    //mainClassName = 'client.Client'
+    //applicationName = 'Client'
+    mainClassName = 'server.ServerMain'
+    applicationName = 'serverMain'
     //classpath = sourceSets.main.runtimeClasspath
     classpath = files('install/Cacao/lib')
 }
