@@ -50,7 +50,7 @@ public class ClientConnection {
 
         } catch (IOException e) {
             JOptionPane.showMessageDialog(new JFrame(), "An error occured during client.connection.", "Connection Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            //e.printStackTrace();
 
             System.exit(-1);
         }
