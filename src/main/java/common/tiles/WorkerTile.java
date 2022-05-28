@@ -19,8 +19,8 @@ public class WorkerTile extends AbstractTile {
     private int downWorker;
 
 
-    private String type;
-    private PlayerColour colour;
+    private final String type;
+    private final PlayerColour colour;
     private TileEnum tileEnum;
     private int numberOfRotation;
 
@@ -102,10 +102,10 @@ public class WorkerTile extends AbstractTile {
         LinkedList<Pair<Point, Integer>> processOrder = new LinkedList<>();
 
         List<Pair<Point, Integer>> sidesAndWorkers = Arrays.asList(
-                new Pair<Point, Integer>(new Point(coord.x - 1, coord.y), leftWorker),
-                new Pair<Point, Integer>(new Point(coord.x + 1, coord.y), rightWorker),
-                new Pair<Point, Integer>(new Point(coord.x, coord.y - 1), upWorker),
-                new Pair<Point, Integer>(new Point(coord.x, coord.y + 1), downWorker));
+                new Pair<>(new Point(coord.x - 1, coord.y), leftWorker),
+                new Pair<>(new Point(coord.x + 1, coord.y), rightWorker),
+                new Pair<>(new Point(coord.x, coord.y - 1), upWorker),
+                new Pair<>(new Point(coord.x, coord.y + 1), downWorker));
 
         for (Pair<Point, Integer> side : sidesAndWorkers) {
             if (game.isFieldValid(side.getKey().x, side.getKey().y)) {
@@ -200,10 +200,10 @@ public class WorkerTile extends AbstractTile {
         LinkedList<Pair<Point, Integer>> processOrder = new LinkedList<>();
 
         List<Pair<Point, Integer>> sidesAndWorkers = Arrays.asList(
-                new Pair<Point, Integer>(new Point(coord.getKey() - 1, coord.getValue()), leftWorker),
-                new Pair<Point, Integer>(new Point(coord.getKey() + 1, coord.getValue()), rightWorker),
-                new Pair<Point, Integer>(new Point(coord.getKey(), coord.getValue() - 1), upWorker),
-                new Pair<Point, Integer>(new Point(coord.getKey(), coord.getValue() + 1), downWorker));
+                new Pair<>(new Point(coord.getKey() - 1, coord.getValue()), leftWorker),
+                new Pair<>(new Point(coord.getKey() + 1, coord.getValue()), rightWorker),
+                new Pair<>(new Point(coord.getKey(), coord.getValue() - 1), upWorker),
+                new Pair<>(new Point(coord.getKey(), coord.getValue() + 1), downWorker));
 
         for (Pair<Point, Integer> side : sidesAndWorkers) {
             if (game.isFieldValid(side.getKey().x, side.getKey().y)) {
