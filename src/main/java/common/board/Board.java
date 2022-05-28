@@ -51,6 +51,20 @@ public class Board implements Serializable {
         setField(midXCoord+1, midYCoord+1, new Market(Market.MarketPrice.LOW));
     }
 
+    public void resetBoardToInitialState() {
+        for (int y = 0; y < INITIAL_HEIGHT; ++y) {
+            List<AbstractTile> tempList = new ArrayList<>();
+            for (int x = 0; x < INITIAL_WIDTH; ++x) {
+                board.get(y).remove(x);
+                board.get(y).add(x, new EmptyTile());
+            }
+        }
+        int midXCoord = (int) Math.floor(INITIAL_WIDTH / 2) -1;
+        int midYCoord = (int) Math.floor(INITIAL_HEIGHT / 2) -1;
+
+        setField(midXCoord, midYCoord, new Plantation(1));
+        setField(midXCoord+1, midYCoord+1, new Market(Market.MarketPrice.LOW));
+    }
 
     public void selectPossibleWorkerAndJungleTilesForPlacement(){
         selectableJunglePanelPositions = new ArrayList<>();
