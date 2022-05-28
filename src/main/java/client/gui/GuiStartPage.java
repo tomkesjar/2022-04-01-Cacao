@@ -317,9 +317,11 @@ public class GuiStartPage extends JFrame {
                 isGameConnected = true;
                 System.out.println("[GuiStartPage]: isGameConnected=" + isGameConnected);
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.out.println("[GuiStartPage]: error happened during game connection, please check server status");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                System.out.println("[GuiStartPage]: error happened during game connection, please check server status");
             }
         }
 
@@ -351,7 +353,8 @@ public class GuiStartPage extends JFrame {
                 System.out.println("[GuiStartPage]: Game object and player index received");
 
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("[GuiStartPage]: error happened during chat connection, please check server status");
+                //e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
