@@ -114,7 +114,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.pack();    //ez rakja egybe
         this.setVisible(true);
-        //this.requestFocusInWindow();
+        this.requestFocusInWindow();
     }
 
     protected void collectBoardTileButtonLink() {
@@ -206,7 +206,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.pack();
         this.setVisible(true);
-        //this.requestFocusInWindow();
+        this.requestFocusInWindow();
     }
 
     protected void initializeCommonVariables() {
@@ -518,7 +518,6 @@ public class GuiBoard extends JFrame implements Runnable {
 
                     this.setVisible(true);
                     this.setAutoRequestFocus(false);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
@@ -526,9 +525,7 @@ public class GuiBoard extends JFrame implements Runnable {
                 }
             }
 
-            //own turn, simple waiting
-            //this.setVisible(true);
-            //this.setAutoRequestFocus(true);
+
             try {
                 System.out.println("[GuiBoard]: void Sleep: current common.game.activePlayer=" + game.getActivePlayer());
                 TimeUnit.SECONDS.sleep(5);
@@ -536,8 +533,6 @@ public class GuiBoard extends JFrame implements Runnable {
                 e.printStackTrace();
             }
         }
-
-
         try {
             TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
             this.game = response.getGame();

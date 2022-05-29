@@ -97,6 +97,7 @@ public class GuiEndGameResult extends JFrame {
         this.setVisible(true);
         this.setFocusable(true);
         this.requestFocusInWindow();
+        this.setAlwaysOnTop(true);
     }
 
     private JPanel createPlayerPanel(Player player){
