@@ -32,6 +32,8 @@ public class ServerGui extends JFrame {
 
     public ServerGui() {
         super("ServerGui");
+        this.setResizable(false);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setFont(new Font("Times New Roman", Font.PLAIN, 12));
 
         logger = (Logger) LogManager.getLogger(ServerGui.class);

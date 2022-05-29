@@ -114,7 +114,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.pack();    //ez rakja egybe
         this.setVisible(true);
-        this.requestFocusInWindow();
+        //this.requestFocusInWindow();
     }
 
     protected void collectBoardTileButtonLink() {
@@ -162,7 +162,6 @@ public class GuiBoard extends JFrame implements Runnable {
         this.setContentPane(contentPane);
 
         this.setPreferredSize(new Dimension(PANEL_MAX_WIDTH, PANEL_MAX_HEIGHT));
-        this.setMinimumSize(new Dimension(1024, 768));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         infoPanel = generateInfoPanel(game, textMessage);
@@ -185,7 +184,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
     public GuiBoard(ClientConnection gameConnection, ClientConnection chatConnection, Game game, int playerIndex) {
         super("Cacao Board Game - Player " + Objects.toString((int) (playerIndex + 1)));
-
+        this.setResizable(false);
         this.gameType = GameType.MULTI;
 
         this.gameHandlerForSinglePlayer = null;
@@ -207,7 +206,7 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.pack();
         this.setVisible(true);
-        this.requestFocusInWindow();
+        //this.requestFocusInWindow();
     }
 
     protected void initializeCommonVariables() {
@@ -262,6 +261,13 @@ public class GuiBoard extends JFrame implements Runnable {
 
         this.invalidate();
         this.repaint();
+        if (playerIndex == game.getActivePlayer()){
+            this.setAutoRequestFocus(true);
+            this.setAlwaysOnTop(true);
+        }else{
+            this.setAutoRequestFocus(false);
+            this.setAlwaysOnTop(false);
+        }
     }
 
     private void collectSelectableWorkerPanelLink() {
@@ -511,6 +517,8 @@ public class GuiBoard extends JFrame implements Runnable {
                     this.updateGuiBoard(game, response.getTextMessage());
 
                     this.setVisible(true);
+                    this.setAutoRequestFocus(false);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
@@ -519,7 +527,8 @@ public class GuiBoard extends JFrame implements Runnable {
             }
 
             //own turn, simple waiting
-            this.setVisible(true);
+            //this.setVisible(true);
+            //this.setAutoRequestFocus(true);
             try {
                 System.out.println("[GuiBoard]: void Sleep: current common.game.activePlayer=" + game.getActivePlayer());
                 TimeUnit.SECONDS.sleep(5);
@@ -527,6 +536,8 @@ public class GuiBoard extends JFrame implements Runnable {
                 e.printStackTrace();
             }
         }
+
+
         try {
             TilePlacementMessageResponse response = (TilePlacementMessageResponse) this.getGameConnection().getObjectInputStream().readUnshared();
             this.game = response.getGame();
